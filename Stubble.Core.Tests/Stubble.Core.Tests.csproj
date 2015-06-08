@@ -59,6 +59,7 @@
     <Compile Include="ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScannerTest.cs" />
+    <Compile Include="StubbleTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
