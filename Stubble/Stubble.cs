@@ -10,19 +10,31 @@ namespace Stubble.Core
 {
     public class Stubble
     {
-        private ConcurrentDictionary<string, IEnumerable<ParserOutput>> Cache { get; set; }
+        public LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
+
+        public Stubble()
+        {
+            Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>(15);
+        }
+
+        public Stubble(int cacheLimit)
+        {
+            Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>(cacheLimit);
+        }
 
         public string Render(string template, object view)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<ParserOutput> Parse(string template, Tags tags)
+        public IList<ParserOutput> Parse(string template, Tags tags)
         {
-            IEnumerable<ParserOutput> tokens;
+            IList<ParserOutput> tokens;
             var success = Cache.TryGetValue(template, out tokens);
             if (!success)
+            {
                 tokens = Cache[template] = Parser.ParseTemplate(template, tags);
+            }
 
             return tokens;
         }

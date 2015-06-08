@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\LimitedSizeConcurrentDictionary.cs" />
     <Compile Include="Classes\ParserOutput.cs" />
     <Compile Include="Classes\Tags.cs" />
     <Compile Include="Parser.cs" />
