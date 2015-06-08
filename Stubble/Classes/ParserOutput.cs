@@ -38,5 +38,19 @@ namespace Stubble.Core.Classes
 
             return true;
         }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hash = 27;
+                hash = (13 * hash) + TokenType.GetHashCode();
+                hash = (13 * hash) + Value.GetHashCode();
+                hash = (13 * hash) + Start.GetHashCode();
+                hash = (13 * hash) + End.GetHashCode();
+                hash = (13 * hash) + ParentSectionEnd.GetHashCode();
+                return hash;
+            }
+        }
     }
 }
