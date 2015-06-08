@@ -26,7 +26,7 @@ namespace Stubble.Core.Tests
         [Theory, MemberData("TemplateParsingData")]
         public void It_Can_Handle_Parsing_And_Caching(string template, IList<ParserOutput> result)
         {
-            var results = Stubble.Parse(template, new Tags("{{", "}}"));
+            var results = Stubble.Parse(template);
 
             Assert.False(Stubble.Cache.Count > 15);
             for (var i = 0; i < results.Count; i++)

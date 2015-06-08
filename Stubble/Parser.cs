@@ -21,7 +21,7 @@ namespace Stubble.Core
         private static Regex _openingTagRegex;
         private static Regex _closingTagRegex;
         private static Regex _closingCurlyRegex;
-        private static readonly Tags DefaultTags = new Tags("{{", "}}");
+        public static readonly Tags DefaultTags = new Tags("{{", "}}");
 
         public static IList<ParserOutput> ParseTemplate(string template)
         {

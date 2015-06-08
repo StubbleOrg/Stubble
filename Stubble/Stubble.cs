@@ -12,9 +12,8 @@ namespace Stubble.Core
     {
         public LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
 
-        public Stubble()
+        public Stubble() : this(15)
         {
-            Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>(15);
         }
 
         public Stubble(int cacheLimit)
@@ -25,6 +24,11 @@ namespace Stubble.Core
         public string Render(string template, object view)
         {
             throw new NotImplementedException();
+        }
+
+        public IList<ParserOutput> Parse(string template)
+        {
+            return Parse(template, Parser.DefaultTags);
         }
 
         public IList<ParserOutput> Parse(string template, Tags tags)
