@@ -34,5 +34,11 @@ namespace Stubble.Core.Tests
                 Assert.Equal(results[i], result[i]);
             }
         }
+
+        [Fact]
+        public void It_Can_Render_Templates()
+        {
+            var str = Writer.Render("{{foo}}", null, null);
+        }
     }
 }

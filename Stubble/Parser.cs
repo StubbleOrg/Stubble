@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Tokens;
 
 namespace Stubble.Core
 {
@@ -60,7 +61,7 @@ namespace Stubble.Core
                         {
                             nonSpace = true;
                         }
-                        tokens.Add(new ParserOutput() { TokenType = "text", Value = c.ToString(), Start = start, End = start + 1 });
+                        tokens.Add(new RawValueToken() { TokenType = "text", Value = c.ToString(), Start = start, End = start + 1 });
                         start += 1;
 
                         if (c != '\n') continue;
@@ -113,13 +114,10 @@ namespace Stubble.Core
                     throw new Exception("Unclosed Tag at " + scanner.Pos);
                 }
 
-                var token = new ParserOutput()
-                {
-                    TokenType = type,
-                    Value = value,
-                    Start = start,
-                    End = scanner.Pos
-                };
+                var token = GetCorrectTypedToken(type);
+                token.Value = value;
+                token.Start = start;
+                token.End = scanner.Pos;
                 tokens.Add(token);
 
                 switch (type)
@@ -228,6 +226,27 @@ namespace Stubble.Core
         private static string EscapeRegexExpression(string expression)
         {
             return Regex.Replace(expression, @"[\-\[\]{}()*+?.,\^$|#\s]", @"\$&");
+        }
+
+        private static ParserOutput GetCorrectTypedToken(string tokenType)
+        {
+            switch (tokenType)
+            {
+                case "#":
+                    return new ParserOutput { TokenType = tokenType };
+                case "^":
+                    return new ParserOutput { TokenType = tokenType };
+                case ">":
+                    return new ParserOutput { TokenType = tokenType };
+                case "&":
+                    return new ParserOutput { TokenType = tokenType };
+                case "name":
+                    return new EscapedValueToken { TokenType = tokenType };
+                case "text":
+                    return new RawValueToken { TokenType = tokenType };
+                default:
+                    return new ParserOutput { TokenType = tokenType };
+            }
         }
     }
 }

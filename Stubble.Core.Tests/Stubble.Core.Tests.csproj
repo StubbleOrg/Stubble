@@ -59,7 +59,7 @@
     <Compile Include="ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScannerTest.cs" />
-    <Compile Include="StubbleTest.cs" />
+    <Compile Include="WriterTest.cs" />
     <Compile Include="Fixtures\WriterTestFixture.cs" />
   </ItemGroup>
   <ItemGroup>

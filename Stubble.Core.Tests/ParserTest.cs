@@ -18,7 +18,7 @@ namespace Stubble.Core.Tests
 
             for (var i = 0; i < results.Count; i++)
             {
-                Assert.Equal(results[i], result[i]);
+                Assert.StrictEqual(results[i], result[i]);
             }
         }
 

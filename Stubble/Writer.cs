@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,9 +39,25 @@ namespace Stubble.Core
             return tokens;
         }
 
+        public string RenderTokens(IList<ParserOutput> tokens, Context context, Dictionary<string, string> partials, string originalTemplate)
+        {
+            var sb = new StringBuilder();
+            foreach (var token in tokens.OfType<IRenderableToken>( ))
+            {
+                sb.Append(token.Render(context, partials, originalTemplate));
+            }
+            return sb.ToString();
+        }
+
         public string Render(string template, object view, Dictionary<string, string> partials)
         {
-            throw new NotImplementedException();
+            return Render(template, new Context(view), partials);
+        }
+
+        public string Render(string template, Context context, Dictionary<string, string> partials)
+        {
+            var tokens = Parse(template);
+            return RenderTokens(tokens, context, partials, template);
         }
     }
 }
