@@ -4,45 +4,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Stubble.Core.Classes;
+using Stubble.Core.Tests.Fixtures;
 using Xunit;
 
 namespace Stubble.Core.Tests
 {
-    
-    [CollectionDefinition("MyCollection")]
-    public class CollectionClass : ICollectionFixture<StubbleTestFixture> { }
+    [CollectionDefinition("WriterCollection")]
+    public class CollectionClass : ICollectionFixture<WriterTestFixture> { }
 
-    [Collection("MyCollection")]
-    public class StubbleTest
+    [Collection("WriterCollection")]
+    public class WriterTest
     {
         public static IEnumerable<object[]> TemplateParsingData = ParserTest.TemplateParsingData();
-        public Stubble Stubble;
+        public Writer Writer;
 
-        public StubbleTest(StubbleTestFixture fixture)
+        public WriterTest(WriterTestFixture fixture)
         {
-            Stubble = fixture.Stubble;
+            Writer = fixture.Writer;
         }
 
         [Theory, MemberData("TemplateParsingData")]
         public void It_Can_Handle_Parsing_And_Caching(string template, IList<ParserOutput> result)
         {
-            var results = Stubble.Parse(template);
+            var results = Writer.Parse(template);
 
-            Assert.False(Stubble.Cache.Count > 15);
+            Assert.False(Writer.Cache.Count > 15);
             for (var i = 0; i < results.Count; i++)
             {
                 Assert.Equal(results[i], result[i]);
             }
-        }
-    }
-
-    public class StubbleTestFixture
-    {
-        public Stubble Stubble { get; set; }
-
-        public StubbleTestFixture()
-        {
-            Stubble = new Stubble();
         }
     }
 }
