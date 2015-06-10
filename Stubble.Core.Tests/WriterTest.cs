@@ -38,7 +38,8 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Can_Render_Templates()
         {
-            var str = Writer.Render("{{foo}}", null, null);
+            var output = Writer.Render("{{foo}}", new { foo = "Bar" }, null);
+            Assert.Equal("Bar", output);
         }
     }
 }

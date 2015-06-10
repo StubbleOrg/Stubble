@@ -44,7 +44,8 @@ namespace Stubble.Core
             var sb = new StringBuilder();
             foreach (var token in tokens.OfType<IRenderableToken>( ))
             {
-                sb.Append(token.Render(context, partials, originalTemplate));
+                var renderResult = token.Render(context, partials, originalTemplate);
+                sb.Append(renderResult);
             }
             return sb.ToString();
         }
@@ -57,7 +58,8 @@ namespace Stubble.Core
         public string Render(string template, Context context, Dictionary<string, string> partials)
         {
             var tokens = Parse(template);
-            return RenderTokens(tokens, context, partials, template);
+            var renderResult = RenderTokens(tokens, context, partials, template);
+            return renderResult;
         }
     }
 }

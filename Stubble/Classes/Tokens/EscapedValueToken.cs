@@ -10,7 +10,8 @@ namespace Stubble.Core.Classes.Tokens
     {
         public string Render(Context context, IDictionary<string, string> partials, string originalTemplate)
         {
-            throw new NotImplementedException();
+            var value = context.Lookup(Value);
+            return value.ToString();
         }
     }
 }
