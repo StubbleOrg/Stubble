@@ -39,7 +39,7 @@ namespace Stubble.Core
             return tokens;
         }
 
-        public string RenderTokens(IList<ParserOutput> tokens, Context context, Dictionary<string, string> partials, string originalTemplate)
+        public static string RenderTokens(IList<ParserOutput> tokens, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
             var sb = new StringBuilder();
             foreach (var token in tokens.OfType<IRenderableToken>( ))
