@@ -12,7 +12,8 @@ namespace Stubble.Core
     {
         public string Render(string template, object view)
         {
-            throw new NotImplementedException();
+            var writer = new Writer();
+            return writer.Render(template, view, null);
         }
     }
 }
