@@ -33,5 +33,10 @@ namespace Stubble.Core.Helpers
 
             return true;
         }
+
+        internal static bool IsArray(object value)
+        {
+            return value is Array;
+        }
     }
 }

@@ -47,9 +47,11 @@
     <Compile Include="Classes\Tokens\InvertedToken.cs" />
     <Compile Include="Classes\Tokens\PartialToken.cs" />
     <Compile Include="Classes\Tokens\RawValueToken.cs" />
+    <Compile Include="Classes\Tokens\SectionToken.cs" />
     <Compile Include="Classes\Tokens\UnescapedValueToken.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Helpers\Helpers.cs" />
+    <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanner.cs" />

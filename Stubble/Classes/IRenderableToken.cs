@@ -8,6 +8,6 @@ namespace Stubble.Core.Classes
 {
     public interface IRenderableToken
     {
-        string Render(Context context, IDictionary<string, string> partials, string originalTemplate);
+        string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate);
     }
 }

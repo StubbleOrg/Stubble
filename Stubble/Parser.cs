@@ -233,7 +233,7 @@ namespace Stubble.Core
             switch (tokenType)
             {
                 case "#":
-                    return new ParserOutput { TokenType = tokenType };
+                    return new SectionToken { TokenType = tokenType };
                 case "^":
                     return new InvertedToken { TokenType = tokenType };
                 case ">":
