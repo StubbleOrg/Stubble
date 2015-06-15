@@ -235,7 +235,7 @@ namespace Stubble.Core
                 case "#":
                     return new ParserOutput { TokenType = tokenType };
                 case "^":
-                    return new ParserOutput { TokenType = tokenType };
+                    return new InvertedToken { TokenType = tokenType };
                 case ">":
                     return new PartialToken { TokenType = tokenType };
                 case "&":
