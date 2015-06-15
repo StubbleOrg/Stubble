@@ -11,8 +11,10 @@ namespace Stubble.Core
     public class Context
     {
         private IDictionary<string, object> Cache { get; set; }
-        private object View { get; set; }
-        private Context ParentContext { get; set; }
+        private readonly object _view;
+
+        public Context ParentContext { get; set; }
+        public dynamic View { get; set; }
 
         public Context(object view) : this(view, null)
         {
@@ -20,10 +22,11 @@ namespace Stubble.Core
 
         public Context(object view, Context parentContext)
         {
-            View = view;
+            _view = view;
+            View = _view;
             Cache = new Dictionary<string, object>()
             {
-                {".", View}
+                {".", _view}
             };
             ParentContext = parentContext;
         }
@@ -44,22 +47,26 @@ namespace Stubble.Core
                     if (name.IndexOf('.') > 0)
                     {
                         var names = name.Split('.');
-                        value = context.View;
+                        value = context._view;
                         for (var i = 0; i < names.Length; i++)
                         {
                             if (i == names.Length - 1)
                                 lookupHit = value.GetType().GetProperty(names[i]) != null;
 
-                            value = value.GetType().GetProperty(names[i]).GetValue(value, null);
+                            var propertyInfo = value.GetType().GetProperty(names[i]);
+                            if (propertyInfo != null)
+                            {
+                                value = propertyInfo.GetValue(value, null);
+                            }
                         }
                     }
-                    else if (context.View != null)
+                    else if (context._view != null)
                     {
-                        var type = context.View.GetType();
+                        var type = context._view.GetType();
                         var propertyInfo = type.GetProperty(name);
                         if (propertyInfo != null)
                         {
-                            value = propertyInfo.GetValue(context.View, null);
+                            value = propertyInfo.GetValue(context._view, null);
                             lookupHit = true;
                         }
                     }
@@ -83,7 +90,7 @@ namespace Stubble.Core
                         value = delegateValue.DynamicInvoke(null);
                         break;
                     case 1:
-                        value = delegateValue.DynamicInvoke(View);
+                        value = delegateValue.DynamicInvoke(_view);
                         break;
                 }
             }
@@ -93,6 +100,11 @@ namespace Stubble.Core
             }
 
             return value;
+        }
+
+        public Context Push(object view)
+        {
+            return new Context(view, this);
         }
     }
 }

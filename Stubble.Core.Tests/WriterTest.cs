@@ -10,7 +10,7 @@ using Xunit;
 namespace Stubble.Core.Tests
 {
     [CollectionDefinition("WriterCollection")]
-    public class CollectionClass : ICollectionFixture<WriterTestFixture> { }
+    public class WriterCollection : ICollectionFixture<WriterTestFixture> { }
 
     [Collection("WriterCollection")]
     public class WriterTest
@@ -31,7 +31,7 @@ namespace Stubble.Core.Tests
             Assert.False(Writer.Cache.Count > 15);
             for (var i = 0; i < results.Count; i++)
             {
-                Assert.Equal(results[i], result[i]);
+                Assert.StrictEqual(results[i], result[i]);
             }
         }
 
