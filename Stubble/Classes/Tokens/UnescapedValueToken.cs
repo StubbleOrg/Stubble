@@ -11,7 +11,7 @@ namespace Stubble.Core.Classes.Tokens
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
             var value = context.Lookup(Value);
-            return value.ToString();
+            return value != null ? value.ToString() : null;
         }
     }
 }

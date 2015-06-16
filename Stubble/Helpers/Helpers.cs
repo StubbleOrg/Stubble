@@ -16,9 +16,12 @@ namespace Stubble.Core.Helpers
                 return false;
             }
 
-            if (value is bool)
+            bool boolValue;
+            var parseResult = bool.TryParse(value.ToString(), out boolValue) ? (bool?)boolValue : null;
+            
+            if (parseResult.HasValue || value is bool)
             {
-                return (bool)value;
+                return parseResult ?? (bool)value;
             }
 
             if (value is string)
@@ -28,7 +31,7 @@ namespace Stubble.Core.Helpers
 
             if (value is IEnumerable)
             {
-                return ((IEnumerable<object>) value).Any();
+                return ((IEnumerable)value).GetEnumerator().MoveNext();
             }
 
             return true;

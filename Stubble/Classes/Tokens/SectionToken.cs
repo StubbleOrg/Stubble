@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,10 +27,6 @@ namespace Stubble.Core.Classes.Tokens
                     buffer.Append(writer.RenderTokens(ChildTokens, context.Push(v), partials, originalTemplate));
                 }
             }
-            else if (value.GetType() == typeof (object))
-            {
-                buffer.Append(writer.RenderTokens(ChildTokens, context.Push(value), partials, originalTemplate));
-            }
             else if (value is Delegate)
             {
                 if (originalTemplate == null) throw new Exception("Cannot use higher-order sections without the original template");
@@ -41,6 +38,10 @@ namespace Stubble.Core.Classes.Tokens
                 {
                     buffer.Append(value);
                 }
+            }
+            else if (value is IDictionary || value != null)
+            {
+                buffer.Append(writer.RenderTokens(ChildTokens, context.Push(value), partials, originalTemplate));
             }
             else
             {

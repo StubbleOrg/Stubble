@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Stubble.Core.Helpers;
 
 namespace Stubble.Core
 {
@@ -12,6 +13,7 @@ namespace Stubble.Core
     {
         private IDictionary<string, object> Cache { get; set; }
         private readonly object _view;
+        private IDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
 
         public Context ParentContext { get; set; }
         public dynamic View { get; set; }
@@ -29,6 +31,26 @@ namespace Stubble.Core
                 {".", _view}
             };
             ParentContext = parentContext;
+
+            ValueRegistry = new Dictionary<Type, Func<object, string, object>>
+            {
+                {
+                    typeof (IDictionary),
+                    (value, key) =>
+                    {
+                        var castValue = value as IDictionary;
+                        return castValue != null ? castValue[key] : null;
+                    }
+                },
+                {
+                    typeof (object), (value, key) =>
+                    {
+                        var type = value.GetType();
+                        var propertyInfo = type.GetProperty(key);
+                        return propertyInfo != null ? propertyInfo.GetValue(value, null) : null;
+                    }
+                }
+            };
         }
 
         public object Lookup(string name)
@@ -50,23 +72,29 @@ namespace Stubble.Core
                         value = context._view;
                         for (var i = 0; i < names.Length; i++)
                         {
-                            if (i == names.Length - 1)
-                                lookupHit = value.GetType().GetProperty(names[i]) != null;
-
-                            var propertyInfo = value.GetType().GetProperty(names[i]);
-                            if (propertyInfo != null)
+                            var tempValue = GetValueFromRegistry(value, names[i]);
+                            if (tempValue != null)
                             {
-                                value = propertyInfo.GetValue(value, null);
+                                if (i == names.Length - 1)
+                                    lookupHit = true;
+
+                                value = tempValue;
+                            }
+                            else if (i > 0)
+                            {
+                                return null;
+                            }
+                            else
+                            {
+                                break;
                             }
                         }
                     }
                     else if (context._view != null)
                     {
-                        var type = context._view.GetType();
-                        var propertyInfo = type.GetProperty(name);
-                        if (propertyInfo != null)
+                        value = GetValueFromRegistry(context._view, name);
+                        if (value != null)
                         {
-                            value = propertyInfo.GetValue(context._view, null);
                             lookupHit = true;
                         }
                     }
@@ -105,6 +133,16 @@ namespace Stubble.Core
         public Context Push(object view)
         {
             return new Context(view, this);
+        }
+
+        public object GetValueFromRegistry(object value, string key)
+        {
+            foreach (var entry in ValueRegistry.Where(x => x.Key.IsInstanceOfType(value)))
+            {
+                var outputVal = entry.Value(value, key);
+                if (outputVal != null) return outputVal;
+            }
+            return null;
         }
     }
 }
