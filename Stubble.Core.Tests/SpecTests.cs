@@ -23,7 +23,8 @@ namespace Stubble.Core.Tests
                 "Standalone Without Previous Line",
                 "Standalone Without Newline",
                 "Standalone Indentation"
-            }}
+            }},
+            { "sections", new List<string> { "Standalone Without Newline" } },
         };
 
         public static IEnumerable<SpecTest> GetTests(string filename)
@@ -149,6 +150,32 @@ namespace Stubble.Core.Tests
         public static IEnumerable<object[]> Spec_Partials()
         {
             return SpecTestHelper.GetTests("partials").Select(test => new object[] { test });
+        }
+    }
+
+    [Collection("SectionsTestsCollection")]
+    public class SectionsTests
+    {
+        private readonly ITestOutputHelper OutputStream;
+
+        public SectionsTests(ITestOutputHelper output)
+        {
+            OutputStream = output;
+        }
+
+        [Theory, MemberData("Spec_Sections")]
+        public void It_Can_Pass_Spec_Tests(SpecTest data)
+        {
+            OutputStream.WriteLine("This is output from {0}", data.name);
+            var stubble = new Stubble();
+            var output = stubble.Render(data.template, data.data, data.partials);
+            OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.expected, output);
+            Assert.Equal(data.expected, output);
+        }
+
+        public static IEnumerable<object[]> Spec_Sections()
+        {
+            return SpecTestHelper.GetTests("sections").Select(test => new object[] { test });
         }
     }
 
