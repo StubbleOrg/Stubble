@@ -19,9 +19,9 @@ namespace Stubble.Core.Classes.Tokens
 
             if (!ValueHelpers.IsTruthy(value)) return null;
 
-            if (value is Array)
+            if (value is IEnumerable && !(value is IDictionary))
             {
-                var arrayValue = value as Array;
+                var arrayValue = value as IEnumerable;
                 foreach (var v in arrayValue)
                 {
                     buffer.Append(writer.RenderTokens(ChildTokens, context.Push(v), partials, originalTemplate));

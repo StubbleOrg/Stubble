@@ -18,6 +18,12 @@ namespace Stubble.Core.Tests
             { "comments", new List<string> { "Standalone Without Newline" } },
             { "delimiters", new List<string> { "Standalone Without Newline" } },
             { "inverted", new List<string> { "Standalone Without Newline" } },
+            { "partials", new List<string>
+            {
+                "Standalone Without Previous Line",
+                "Standalone Without Newline",
+                "Standalone Indentation"
+            }}
         };
 
         public static IEnumerable<SpecTest> GetTests(string filename)
@@ -117,6 +123,32 @@ namespace Stubble.Core.Tests
         public static IEnumerable<object[]> Spec_Inverted()
         {
             return SpecTestHelper.GetTests("inverted").Select(test => new object[] { test });
+        }
+    }
+
+    [Collection("PartialsTestsCollection")]
+    public class PartialsTests
+    {
+        private readonly ITestOutputHelper OutputStream;
+
+        public PartialsTests(ITestOutputHelper output)
+        {
+            OutputStream = output;
+        }
+
+        [Theory, MemberData("Spec_Partials")]
+        public void It_Can_Pass_Spec_Tests(SpecTest data)
+        {
+            OutputStream.WriteLine("This is output from {0}", data.name);
+            var stubble = new Stubble();
+            var output = stubble.Render(data.template, data.data, data.partials);
+            OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.expected, output);
+            Assert.Equal(data.expected, output);
+        }
+
+        public static IEnumerable<object[]> Spec_Partials()
+        {
+            return SpecTestHelper.GetTests("partials").Select(test => new object[] { test });
         }
     }
 
