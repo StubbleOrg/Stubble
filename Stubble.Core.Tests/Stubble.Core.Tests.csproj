@@ -63,11 +63,15 @@
     <Compile Include="ContextTest.cs" />
     <Compile Include="Fixtures\ChildContextTestFixture.cs" />
     <Compile Include="Fixtures\ContextTestFixture.cs" />
-    <Compile Include="Fixtures\SpecTestFixture.cs" />
+    <Compile Include="Fixtures\ParserTestFixture.cs" />
+    <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScannerTest.cs" />
-    <Compile Include="SpecTests.cs" />
+    <Compile Include="Spec\SpecTest.cs" />
+    <Compile Include="Spec\SpecTestDefinition.cs" />
+    <Compile Include="Spec\SpecTestHelper.cs" />
+    <Compile Include="Spec\SpecTests.cs" />
     <Compile Include="WriterTest.cs" />
     <Compile Include="Fixtures\WriterTestFixture.cs" />
   </ItemGroup>

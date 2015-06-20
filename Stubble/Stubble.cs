@@ -10,6 +10,13 @@ namespace Stubble.Core
 {
     public class Stubble
     {
+        public Writer Writer;
+
+        public Stubble()
+        {
+            Writer = new Writer();
+        }
+
         public string Render(string template, object view)
         {
             return Render(template, view, null);
@@ -17,8 +24,7 @@ namespace Stubble.Core
 
         public string Render(string template, object view, IDictionary<string, string> partials)
         {
-            var writer = new Writer();
-            return writer.Render(template, view, partials);
+            return Writer.Render(template, view, partials);
         }
     }
 }

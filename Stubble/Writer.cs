@@ -24,7 +24,7 @@ namespace Stubble.Core
 
         public IList<ParserOutput> Parse(string template)
         {
-            return Parse(template, Parser.DefaultTags);
+            return Parse(template, null);
         }
 
         public IList<ParserOutput> Parse(string template, Tags tags)
