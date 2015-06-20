@@ -94,6 +94,32 @@ namespace Stubble.Core.Tests
         }
     }
 
+    [Collection("InvertedTestsCollection")]
+    public class InvertedTests
+    {
+        private readonly ITestOutputHelper OutputStream;
+
+        public InvertedTests(ITestOutputHelper output)
+        {
+            OutputStream = output;
+        }
+
+        [Theory, MemberData("Spec_Inverted")]
+        public void It_Can_Pass_Spec_Tests(SpecTest data)
+        {
+            OutputStream.WriteLine("This is output from {0}", data.name);
+            var stubble = new Stubble();
+            var output = stubble.Render(data.template, data.data, data.partials);
+            OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.expected, output);
+            Assert.Equal(data.expected, output);
+        }
+
+        public static IEnumerable<object[]> Spec_Inverted()
+        {
+            return SpecTestHelper.GetTests("inverted").Select(test => new object[] { test });
+        }
+    }
+
     public class SpecTestDefinition
     {
         public string overview { get; set; }
