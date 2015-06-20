@@ -22,7 +22,8 @@ namespace Stubble.Core.Classes
 
         public override bool Equals(object obj)
         {
-            var a = (ParserOutput)obj;
+            var a = obj as ParserOutput;
+            if (a == null) return false;
 
             if (!TokenType.Equals(a.TokenType)) return false;
             if (!Value.Equals(a.Value)) return false;

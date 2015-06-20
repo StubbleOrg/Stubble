@@ -19,17 +19,17 @@ namespace Stubble.Core
         private static readonly Regex TagRegex = new Regex(@"#|\^|\/|>|\{|&|=|!", RegexOptions.Compiled);
         #endregion
 
-        private static Regex _openingTagRegex;
-        private static Regex _closingTagRegex;
-        private static Regex _closingCurlyRegex;
+        private Regex _openingTagRegex;
+        private Regex _closingTagRegex;
+        private Regex _closingCurlyRegex;
         public static readonly Tags DefaultTags = new Tags("{{", "}}");
 
-        public static IList<ParserOutput> ParseTemplate(string template)
+        public IList<ParserOutput> ParseTemplate(string template)
         {
             return ParseTemplate(template, null);
         }
 
-        public static IList<ParserOutput> ParseTemplate(string template, Tags tags)
+        public IList<ParserOutput> ParseTemplate(string template, Tags tags)
         {
             if (string.IsNullOrEmpty(template))
                 return new List<ParserOutput>();
@@ -211,12 +211,12 @@ namespace Stubble.Core
             return nestedTokens;
         }
 
-        private static void CompileTags(string value)
+        private void CompileTags(string value)
         {
             CompileTags(new Tags(SpaceRegex.Split(value)));
         }
 
-        private static void CompileTags(Tags tags)
+        private void CompileTags(Tags tags)
         {
             _openingTagRegex = new Regex(EscapeRegexExpression(tags.StartTag) + @"\s*");
             _closingTagRegex = new Regex(@"\s*" + EscapeRegexExpression(tags.EndTag));

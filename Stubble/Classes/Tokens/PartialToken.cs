@@ -13,7 +13,7 @@ namespace Stubble.Core.Classes.Tokens
             if (partials == null) return null;
 
             var value = partials.ContainsKey(Value) ? partials[Value] : null;
-            return value != null ? writer.RenderTokens(Parser.ParseTemplate(value), context, partials, value) : null;
+            return value != null ? writer.RenderTokens(writer.Parse(value), context, partials, value) : null;
         }
     }
 }

@@ -11,10 +11,12 @@ namespace Stubble.Core
     public class Writer
     {
         public LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
+        internal Parser Parser;
 
         public Writer(int cacheLimit)
         {
             Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>(cacheLimit);
+            Parser = new Parser();
         }
 
         public Writer()

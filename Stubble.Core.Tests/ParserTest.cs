@@ -4,13 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Stubble.Core.Classes;
+using Stubble.Core.Tests.Fixtures;
 using Xunit;
 using Xunit.Extensions;
 
 namespace Stubble.Core.Tests
 {
+    [CollectionDefinition("ParserCollection")]
+    public class ParserCollection : ICollectionFixture<ParserTestFixture> { }
+
+    [Collection("ParserCollection")]
     public class ParserTest
     {
+        internal Parser Parser;
+
+        public ParserTest(ParserTestFixture fixture)
+        {
+            Parser = fixture.Parser;
+        }
+
         [Theory, MemberData("TemplateParsingData")]
         public void It_Knows_How_To_Parse(string template, IList<ParserOutput> result)
         {
