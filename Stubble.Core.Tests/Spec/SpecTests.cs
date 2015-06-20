@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using Stubble.Core.Classes;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,7 +19,8 @@ namespace Stubble.Core.Tests.Spec
         public void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             var stubble = new Stubble();
-            var output = stubble.Render(data.Template, data.Data, data.Partials);
+            var output = data.Partials != null ? stubble.Render(data.Template, data.Data, data.Partials) : stubble.Render(data.Template, data.Data);
+
             OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.Expected, output);
             var dic = stubble.Writer.Cache as IDictionary;
             OutputStream.WriteLine("Input Data: {0}", JsonConvert.SerializeObject(data));
@@ -109,7 +109,7 @@ namespace Stubble.Core.Tests.Spec
     public class PartialsTests : SpecTestBase
     {
         [Theory, MemberData("Spec_Partials")]
-        public void It_Can_Pass_Spec_Tests(SpecTest data)
+        public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
         }
