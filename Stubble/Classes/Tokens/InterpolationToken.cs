@@ -8,10 +8,13 @@ namespace Stubble.Core.Classes.Tokens
 {
     public abstract class InterpolationToken : ParserOutput
     {
-        internal object InterpolateLambdaValueIfPossible(object value, Context context)
+        internal object InterpolateLambdaValueIfPossible(object value, Writer writer, Context context, IDictionary<string, string> partials)
         {
             var functionValue = value as Func<dynamic, object>;
-            return functionValue != null ? ((Func<dynamic, object>)value).Invoke(context.View) : value;
+            if (functionValue == null) return value;
+
+            var functionResult = functionValue.Invoke(context.View);
+            return writer.Render(functionResult.ToString(), context, partials);
         }
     }
 }
