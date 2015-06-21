@@ -12,17 +12,17 @@ namespace Stubble.Core
     public class Context
     {
         private IDictionary<string, object> Cache { get; set; }
-        private readonly object _view;
         private IDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
+        private readonly object _view;
 
         public Context ParentContext { get; set; }
         public dynamic View { get; set; }
 
-        public Context(object view) : this(view, null)
+        public Context(object view, IDictionary<Type, Func<object, string, object>> registry) : this(view, registry, null)
         {
         }
 
-        public Context(object view, Context parentContext)
+        public Context(object view, IDictionary<Type, Func<object, string, object>> registry, Context parentContext)
         {
             _view = view;
             View = _view;
@@ -31,26 +31,7 @@ namespace Stubble.Core
                 {".", _view}
             };
             ParentContext = parentContext;
-
-            ValueRegistry = new Dictionary<Type, Func<object, string, object>>
-            {
-                {
-                    typeof (IDictionary),
-                    (value, key) =>
-                    {
-                        var castValue = value as IDictionary;
-                        return castValue != null ? castValue[key] : null;
-                    }
-                },
-                {
-                    typeof (object), (value, key) =>
-                    {
-                        var type = value.GetType();
-                        var propertyInfo = type.GetProperty(key);
-                        return propertyInfo != null ? propertyInfo.GetValue(value, null) : null;
-                    }
-                }
-            };
+            ValueRegistry = registry;
         }
 
         public object Lookup(string name)
@@ -107,32 +88,12 @@ namespace Stubble.Core
                 Cache[name] = value;
             }
 
-            //var delegateValue = value as Delegate;
-            //if (delegateValue == null) return value;
-            //var methodLength = delegateValue.Method.GetParameters().Length;
-            //try
-            //{
-            //    switch (methodLength)
-            //    {
-            //        case 0:
-            //            value = delegateValue.DynamicInvoke(null);
-            //            break;
-            //        case 1:
-            //            value = delegateValue.DynamicInvoke(_view);
-            //            break;
-            //    }
-            //}
-            //catch
-            //{
-            //    value = null;
-            //}
-
             return value;
         }
 
         public Context Push(object view)
         {
-            return new Context(view, this);
+            return new Context(view, ValueRegistry, this);
         }
 
         public object GetValueFromRegistry(object value, string key)

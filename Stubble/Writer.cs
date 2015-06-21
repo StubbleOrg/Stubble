@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,11 +14,32 @@ namespace Stubble.Core
     {
         public LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
         internal Parser Parser;
+        internal IDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
 
         public Writer(int cacheLimit)
         {
             Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>(cacheLimit);
             Parser = new Parser();
+
+            ValueRegistry = new ReadOnlyDictionary<Type, Func<object, string, object>>(new Dictionary<Type, Func<object, string, object>>
+            {
+                {
+                    typeof (IDictionary),
+                    (value, key) =>
+                    {
+                        var castValue = value as IDictionary;
+                        return castValue != null ? castValue[key] : null;
+                    }
+                },
+                {
+                    typeof (object), (value, key) =>
+                    {
+                        var type = value.GetType();
+                        var propertyInfo = type.GetProperty(key);
+                        return propertyInfo != null ? propertyInfo.GetValue(value, null) : null;
+                    }
+                }
+            });
         }
 
         public Writer()
@@ -54,7 +77,7 @@ namespace Stubble.Core
 
         public string Render(string template, object view, IDictionary<string, string> partials)
         {
-            return Render(template, new Context(view), partials, null);
+            return Render(template, new Context(view, ValueRegistry), partials, null);
         }
 
         public string Render(string template, Context context, IDictionary<string, string> partials)

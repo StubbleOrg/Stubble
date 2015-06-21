@@ -18,23 +18,23 @@ namespace Stubble.Core.Tests
     [Collection("ContextCollection")]
     public class ContextTest
     {
-        public Context Context;
+        public ContextTestFixture Fixture;
 
         public ContextTest(ContextTestFixture fixture)
         {
-            Context = fixture.Context;
+            Fixture = fixture;
         }
 
         [Fact]
         public void It_Can_Lookup_Properties_In_Its_Own_View()
         {
-            Assert.Equal("parent", Context.Lookup("Name"));
+            Assert.Equal("parent", Fixture.Context.Lookup("Name"));
         }
 
         [Fact]
         public void It_Can_Lookup_Nested_Properties_In_Its_Own_View()
         {
-            Assert.Equal("b", Context.Lookup("A.B"));
+            Assert.Equal("b", Fixture.Context.Lookup("A.B"));
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace Stubble.Core.Tests
             var context = new Context(new
             {
                 Foo = new Func<object>(() => "TestyTest")
-            });
+            }, Fixture.Registry);
             var output = context.Lookup("Foo");
             var functionOutput = output as Func<object>;
             Assert.Equal("TestyTest", functionOutput.Invoke());
@@ -56,7 +56,7 @@ namespace Stubble.Core.Tests
             {
                 MyData = "Data!",
                 Foo = new Func<dynamic, object>((data) => data.MyData)
-            });
+            }, Fixture.Registry);
             var output = context.Lookup("Foo");
             var functionOutput = output as Func<dynamic, object>;
 
