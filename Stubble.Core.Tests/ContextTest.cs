@@ -42,10 +42,11 @@ namespace Stubble.Core.Tests
         {
             var context = new Context(new
             {
-                Foo = new Func<string>(() => "TestyTest")
+                Foo = new Func<object>(() => "TestyTest")
             });
             var output = context.Lookup("Foo");
-            Assert.Equal("TestyTest", output);
+            var functionOutput = output as Func<object>;
+            Assert.Equal("TestyTest", functionOutput.Invoke());
         }
 
         [Fact]
@@ -54,10 +55,12 @@ namespace Stubble.Core.Tests
             var context = new Context(new
             {
                 MyData = "Data!",
-                Foo = new Func<dynamic, string>((data) => data.MyData)
+                Foo = new Func<dynamic, object>((data) => data.MyData)
             });
             var output = context.Lookup("Foo");
-            Assert.Equal("Data!", output);
+            var functionOutput = output as Func<dynamic, object>;
+
+            Assert.Equal("Data!", functionOutput.Invoke(context.View));
         }
     }
 

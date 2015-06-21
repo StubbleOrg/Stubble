@@ -165,42 +165,42 @@ namespace Stubble.Core.Tests.Spec
                     Desc = "A lambda's return value should be interpolated.",
                     Data = new Dictionary<string, object>
                     {
-                        { "lambda", new Func<dynamic, string>(dyn => "world")}
+                        { "lambda", new Func<object>(() => "world")}
                     },
                     Template = "Hello, {{lambda}}!",
                     Expected = "Hello, world!"
                 },
-                //new SpecTest()
-                //{
-                //    Name = "Interpolation - Expansion",
-                //    Desc = "A lambda's return value should be parsed.",
-                //    Data = new Dictionary<string, object>
-                //    {
-                //        { "planet", "world"},
-                //        { "lambda", new Func<dynamic, string>(x => "{{planet}}")}
-                //    },
-                //    Template = "Hello, {{lambda}}!",
-                //    Expected = "Hello, world!"
-                //},
-                //new SpecTest()
-                //{
-                //    Name = "Interpolation - Alternate Delimiters",
-                //    Desc = "A lambda's return value should parse with the default delimiters.",
-                //    Data = new Dictionary<string, object>
-                //    {
-                //        { "planet", "world"},
-                //        { "lambda", new Func<dynamic, string>(x => "|planet| => {{planet}}")}
-                //    },
-                //    Template = "{{= | | =}}\nHello, (|&lambda|)",
-                //    Expected = "Hello, (|planet| => world)!"
-                //},
+                new SpecTest()
+                {
+                    Name = "Interpolation - Expansion",
+                    Desc = "A lambda's return value should be parsed.",
+                    Data = new Dictionary<string, object>
+                    {
+                        { "planet", "world"},
+                        { "lambda", new Func<object>(() => "{{planet}}")}
+                    },
+                    Template = "Hello, {{lambda}}!",
+                    Expected = "Hello, world!"
+                },
+                new SpecTest()
+                {
+                    Name = "Interpolation - Alternate Delimiters",
+                    Desc = "A lambda's return value should parse with the default delimiters.",
+                    Data = new Dictionary<string, object>
+                    {
+                        { "planet", "world"},
+                        { "lambda", new Func<object>(() => "|planet| => {{planet}}")}
+                    },
+                    Template = "{{= | | =}}\nHello, (|&lambda|)!",
+                    Expected = "Hello, (|planet| => world)!"
+                },
                 new SpecTest()
                 {
                     Name = "Interpolation - Multiple Calls",
                     Desc = "Interpolated lambdas should not be cached.",
                     Data = new Dictionary<string, object>
                     {
-                        { "lambda", new Func<dynamic, object>(dyn => ++LambdaTests.GlobalInt)}
+                        { "lambda", new Func<object>(() => ++LambdaTests.GlobalInt)}
                     },
                     Template = "{{lambda}} == {{lambda}} == {{lambda}}",
                     Expected = "1 == 2 == 3"
@@ -211,23 +211,23 @@ namespace Stubble.Core.Tests.Spec
                     Desc = "Lambda results should be appropriately escaped.",
                     Data = new Dictionary<string, object>
                     {
-                        { "lambda", new Func<dynamic, object>(dyn => ">") }
+                        { "lambda", new Func<object>(() => ">") }
                     },
                     Template = "<{{lambda}}{{{lambda}}}",
                     Expected = "<&gt;>"
                 },
-                //new SpecTest()
-                //{
-                //    Name = "Section",
-                //    Desc = "Lambdas used for sections should receive the raw section string.",
-                //    Data = new Dictionary<string, object>
-                //    {
-                //        { "x", "error"},
-                //        { "lambda", new Func<dynamic, string, string>((dyn, txt) => txt == "{{x}}" ? "yes" : "no") }
-                //    },
-                //    Template = "<{{#lambda}}{{x}}{{/lambda}}>",
-                //    Expected = "<yes>"
-                //},
+                new SpecTest()
+                {
+                    Name = "Section",
+                    Desc = "Lambdas used for sections should receive the raw section string.",
+                    Data = new Dictionary<string, object>
+                    {
+                        { "x", "error"},
+                        { "lambda", new Func<string, object>(txt => txt == "{{x}}" ? "yes" : "no") }
+                    },
+                    Template = "<{{#lambda}}{{x}}{{/lambda}}>",
+                    Expected = "<yes>"
+                },
                 new SpecTest()
                 {
                     Name = "Section - Expansion",
@@ -235,7 +235,7 @@ namespace Stubble.Core.Tests.Spec
                     Data = new Dictionary<string, object>
                     {
                         { "planet", "Earth"},
-                        { "lambda", new Func<dynamic, string, object>((dyn, txt) => txt + "{{planet}}" + txt ) }
+                        { "lambda", new Func<string, object>(txt => txt + "{{planet}}" + txt ) }
                     },
                     Template = "<{{#lambda}}-{{/lambda}}>",
                     Expected = "<-Earth->"
@@ -247,7 +247,7 @@ namespace Stubble.Core.Tests.Spec
                     Data = new Dictionary<string, object>
                     {
                         { "planet", "Earth"},
-                        { "lambda", new Func<dynamic, string, object>((dyn, txt) => txt + "{{planet}} => |planet|" + txt ) }
+                        { "lambda", new Func<string, object>(txt => txt + "{{planet}} => |planet|" + txt ) }
                     },
                     Template = "{{= | | =}}<|#lambda|-|/lambda|>",
                     Expected = "<-{{planet}} => Earth->"
@@ -258,8 +258,7 @@ namespace Stubble.Core.Tests.Spec
                     Desc = "Lambdas used for sections should not be cached.",
                     Data = new Dictionary<string, object>
                     {
-                        { "planet", "Earth"},
-                        { "lambda", new Func<dynamic, string, object>((dyn, txt) => "__" + txt + "__" ) }
+                        { "lambda", new Func<string, object>(txt => "__" + txt + "__" ) }
                     },
                     Template = "{{#lambda}}FILE{{/lambda}} != {{#lambda}}LINE{{/lambda}}",
                     Expected = "__FILE__ != __LINE__"
@@ -271,7 +270,7 @@ namespace Stubble.Core.Tests.Spec
                     Data = new Dictionary<string, object>
                     {
                         { "static", "static"},
-                        { "lambda", new Func<dynamic, string, object>((dyn, txt) => false) }
+                        { "lambda", new Func<string, object>(txt => false) }
                     },
                     Template = "<{{^lambda}}{{static}}{{/lambda}}>",
                     Expected = "<>"
