@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -139,6 +140,147 @@ namespace Stubble.Core.Tests.Spec
         }
 
         public SectionsTests(ITestOutputHelper output) : base(output)
+        {
+        }
+    }
+
+    [Collection("LambdaTestsCollection")]
+    public class LambdaTests : SpecTestBase
+    {
+        public static int GlobalInt;
+
+        [Theory, MemberData("Spec_Lambdas")]
+        public new void It_Can_Pass_Spec_Tests(SpecTest data)
+        {
+            base.It_Can_Pass_Spec_Tests(data);
+        }
+
+        public static IEnumerable<object[]> Spec_Lambdas()
+        {
+            return new[]
+            {
+                new SpecTest()
+                {
+                    Name = "Interpolation",
+                    Desc = "A lambda's return value should be interpolated.",
+                    Data = new Dictionary<string, object>
+                    {
+                        { "lambda", new Func<dynamic, string>(dyn => "world")}
+                    },
+                    Template = "Hello, {{lambda}}!",
+                    Expected = "Hello, world!"
+                },
+                //new SpecTest()
+                //{
+                //    Name = "Interpolation - Expansion",
+                //    Desc = "A lambda's return value should be parsed.",
+                //    Data = new Dictionary<string, object>
+                //    {
+                //        { "planet", "world"},
+                //        { "lambda", new Func<dynamic, string>(x => "{{planet}}")}
+                //    },
+                //    Template = "Hello, {{lambda}}!",
+                //    Expected = "Hello, world!"
+                //},
+                //new SpecTest()
+                //{
+                //    Name = "Interpolation - Alternate Delimiters",
+                //    Desc = "A lambda's return value should parse with the default delimiters.",
+                //    Data = new Dictionary<string, object>
+                //    {
+                //        { "planet", "world"},
+                //        { "lambda", new Func<dynamic, string>(x => "|planet| => {{planet}}")}
+                //    },
+                //    Template = "{{= | | =}}\nHello, (|&lambda|)",
+                //    Expected = "Hello, (|planet| => world)!"
+                //},
+                new SpecTest()
+                {
+                    Name = "Interpolation - Multiple Calls",
+                    Desc = "Interpolated lambdas should not be cached.",
+                    Data = new Dictionary<string, object>
+                    {
+                        { "lambda", new Func<dynamic, object>(dyn => ++LambdaTests.GlobalInt)}
+                    },
+                    Template = "{{lambda}} == {{lambda}} == {{lambda}}",
+                    Expected = "1 == 2 == 3"
+                },
+                new SpecTest()
+                {
+                    Name = "Escaping",
+                    Desc = "Lambda results should be appropriately escaped.",
+                    Data = new Dictionary<string, object>
+                    {
+                        { "lambda", new Func<dynamic, object>(dyn => ">") }
+                    },
+                    Template = "<{{lambda}}{{{lambda}}}",
+                    Expected = "<&gt;>"
+                },
+                //new SpecTest()
+                //{
+                //    Name = "Section",
+                //    Desc = "Lambdas used for sections should receive the raw section string.",
+                //    Data = new Dictionary<string, object>
+                //    {
+                //        { "x", "error"},
+                //        { "lambda", new Func<dynamic, string, string>((dyn, txt) => txt == "{{x}}" ? "yes" : "no") }
+                //    },
+                //    Template = "<{{#lambda}}{{x}}{{/lambda}}>",
+                //    Expected = "<yes>"
+                //},
+                new SpecTest()
+                {
+                    Name = "Section - Expansion",
+                    Desc = "Lambdas used for sections should have their results parsed.",
+                    Data = new Dictionary<string, object>
+                    {
+                        { "planet", "Earth"},
+                        { "lambda", new Func<dynamic, string, object>((dyn, txt) => txt + "{{planet}}" + txt ) }
+                    },
+                    Template = "<{{#lambda}}-{{/lambda}}>",
+                    Expected = "<-Earth->"
+                },
+                new SpecTest()
+                {
+                    Name = "Section - Alternate Delimiters",
+                    Desc = "Lambdas used for sections should parse with the current delimiters.",
+                    Data = new Dictionary<string, object>
+                    {
+                        { "planet", "Earth"},
+                        { "lambda", new Func<dynamic, string, object>((dyn, txt) => txt + "{{planet}} => |planet|" + txt ) }
+                    },
+                    Template = "{{= | | =}}<|#lambda|-|/lambda|>",
+                    Expected = "<-{{planet}} => Earth->"
+                },
+                new SpecTest()
+                {
+                    Name = "Section - Multiple Calls",
+                    Desc = "Lambdas used for sections should not be cached.",
+                    Data = new Dictionary<string, object>
+                    {
+                        { "planet", "Earth"},
+                        { "lambda", new Func<dynamic, string, object>((dyn, txt) => "__" + txt + "__" ) }
+                    },
+                    Template = "{{#lambda}}FILE{{/lambda}} != {{#lambda}}LINE{{/lambda}}",
+                    Expected = "__FILE__ != __LINE__"
+                },
+                new SpecTest()
+                {
+                    Name = "Inverted Section",
+                    Desc = "Lambdas used for inverted sections should be considered truthy.",
+                    Data = new Dictionary<string, object>
+                    {
+                        { "static", "static"},
+                        { "lambda", new Func<dynamic, string, object>((dyn, txt) => false) }
+                    },
+                    Template = "<{{^lambda}}{{static}}{{/lambda}}>",
+                    Expected = "<>"
+                }
+            }.Select(x => new [] { x });
+        }
+
+        public LambdaTests(ITestOutputHelper output)
+            : base(output)
         {
         }
     }
