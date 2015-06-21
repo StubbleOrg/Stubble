@@ -22,8 +22,8 @@ namespace Stubble.Core
         private Regex _openingTagRegex;
         private Regex _closingTagRegex;
         private Regex _closingCurlyRegex;
+        private Tags _currentTags;
         public static readonly Tags DefaultTags = new Tags("{{", "}}");
-        private Tags currentTags;
 
         public IList<ParserOutput> ParseTemplate(string template)
         {
@@ -115,11 +115,10 @@ namespace Stubble.Core
                     throw new Exception("Unclosed Tag at " + scanner.Pos);
                 }
 
-                var token = GetCorrectTypedToken(type);
+                var token = GetCorrectTypedToken(type, _currentTags);
                 token.Value = value;
                 token.Start = start;
                 token.End = scanner.Pos;
-                token.Tags = currentTags;
                 tokens.Add(token);
 
                 switch (type)
@@ -220,7 +219,7 @@ namespace Stubble.Core
 
         private void CompileTags(Tags tags)
         {
-            currentTags = tags;
+            _currentTags = tags;
             _openingTagRegex = new Regex(EscapeRegexExpression(tags.StartTag) + @"\s*");
             _closingTagRegex = new Regex(@"\s*" + EscapeRegexExpression(tags.EndTag));
             _closingCurlyRegex = new Regex(@"\s*" + EscapeRegexExpression("}" + tags.EndTag));
@@ -231,12 +230,12 @@ namespace Stubble.Core
             return Regex.Replace(expression, @"[\-\[\]{}()*+?.,\^$|#\s]", @"\$&");
         }
 
-        private static ParserOutput GetCorrectTypedToken(string tokenType)
+        private static ParserOutput GetCorrectTypedToken(string tokenType, Tags currentTags)
         {
             switch (tokenType)
             {
                 case "#":
-                    return new SectionToken { TokenType = tokenType };
+                    return new SectionToken { TokenType = tokenType, Tags = currentTags };
                 case "^":
                     return new InvertedToken { TokenType = tokenType };
                 case ">":

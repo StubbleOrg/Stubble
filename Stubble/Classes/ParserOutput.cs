@@ -12,7 +12,6 @@ namespace Stubble.Core.Classes
         public int End { get; set; }
         public List<ParserOutput> ChildTokens { get; set; }
         public int ParentSectionEnd { get; set; }
-        public Tags Tags { get; set; }
 
         public ParserOutput()
         {

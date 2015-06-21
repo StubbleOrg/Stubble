@@ -10,6 +10,8 @@ namespace Stubble.Core.Classes.Tokens
 {
     public class SectionToken : ParserOutput, IRenderableToken
     {
+        public Tags Tags { get; set; }
+
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
             var buffer = new StringBuilder();
