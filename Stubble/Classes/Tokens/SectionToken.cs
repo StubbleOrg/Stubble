@@ -27,12 +27,16 @@ namespace Stubble.Core.Classes.Tokens
                     buffer.Append(writer.RenderTokens(ChildTokens, context.Push(v), partials, originalTemplate));
                 }
             }
-            else if (value is Delegate)
+            else if (value is Func<dynamic, object> || value is Func<dynamic, string, object>)
             {
                 if (originalTemplate == null) throw new Exception("Cannot use higher-order sections without the original template");
-                var functionValue = value as Delegate;
+                
+                var functionValue = value as Func<dynamic, string, object>;
 
-                value = functionValue.DynamicInvoke(context.View, originalTemplate.Slice(Start, End), subRender);
+                if (functionValue != null)
+                {
+                    value = functionValue.DynamicInvoke(context.View, originalTemplate.Slice(Start, End));
+                }
 
                 if (value != null)
                 {

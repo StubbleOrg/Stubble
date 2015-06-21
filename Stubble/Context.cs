@@ -107,25 +107,25 @@ namespace Stubble.Core
                 Cache[name] = value;
             }
 
-            var delegateValue = value as Delegate;
-            if (delegateValue == null) return value;
-            var methodLength = delegateValue.Method.GetParameters().Length;
-            try
-            {
-                switch (methodLength)
-                {
-                    case 0:
-                        value = delegateValue.DynamicInvoke(null);
-                        break;
-                    case 1:
-                        value = delegateValue.DynamicInvoke(_view);
-                        break;
-                }
-            }
-            catch
-            {
-                value = null;
-            }
+            //var delegateValue = value as Delegate;
+            //if (delegateValue == null) return value;
+            //var methodLength = delegateValue.Method.GetParameters().Length;
+            //try
+            //{
+            //    switch (methodLength)
+            //    {
+            //        case 0:
+            //            value = delegateValue.DynamicInvoke(null);
+            //            break;
+            //        case 1:
+            //            value = delegateValue.DynamicInvoke(_view);
+            //            break;
+            //    }
+            //}
+            //catch
+            //{
+            //    value = null;
+            //}
 
             return value;
         }

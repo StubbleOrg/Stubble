@@ -7,11 +7,12 @@ using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes.Tokens
 {
-    public class InvertedToken : ParserOutput, IRenderableToken
+    public class InvertedToken : InterpolationToken, IRenderableToken
     {
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
             var value = context.Lookup(Value);
+            value = InterpolateLambdaValueIfPossible(value, context);
 
             return !ValueHelpers.IsTruthy(value) ? writer.RenderTokens(ChildTokens, context, partials, originalTemplate) : null;
         }

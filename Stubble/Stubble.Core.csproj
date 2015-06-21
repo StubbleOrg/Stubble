@@ -44,6 +44,7 @@
     <Compile Include="Classes\ParserOutput.cs" />
     <Compile Include="Classes\Tags.cs" />
     <Compile Include="Classes\Tokens\EscapedValueToken.cs" />
+    <Compile Include="Classes\Tokens\InterpolationToken.cs" />
     <Compile Include="Classes\Tokens\InvertedToken.cs" />
     <Compile Include="Classes\Tokens\PartialToken.cs" />
     <Compile Include="Classes\Tokens\RawValueToken.cs" />
