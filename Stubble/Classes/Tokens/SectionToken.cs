@@ -27,16 +27,15 @@ namespace Stubble.Core.Classes.Tokens
                     buffer.Append(writer.RenderTokens(ChildTokens, context.Push(v), partials, originalTemplate));
                 }
             }
-            else if (value is Func<dynamic, object> || value is Func<dynamic, string, object>)
+            else if (value is Func<dynamic, string, object> || value is Func<string, object>)
             {
                 if (originalTemplate == null) throw new Exception("Cannot use higher-order sections without the original template");
-                
-                var functionValue = value as Func<dynamic, string, object>;
 
-                if (functionValue != null)
-                {
-                    value = functionValue.DynamicInvoke(context.View, originalTemplate.Slice(Start, End));
-                }
+                var functionDynamicValue = value as Func<dynamic, string, object>;
+                var functionStringValue = value as Func<string, object>;
+                var sectionContent = originalTemplate.Slice(End, ParentSectionEnd);
+                value = functionDynamicValue != null ? functionDynamicValue.Invoke(context.View, sectionContent) : functionStringValue.Invoke(sectionContent);
+                value = writer.Render(value.ToString(), context, partials);
 
                 if (value != null)
                 {
