@@ -23,6 +23,7 @@ namespace Stubble.Core
         private Regex _closingTagRegex;
         private Regex _closingCurlyRegex;
         public static readonly Tags DefaultTags = new Tags("{{", "}}");
+        private Tags currentTags;
 
         public IList<ParserOutput> ParseTemplate(string template)
         {
@@ -118,6 +119,7 @@ namespace Stubble.Core
                 token.Value = value;
                 token.Start = start;
                 token.End = scanner.Pos;
+                token.Tags = currentTags;
                 tokens.Add(token);
 
                 switch (type)
@@ -218,6 +220,7 @@ namespace Stubble.Core
 
         private void CompileTags(Tags tags)
         {
+            currentTags = tags;
             _openingTagRegex = new Regex(EscapeRegexExpression(tags.StartTag) + @"\s*");
             _closingTagRegex = new Regex(@"\s*" + EscapeRegexExpression(tags.EndTag));
             _closingCurlyRegex = new Regex(@"\s*" + EscapeRegexExpression("}" + tags.EndTag));

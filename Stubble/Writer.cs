@@ -54,12 +54,17 @@ namespace Stubble.Core
 
         public string Render(string template, object view, IDictionary<string, string> partials)
         {
-            return Render(template, new Context(view), partials);
+            return Render(template, new Context(view), partials, null);
         }
 
         public string Render(string template, Context context, IDictionary<string, string> partials)
         {
-            var tokens = Parse(template);
+            return Render(template, context, partials, null);
+        }
+
+        public string Render(string template, Context context, IDictionary<string, string> partials, Tags tags)
+        {
+            var tokens = Parse(template, tags);
             var renderResult = RenderTokens(tokens, context, partials, template);
             return renderResult;
         }

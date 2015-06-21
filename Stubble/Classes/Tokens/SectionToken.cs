@@ -35,7 +35,7 @@ namespace Stubble.Core.Classes.Tokens
                 var functionStringValue = value as Func<string, object>;
                 var sectionContent = originalTemplate.Slice(End, ParentSectionEnd);
                 value = functionDynamicValue != null ? functionDynamicValue.Invoke(context.View, sectionContent) : functionStringValue.Invoke(sectionContent);
-                value = writer.Render(value.ToString(), context, partials);
+                value = writer.Render(value.ToString(), context, partials, Tags);
 
                 if (value != null)
                 {
