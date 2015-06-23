@@ -12,7 +12,7 @@ namespace Stubble.Core
 {
     public class Writer
     {
-        public LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
+        internal LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
         internal Parser Parser;
         internal ReadOnlyDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
 
@@ -98,6 +98,11 @@ namespace Stubble.Core
             var tokens = Parse(template, tags);
             var renderResult = RenderTokens(tokens, context, partials, template);
             return renderResult;
+        }
+
+        public void ClearCache()
+        {
+            Cache.Clear();
         }
     }
 }
