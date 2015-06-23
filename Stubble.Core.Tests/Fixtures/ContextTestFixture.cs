@@ -18,6 +18,14 @@ namespace Stubble.Core.Tests.Fixtures
             new Dictionary<Type, Func<object, string, object>>
             {
                 {
+                    typeof (IDictionary<string, object>),
+                    (value, key) =>
+                    {
+                        var castValue = value as IDictionary<string, object>;
+                        return castValue != null ? castValue[key] : null;
+                    }
+                },
+                {
                     typeof (IDictionary),
                     (value, key) =>
                     {

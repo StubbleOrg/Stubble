@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -62,6 +63,52 @@ namespace Stubble.Core.Tests
 
             Assert.Equal("Data!", functionOutput.Invoke(context.View));
         }
+
+        [Fact]
+        public void It_Can_Retrieve_Values_From_Objects()
+        {
+            var context = new Context(new
+            {
+                MyData = "Data!"
+            }, Fixture.Registry);
+            var output = context.Lookup("MyData");
+
+            Assert.Equal("Data!", output);
+        }
+
+        [Fact]
+        public void It_Can_Retrieve_Values_From_Dictionary()
+        {
+            var context = new Context(new Dictionary<string, object>
+            {
+                { "Foo", "Bar"},
+                { "Foo2", 1 }
+            }, Fixture.Registry);
+            var output = context.Lookup("Foo");
+            var output2 = context.Lookup("Foo2");
+
+            Assert.Equal("Bar", output);
+            Assert.Equal(1, output2);
+        }
+
+        [Fact]
+        public void It_Can_Retrieve_Values_From_Dynamic()
+        {
+            dynamic input = new ExpandoObject();
+            input.Foo = "Bar";
+            input.Number = 1;
+            input.Blah = new { String = "Test" };
+
+            var context = new Context(input, Fixture.Registry);
+            var output = context.Lookup("Foo");
+            var output2 = context.Lookup("Number");
+            var output3 = context.Lookup("Blah.String");
+
+            Assert.Equal("Bar", output);
+            Assert.Equal(1, output2);
+            Assert.Equal("Test", output3);
+        }
+
     }
 
     [Collection("ChildContextCollection")]

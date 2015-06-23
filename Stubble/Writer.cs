@@ -14,7 +14,7 @@ namespace Stubble.Core
     {
         public LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
         internal Parser Parser;
-        internal IDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
+        internal ReadOnlyDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
 
         public Writer(int cacheLimit)
         {
@@ -23,6 +23,14 @@ namespace Stubble.Core
 
             ValueRegistry = new ReadOnlyDictionary<Type, Func<object, string, object>>(new Dictionary<Type, Func<object, string, object>>
             {
+                {
+                    typeof (IDictionary<string, object>),
+                    (value, key) =>
+                    {
+                        var castValue = value as IDictionary<string, object>;
+                        return castValue != null ? castValue[key] : null;
+                    }
+                },
                 {
                     typeof (IDictionary),
                     (value, key) =>

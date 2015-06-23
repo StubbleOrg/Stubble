@@ -1,0 +1,30 @@
+# Stubble
+### Trimmed Down Logic-less {{mustache}} templates in .Net
+
+Stubble is implementation of the [Mustache](http://mustache.github.com/) template system in C# (but usable from any .Net language).
+
+For a language-agnostic overview of mustache's template syntax, see the `mustache(5)` [manpage](http://mustache.github.com/mustache.5.html).
+
+Stubble is tested against the mustache specification and so is `v.1.1.2, including lambdas` compliant meaning that your templates in other languages will work with Stubble provided they match the spec!
+
+### Why should I use Stubble?
+Stubble is designed to be a spec complient mustache renderer with only the bare essentials, *you could say the rest has been trimmed down!*
+
+Stubble provides no methods of finding your templates, no complicated logic for rendering your objects or special types, no non-spec tags for rendering or logic and only the nessaries to make it a simple and fast parser and renderer.
+
+### Why not use [Nustache](https://github.com/jdiamond/Nustache/) instead?
+If Stubble doesn't do what then use Nustache! It's a great tool and provides the same functionality as Stubble provides for the default Mustache spec *(I know because I'm a contributor and current maintainer of that project!)*.
+
+However it does provide lots of extra features, such as a variety of input types, helpers and compliation which increases its complexity and some which are extensions to the Mustache spec (such as helpers) If you need any of those pieces of functionality I'd highly recommend you use Nustache... at least until there are Extensions for Stubble which provide the functionality your after!
+
+### Performance
+This is only the first implementation anc currently I've not began performing performance optimisations. When I feel Stubble is at a *"good"* state I will provide performance comparisions.
+
+### Extensibility
+Since the goal of Stubble is to provide a trimmed down bare-bones implementation the basic library will not contain any extensions to the Mustache spec and only simple ValueGetting functionality.
+
+However in future i plan to add the ability to add integrations and overries within the Stubble core to allow the adding/overring of new tags, value accessor mappings from `Type => Value Getter Function`
+
+These extension points will be exposed by Stubble however none will be provided so you can add in your own wonderful overrides or even include a nuget package which adds these overrides in.
+
+This will be better documented when these have been exposed.
