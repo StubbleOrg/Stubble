@@ -28,7 +28,7 @@ namespace Stubble.Core
                     (value, key) =>
                     {
                         var castValue = value as IDictionary<string, object>;
-                        return castValue != null ? castValue[key] : null;
+                        return castValue != null && castValue.ContainsKey(key) ? castValue[key] : null;
                     }
                 },
                 {
