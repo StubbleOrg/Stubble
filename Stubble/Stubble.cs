@@ -11,10 +11,16 @@ namespace Stubble.Core
     public class Stubble
     {
         public Writer Writer;
+        private Registry _registry;
 
-        public Stubble()
+        public Stubble() : this(new Registry())
         {
-            Writer = new Writer();
+        }
+
+        internal Stubble(Registry registry)
+        {
+            _registry = registry;
+            Writer = new Writer { ValueRegistry = _registry.ValueGetters };
         }
 
         /// <summary>

@@ -14,40 +14,12 @@ namespace Stubble.Core
     {
         internal LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
         internal Parser Parser;
-        internal ReadOnlyDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
+        internal IReadOnlyDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
 
         public Writer(int cacheLimit)
         {
             Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>(cacheLimit);
             Parser = new Parser();
-
-            ValueRegistry = new ReadOnlyDictionary<Type, Func<object, string, object>>(new Dictionary<Type, Func<object, string, object>>
-            {
-                {
-                    typeof (IDictionary<string, object>),
-                    (value, key) =>
-                    {
-                        var castValue = value as IDictionary<string, object>;
-                        return castValue != null && castValue.ContainsKey(key) ? castValue[key] : null;
-                    }
-                },
-                {
-                    typeof (IDictionary),
-                    (value, key) =>
-                    {
-                        var castValue = value as IDictionary;
-                        return castValue != null ? castValue[key] : null;
-                    }
-                },
-                {
-                    typeof (object), (value, key) =>
-                    {
-                        var type = value.GetType();
-                        var propertyInfo = type.GetProperty(key);
-                        return propertyInfo != null ? propertyInfo.GetValue(value, null) : null;
-                    }
-                }
-            });
         }
 
         public Writer()

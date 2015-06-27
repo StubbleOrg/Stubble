@@ -12,17 +12,18 @@ namespace Stubble.Core
     public class Context
     {
         private IDictionary<string, object> Cache { get; set; }
-        private IDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
+        private IReadOnlyDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
         private readonly object _view;
 
         public Context ParentContext { get; set; }
         public dynamic View { get; set; }
 
-        public Context(object view, IDictionary<Type, Func<object, string, object>> registry) : this(view, registry, null)
+        public Context(object view, IReadOnlyDictionary<Type, Func<object, string, object>> registry)
+            : this(view, registry, null)
         {
         }
 
-        public Context(object view, IDictionary<Type, Func<object, string, object>> registry, Context parentContext)
+        public Context(object view, IReadOnlyDictionary<Type, Func<object, string, object>> registry, Context parentContext)
         {
             _view = view;
             View = _view;
