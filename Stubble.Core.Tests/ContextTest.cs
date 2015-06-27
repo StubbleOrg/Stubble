@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using Stubble.Core.Classes;
 using Stubble.Core.Tests.Fixtures;
 using Xunit;
 
@@ -44,7 +45,7 @@ namespace Stubble.Core.Tests
             var context = new Context(new
             {
                 Foo = new Func<object>(() => "TestyTest")
-            }, Fixture.Registry);
+            }, new Registry().ValueGetters);
             var output = context.Lookup("Foo");
             var functionOutput = output as Func<object>;
             Assert.Equal("TestyTest", functionOutput.Invoke());
@@ -57,7 +58,7 @@ namespace Stubble.Core.Tests
             {
                 MyData = "Data!",
                 Foo = new Func<dynamic, object>((data) => data.MyData)
-            }, Fixture.Registry);
+            }, new Registry().ValueGetters);
             var output = context.Lookup("Foo");
             var functionOutput = output as Func<dynamic, object>;
 
@@ -70,7 +71,7 @@ namespace Stubble.Core.Tests
             var context = new Context(new
             {
                 MyData = "Data!"
-            }, Fixture.Registry);
+            }, new Registry().ValueGetters);
             var output = context.Lookup("MyData");
 
             Assert.Equal("Data!", output);
@@ -83,7 +84,7 @@ namespace Stubble.Core.Tests
             {
                 { "Foo", "Bar"},
                 { "Foo2", 1 }
-            }, Fixture.Registry);
+            }, new Registry().ValueGetters);
             var output = context.Lookup("Foo");
             var output2 = context.Lookup("Foo2");
 
@@ -99,7 +100,7 @@ namespace Stubble.Core.Tests
             input.Number = 1;
             input.Blah = new { String = "Test" };
 
-            var context = new Context(input, Fixture.Registry);
+            var context = new Context(input, new Registry().ValueGetters);
             var output = context.Lookup("Foo");
             var output2 = context.Lookup("Number");
             var output3 = context.Lookup("Blah.String");

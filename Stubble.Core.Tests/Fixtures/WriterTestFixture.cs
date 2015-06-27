@@ -1,3 +1,5 @@
+using Stubble.Core.Classes;
+
 namespace Stubble.Core.Tests.Fixtures
 {
     public class WriterTestFixture
@@ -7,6 +9,7 @@ namespace Stubble.Core.Tests.Fixtures
         public WriterTestFixture()
         {
             Writer = new Writer();
+            Writer.ValueRegistry = new Registry().ValueGetters;
         }
     }
 }

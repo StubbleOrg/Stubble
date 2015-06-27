@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Stubble.Core.Classes;
 
 namespace Stubble.Core.Tests.Fixtures
 {
@@ -54,7 +55,7 @@ namespace Stubble.Core.Tests.Fixtures
                 {
                     B = "b"
                 }
-            }, Registry);
+            }, new Registry().ValueGetters);
         }
     }
 }
