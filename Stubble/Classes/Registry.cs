@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes
@@ -48,7 +49,16 @@ namespace Stubble.Core.Classes
 
         public Registry(IDictionary<Type, Func<object, string, object>> valueGetters)
         {
+            SetValueGetters(valueGetters);
+        }
+
+        private void SetValueGetters(IDictionary<Type, Func<object, string, object>> valueGetters)
+        {
             var mergedGetters = DefaultValueGetters.MergeLeft(valueGetters);
+
+            mergedGetters = mergedGetters
+                .OrderBy(x => x.Key, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable())
+                .ToDictionary(item => item.Key, item => item.Value);
 
             ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(mergedGetters);
         }
