@@ -13,15 +13,20 @@ namespace Stubble.Core
         private readonly IDictionary<Type, Func<object, string, object>> _valueGetters =
             new Dictionary<Type, Func<object, string, object>>();
 
-        public void AddValueGetter(KeyValuePair<Type, Func<object, string, object>> valueGetter)
-        {
-            _valueGetters.Add(valueGetter);
-        }
-
         public Stubble Build()
         {
             var registry = new Registry(_valueGetters);
             return new Stubble(registry);
+        }
+
+        public void AddValueGetter(KeyValuePair<Type, Func<object, string, object>> valueGetter)
+        {
+            _valueGetters.Add(valueGetter);
+        }
+        
+        public void AddValueGetter(Type type, Func<object, string, object> valueGetter)
+        {
+            AddValueGetter(new KeyValuePair<Type, Func<object, string, object>>(type, valueGetter));
         }
     }
 }

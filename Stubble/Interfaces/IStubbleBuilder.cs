@@ -9,6 +9,7 @@ namespace Stubble.Core.Interfaces
     public interface IStubbleBuilder
     {
         void AddValueGetter(KeyValuePair<Type, Func<object, string, object>> valueGetter);
+        void AddValueGetter(Type type, Func<object, string, object> valueGetter);
         Stubble Build();
     }
 }
