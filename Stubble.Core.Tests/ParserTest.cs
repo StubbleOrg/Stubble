@@ -69,6 +69,7 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Only_Cache_Four_Regex_Tags()
         {
+            Parser.RegexCacheSize = 4;
             Parser.TagRegexCache.Clear();
             Parser.ParseTemplate("Test 1 {{=<% %>=}}");
             Assert.Equal(2, Parser.TagRegexCache.Count);

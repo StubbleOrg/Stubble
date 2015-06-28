@@ -19,8 +19,11 @@ namespace Stubble.Core
         private static readonly Regex CurlyRegex = new Regex(@"\s*\}", RegexOptions.Compiled);
         private static readonly Regex TagRegex = new Regex(@"#|\^|\/|>|\{|&|=|!", RegexOptions.Compiled);
         private static readonly Regex EscapeRegex = new Regex(@"[\-\[\]{}()*+?.,\^$|#\s]", RegexOptions.Compiled);
+        #endregion
 
-        internal static readonly ConcurrentDictionary<string, TagRegexes> TagRegexCache = new ConcurrentDictionary<string, TagRegexes>(
+        #region Static Tag Cache
+        internal static readonly ConcurrentDictionary<string, TagRegexes> TagRegexCache = new ConcurrentDictionary<string, TagRegexes>
+        (
             new Dictionary<string, TagRegexes>
             {
                 { "{{ }}", new TagRegexes()
@@ -30,7 +33,24 @@ namespace Stubble.Core
                         ClosingTag = new Regex(@"\s*\}\}\}")
                     }
                 }
-            });
+            }
+        );
+
+        internal static int regexCacheSize = 4;
+        public static int RegexCacheSize
+        {
+            get { return regexCacheSize; }
+            set
+            {
+                regexCacheSize = value;
+                if (TagRegexCache.Count <= regexCacheSize) return;
+                while (TagRegexCache.Count > regexCacheSize)
+                {
+                    TagRegexes outVal;
+                    TagRegexCache.TryRemove(TagRegexCache.Last().Key, out outVal);
+                }
+            }
+        }
 
         internal struct TagRegexes
         {
@@ -38,7 +58,6 @@ namespace Stubble.Core
             internal Regex CloseTag { get; set; }
             internal Regex ClosingTag { get; set; }
         }
-
         #endregion
 
         private Regex _openingTagRegex;
@@ -286,7 +305,7 @@ namespace Stubble.Core
 
         private static void AddToRegexCache(string dictionaryKey, TagRegexes regex)
         {
-            if (TagRegexCache.Count >= 4)
+            if (TagRegexCache.Count >= regexCacheSize)
             {
                 TagRegexes outValue;
                 TagRegexCache.TryRemove(TagRegexCache.Last().Key, out outValue);
