@@ -68,6 +68,7 @@
     <Compile Include="Fixtures\ContextTestFixture.cs" />
     <Compile Include="Fixtures\ParserTestFixture.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
+    <Compile Include="ParserOutputTest.cs" />
     <Compile Include="ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScannerTest.cs" />
