@@ -27,7 +27,7 @@ namespace Stubble.Core.Performance
         [InlineData(1000)]
         [InlineData(10000)]
         [InlineData(100000)]
-        public void Simple_Template_Test(int iterations)
+        public TimeSpan Simple_Template_Test(int iterations)
         {
             var stopwatch = Stopwatch.StartNew();
             var stubble = new Stubble();
@@ -44,6 +44,8 @@ namespace Stubble.Core.Performance
                 stopwatch.ElapsedMilliseconds,
                 iterations,
                 stopwatch.ElapsedTicks / (long)iterations);
+
+            return stopwatch.Elapsed;
         }
 
         [Theory]
@@ -52,7 +54,7 @@ namespace Stubble.Core.Performance
         [InlineData(1000)]
         [InlineData(10000)]
         [InlineData(100000)]
-        public void Simple_Template_Test_Nustache(int iterations)
+        public TimeSpan Simple_Template_Test_Nustache(int iterations)
         {
             var stopwatch = Stopwatch.StartNew();
 
@@ -67,6 +69,8 @@ namespace Stubble.Core.Performance
                 stopwatch.ElapsedMilliseconds,
                 iterations,
                 stopwatch.ElapsedTicks / (long)iterations);
+
+            return stopwatch.Elapsed;
         }
 
         public KeyValuePair<string, object> GetRenderTestCase(int index)
