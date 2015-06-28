@@ -186,17 +186,17 @@ namespace Stubble.Core
         {
             using (var iterator = tokens.GetEnumerator())
             {
-                ParserOutput lastItem = null;
+                RawValueToken lastItem = null;
                 while (iterator.MoveNext())
                 {
                     var item = iterator.Current;
-                    if (lastItem != null && item.TokenType.Equals("text") && lastItem.TokenType.Equals("text"))
+                    if (lastItem != null && item is RawValueToken)
                     {
-                        lastItem.Value += item.Value;
+                        lastItem.ValueBuilder.Append(item.Value);
                         lastItem.End = item.End;
                         continue;
                     }
-                    lastItem = item;
+                    lastItem = item as RawValueToken;
                     yield return item;
                 }
             }

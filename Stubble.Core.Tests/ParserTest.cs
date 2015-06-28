@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Stubble.Core.Classes;
 using Stubble.Core.Tests.Fixtures;
 using Xunit;
-using Xunit.Extensions;
 
 namespace Stubble.Core.Tests
 {
@@ -30,7 +27,7 @@ namespace Stubble.Core.Tests
 
             for (var i = 0; i < results.Count; i++)
             {
-                Assert.StrictEqual(results[i], result[i]);
+                Assert.StrictEqual(result[i], results[i]);
             }
         }
 
@@ -178,70 +175,70 @@ namespace Stubble.Core.Tests
 	            }},
 	            new { index = 26, name="a\n{{#a}}{{/a}}\nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-		            new ParserOutput { TokenType = "#", Value = "a", Start = 2, End = 8, ParentSectionEnd = 8, },
+		            new ParserOutput { TokenType = "#", Value = "a", Start = 2, End = 8, ParentSectionEnd = 8, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 15, End = 16,  },
 	            }},
 	            new { index = 27, name="a\n {{#a}}{{/a}}\nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 9, },
+		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 9, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 16, End = 17,  },
 	            }},
 	            new { index = 28, name="a\n {{#a}}{{/a}} \nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 9, },
+		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 9, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 17, End = 18,  },
 	            }},
 	            new { index = 29, name="a\n{{#a}}\n{{/a}}\nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-		            new ParserOutput { TokenType = "#", Value = "a", Start = 2, End = 8, ParentSectionEnd = 9, },
+		            new ParserOutput { TokenType = "#", Value = "a", Start = 2, End = 8, ParentSectionEnd = 9, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 16, End = 17,  },
 	            }},
 	            new { index = 30, name="a\n {{#a}}\n{{/a}}\nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, },
+		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 17, End = 18,  },
 	            }},
 	            new { index = 31, name="a\n {{#a}}\n{{/a}} \nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, },
+		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 18, End = 19,  },
 	            }},
 	            new { index = 32, name="a\n{{#a}}\n{{/a}}\n{{#b}}\n{{/b}}\nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-		            new ParserOutput { TokenType = "#", Value = "a", Start = 2, End = 8, ParentSectionEnd = 9, },
-		            new ParserOutput { TokenType = "#", Value = "b", Start = 16, End = 22, ParentSectionEnd = 23, },
+		            new ParserOutput { TokenType = "#", Value = "a", Start = 2, End = 8, ParentSectionEnd = 9, ChildTokens = new List<ParserOutput>() },
+		            new ParserOutput { TokenType = "#", Value = "b", Start = 16, End = 22, ParentSectionEnd = 23, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 30, End = 31,  },
 	            }},
 	            new { index = 33, name="a\n {{#a}}\n{{/a}}\n{{#b}}\n{{/b}}\nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, },
-		            new ParserOutput { TokenType = "#", Value = "b", Start = 17, End = 23, ParentSectionEnd = 24, },
+		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, ChildTokens = new List<ParserOutput>() },
+		            new ParserOutput { TokenType = "#", Value = "b", Start = 17, End = 23, ParentSectionEnd = 24, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 31, End = 32,  },
 	            }},
 	            new { index = 34, name="a\n {{#a}}\n{{/a}}\n{{#b}}\n{{/b}} \nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, },
-		            new ParserOutput { TokenType = "#", Value = "b", Start = 17, End = 23, ParentSectionEnd = 24, },
+		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, ChildTokens = new List<ParserOutput>() },
+		            new ParserOutput { TokenType = "#", Value = "b", Start = 17, End = 23, ParentSectionEnd = 24, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 32, End = 33,  },
 	            }},
 	            new { index = 35, name="a\n{{#a}}\n{{#b}}\n{{/b}}\n{{/a}}\nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
 		            new ParserOutput { TokenType = "#", Value = "a", Start = 2, End = 8, ChildTokens = new List<ParserOutput> {
-			            new ParserOutput { TokenType = "#", Value = "b", Start = 9, End = 15, ParentSectionEnd = 16, },
+			            new ParserOutput { TokenType = "#", Value = "b", Start = 9, End = 15, ParentSectionEnd = 16, ChildTokens = new List<ParserOutput>() },
 		             }, ParentSectionEnd = 23, },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 30, End = 31,  },
 	            }},
 	            new { index = 36, name="a\n {{#a}}\n{{#b}}\n{{/b}}\n{{/a}}\nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
 		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ChildTokens = new List<ParserOutput> {
-			            new ParserOutput { TokenType = "#", Value = "b", Start = 10, End = 16, ParentSectionEnd = 17, },
+			            new ParserOutput { TokenType = "#", Value = "b", Start = 10, End = 16, ParentSectionEnd = 17, ChildTokens = new List<ParserOutput>() },
 		             }, ParentSectionEnd = 24, },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 31, End = 32,  },
 	            }},
 	            new { index = 37, name="a\n {{#a}}\n{{#b}}\n{{/b}}\n{{/a}} \nb", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
 		            new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ChildTokens = new List<ParserOutput> {
-			            new ParserOutput { TokenType = "#", Value = "b", Start = 10, End = 16, ParentSectionEnd = 17, },
+			            new ParserOutput { TokenType = "#", Value = "b", Start = 10, End = 16, ParentSectionEnd = 17, ChildTokens = new List<ParserOutput>() },
 		             }, ParentSectionEnd = 24, },
 		            new ParserOutput { TokenType = "text", Value = "b", Start = 32, End = 33,  },
 	            }},
@@ -269,9 +266,9 @@ namespace Stubble.Core.Tests
 		            new ParserOutput { TokenType = "name", Value = "hi", Start = 11, End = 17,  },
 	            }},
 	            new { index = 45, name="{{#a}}{{/a}}hi{{#b}}{{/b}}\n", arguments = new List<ParserOutput> {
-		            new ParserOutput { TokenType = "#", Value = "a", Start = 0, End = 6, ParentSectionEnd = 6, },
+		            new ParserOutput { TokenType = "#", Value = "a", Start = 0, End = 6, ParentSectionEnd = 6, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "hi", Start = 12, End = 14,  },
-		            new ParserOutput { TokenType = "#", Value = "b", Start = 14, End = 20, ParentSectionEnd = 20, },
+		            new ParserOutput { TokenType = "#", Value = "b", Start = 14, End = 20, ParentSectionEnd = 20, ChildTokens = new List<ParserOutput>() },
 		            new ParserOutput { TokenType = "text", Value = "\n", Start = 26, End = 27,  },
 	            }},
 	            new { index = 46, name="{{a}}\n{{b}}\n\n{{#c}}\n{{/c}}\n", arguments = new List<ParserOutput> {
@@ -279,7 +276,7 @@ namespace Stubble.Core.Tests
 		            new ParserOutput { TokenType = "text", Value = "\n", Start = 5, End = 6,  },
 		            new ParserOutput { TokenType = "name", Value = "b", Start = 6, End = 11,  },
 		            new ParserOutput { TokenType = "text", Value = "\n\n", Start = 11, End = 13,  },
-		            new ParserOutput { TokenType = "#", Value = "c", Start = 13, End = 19, ParentSectionEnd = 20, },
+		            new ParserOutput { TokenType = "#", Value = "c", Start = 13, End = 19, ParentSectionEnd = 20, ChildTokens = new List<ParserOutput>() },
 	            }},
 	            new { index = 47, name="{{#foo}}\n  {{#a}}\n    {{b}}\n  {{/a}}\n{{/foo}}\n", arguments = new List<ParserOutput> {
 		            new ParserOutput { TokenType = "#", Value = "foo", Start = 0, End = 8, ChildTokens = new List<ParserOutput> {

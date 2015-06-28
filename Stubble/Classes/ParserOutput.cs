@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Stubble.Core.Classes
 {
     public class ParserOutput
     {
         public string TokenType { get; set; }
-        public string Value { get; set; }
+        public virtual string Value { get; set; }
         public int Start { get; set; }
         public int End { get; set; }
         public List<ParserOutput> ChildTokens { get; set; }
         public int ParentSectionEnd { get; set; }
-
-        public ParserOutput()
-        {
-            ChildTokens = new List<ParserOutput>();
-        }
 
         public override bool Equals(object obj)
         {
