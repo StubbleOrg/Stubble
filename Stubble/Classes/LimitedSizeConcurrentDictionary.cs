@@ -23,52 +23,6 @@ namespace Stubble.Core.Classes
             TryRemove(this.First().Key, out output);
         }
 
-        public new bool TryAdd(TKey key, TValue value)
-        {
-            if (Count >= MaxSize)
-            {
-                DumpFirstItem();
-            }
-            return base.TryAdd(key, value);
-        }
-
-        public new TValue AddOrUpdate(TKey key, Func<TKey, TValue> addValueFactory,
-            Func<TKey, TValue, TValue> updateValueFactory)
-        {
-            if (Count >= MaxSize)
-            {
-                DumpFirstItem();
-            }
-            return base.AddOrUpdate(key, addValueFactory, updateValueFactory);
-        }
-
-        public new TValue AddOrUpdate(TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
-        {
-            if (Count >= MaxSize)
-            {
-                DumpFirstItem();
-            }
-            return base.AddOrUpdate(key, addValue, updateValueFactory);
-        }
-
-        public new TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
-        {
-            if (Count >= MaxSize)
-            {
-                DumpFirstItem();
-            }
-            return base.GetOrAdd(key, valueFactory);
-        }
-
-        public new TValue GetOrAdd(TKey key, TValue value)
-        {
-            if (Count >= MaxSize)
-            {
-                DumpFirstItem();
-            }
-            return base.GetOrAdd(key, value);
-        }
-
         public new TValue this[TKey key]
         {
             get { return base[key]; }
