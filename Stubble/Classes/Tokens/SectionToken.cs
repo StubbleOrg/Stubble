@@ -46,10 +46,6 @@ namespace Stubble.Core.Classes.Tokens
             {
                 buffer.Append(writer.RenderTokens(ChildTokens, context.Push(value), partials, originalTemplate));
             }
-            else
-            {
-                buffer.Append(writer.RenderTokens(ChildTokens, context, partials, originalTemplate));
-            }
 
             return buffer.ToString();
         }
