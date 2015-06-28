@@ -27,18 +27,20 @@ namespace Stubble.Core.Performance
 
         public static Dictionary<int, Dictionary<string, List<TimeSpan>>> DurationByIncrement = new Dictionary<int, Dictionary<string, List<TimeSpan>>>();
 
+        readonly static PerformanceTest PerformanceTest = new PerformanceTest(new NothingWriter());
+        readonly static Dictionary<string, Func<int, TimeSpan>> TestFunctions = new Dictionary<string, Func<int, TimeSpan>>
+        {
+            { "Stubble (Without Cache)", PerformanceTest.Simple_Template_Test },
+            { "Stubble (With Cache)", PerformanceTest.Simple_Template_Test_With_Cache },
+            { "Nustache", PerformanceTest.Simple_Template_Test_Nustache }
+        };
+
         public static void Main(string[] args)
         {
-            var performanceTest = new PerformanceTest(new NothingWriter());
 
             const int iterations = 10;
 
             var increments = new[] { 100, 1000, 10000, 100000, 1000000 };
-            var testFunctions = new Dictionary<string, Func<int, TimeSpan>>
-            {
-                { "Stubble", performanceTest.Simple_Template_Test },
-                { "Nustache", performanceTest.Simple_Template_Test_Nustache }
-            };
             
             for (var i = 1; i <= iterations; i++)
             {
@@ -50,7 +52,7 @@ namespace Stubble.Core.Performance
                         DurationByIncrement.Add(increment, new Dictionary<string, List<TimeSpan>>());
                     var item = DurationByIncrement[increment];
 
-                    foreach (var testFunction in testFunctions)
+                    foreach (var testFunction in TestFunctions)
                     {
                         Console.WriteLine("****** {0} ******", testFunction.Key.ToUpper());
                         if (!item.ContainsKey(testFunction.Key))
@@ -73,7 +75,7 @@ namespace Stubble.Core.Performance
         {
             using (var writer = new StreamWriter("./results.csv"))
             {
-                writer.WriteLine(string.Join(",", "Increment", "Stubble", "Nustache"));
+                writer.WriteLine(string.Join(",", "Increment", string.Join(",", TestFunctions.Keys)));
                 foreach (var item in DurationByIncrement)
                 {
                     var res = item.Value.Select(x => x.Value.Average(y => y.TotalMilliseconds).ToString(CultureInfo.InvariantCulture));

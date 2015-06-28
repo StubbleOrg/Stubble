@@ -22,12 +22,17 @@ namespace Stubble.Core.Performance
         }
 
         [Theory]
-        [InlineData(10)]
-        [InlineData(100)]
-        [InlineData(1000)]
-        [InlineData(10000)]
-        [InlineData(100000)]
+        [InlineData(10, false)]
+        [InlineData(100, false)]
+        [InlineData(1000, false)]
+        [InlineData(10000, false)]
+        [InlineData(100000, false)]
         public TimeSpan Simple_Template_Test(int iterations)
+        {
+            return Simple_Template_Test(iterations, false);
+        }
+
+        public TimeSpan Simple_Template_Test(int iterations, bool useCache)
         {
             var stopwatch = Stopwatch.StartNew();
             var stubble = new Stubble();
@@ -36,7 +41,7 @@ namespace Stubble.Core.Performance
             {
                 var testCase = GetRenderTestCase(i);
                 stubble.Render(testCase.Key, testCase.Value);
-                stubble.ClearCache();
+                if(!useCache) stubble.ClearCache();
             }
             stopwatch.Stop();
 
@@ -46,6 +51,16 @@ namespace Stubble.Core.Performance
                 stopwatch.ElapsedTicks / (long)iterations);
 
             return stopwatch.Elapsed;
+        }
+
+        [InlineData(10)]
+        [InlineData(100)]
+        [InlineData(1000)]
+        [InlineData(10000)]
+        [InlineData(100000)]
+        public TimeSpan Simple_Template_Test_With_Cache(int iterations)
+        {
+            return Simple_Template_Test(iterations, true);
         }
 
         [Theory]
