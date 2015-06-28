@@ -69,6 +69,20 @@ namespace Stubble.Core.Tests
             Assert.Equal("Invalid Tags", ex.Message);
         }
 
+        [Fact]
+        public void It_Only_Cache_Four_Regex_Tags()
+        {
+            Parser.TagRegexCache.Clear();
+            Parser.ParseTemplate("Test 1 {{=<% %>=}}");
+            Assert.Equal(2, Parser.TagRegexCache.Count);
+            Parser.ParseTemplate("Test 2 {{={| |}=}}");
+            Assert.Equal(3, Parser.TagRegexCache.Count);
+            Parser.ParseTemplate("Test 3 {{=<: :>=}}");
+            Assert.Equal(4, Parser.TagRegexCache.Count);
+            Parser.ParseTemplate("Test 4 {{=|# #|=}}");
+            Assert.Equal(4, Parser.TagRegexCache.Count);
+        }
+
         public static IEnumerable<object[]> TemplateParsingData()
         {
             return new[] 

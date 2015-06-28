@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,26 @@ namespace Stubble.Core
         private static readonly Regex CurlyRegex = new Regex(@"\s*\}", RegexOptions.Compiled);
         private static readonly Regex TagRegex = new Regex(@"#|\^|\/|>|\{|&|=|!", RegexOptions.Compiled);
         private static readonly Regex EscapeRegex = new Regex(@"[\-\[\]{}()*+?.,\^$|#\s]", RegexOptions.Compiled);
+
+        internal static readonly ConcurrentDictionary<string, TagRegexes> TagRegexCache = new ConcurrentDictionary<string, TagRegexes>(
+            new Dictionary<string, TagRegexes>
+            {
+                { "{{ }}", new TagRegexes()
+                    {
+                        OpenTag = new Regex(@"\{\{\s*"),
+                        CloseTag = new Regex(@"\s*\}\}"),
+                        ClosingTag = new Regex(@"\s*\}\}\}")
+                    }
+                }
+            });
+
+        internal struct TagRegexes
+        {
+            internal Regex OpenTag { get; set; }
+            internal Regex CloseTag { get; set; }
+            internal Regex ClosingTag { get; set; }
+        }
+
         #endregion
 
         private Regex _openingTagRegex;
@@ -219,9 +240,22 @@ namespace Stubble.Core
         private void CompileTags(Tags tags)
         {
             _currentTags = tags;
-            _openingTagRegex = new Regex(EscapeRegexExpression(tags.StartTag) + @"\s*");
-            _closingTagRegex = new Regex(@"\s*" + EscapeRegexExpression(tags.EndTag));
-            _closingCurlyRegex = new Regex(@"\s*" + EscapeRegexExpression("}" + tags.EndTag));
+            TagRegexes tagRegexes;
+            var tagString = tags.ToString();
+            if (!TagRegexCache.TryGetValue(tagString, out tagRegexes))
+            {
+                tagRegexes = new TagRegexes()
+                {
+                    OpenTag = new Regex(EscapeRegexExpression(tags.StartTag) + @"\s*"),
+                    CloseTag = new Regex(@"\s*" + EscapeRegexExpression(tags.EndTag)),
+                    ClosingTag = new Regex(@"\s*" + EscapeRegexExpression("}" + tags.EndTag))
+                };
+                AddToRegexCache(tagString, tagRegexes);
+            }
+
+            _openingTagRegex = tagRegexes.OpenTag;
+            _closingTagRegex = tagRegexes.CloseTag;
+            _closingCurlyRegex = tagRegexes.ClosingTag;
         }
 
         private static string EscapeRegexExpression(string expression)
@@ -248,6 +282,17 @@ namespace Stubble.Core
                 default:
                     return new ParserOutput { TokenType = tokenType };
             }
+        }
+
+        private static void AddToRegexCache(string dictionaryKey, TagRegexes regex)
+        {
+            if (TagRegexCache.Count >= 4)
+            {
+                TagRegexes outValue;
+                TagRegexCache.TryRemove(TagRegexCache.Last().Key, out outValue);
+            }
+
+            TagRegexCache.AddOrUpdate(dictionaryKey, regex, (key, existingVal) => regex);
         }
     }
 }

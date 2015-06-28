@@ -23,5 +23,10 @@ namespace Stubble.Core.Classes
 
         public string StartTag { get; private set; }
         public string EndTag { get; private set; }
+
+        public override string ToString()
+        {
+            return StartTag + " " + EndTag;
+        }
     }
 }
