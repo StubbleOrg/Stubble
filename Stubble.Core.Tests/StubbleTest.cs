@@ -75,5 +75,40 @@ namespace Stubble.Core.Tests
             var output = stubble.Render("I Have No Data :(", null);
             Assert.Equal("I Have No Data :(", output);
         }
+
+        [Fact]
+        public void It_Can_Render_With_LambdaToken_NoDynamic()
+        {
+            var stubble = new Stubble();
+            var output = stubble.Render("{{Foo}}", new { Foo = new Func<object>(() => "Bar") });
+            Assert.Equal("Bar", output);
+        }
+
+        [Fact]
+        public void It_Can_Render_With_LambdaToken_Dynamic()
+        {
+            var stubble = new Stubble();
+            var output = stubble.Render("{{Foo}}", new { BarValue = "Bar", Foo = new Func<dynamic, object>((context) => context.BarValue) });
+            Assert.Equal("Bar", output);
+        }
+
+        [Fact]
+        public void It_Can_Render_With_LambdaSection_NoDynamic()
+        {
+            var stubble = new Stubble();
+            var output = stubble.Render("{{#Foo}}Foo{{/Foo}}", new { Foo = new Func<string, object>((str) => str + " Bar") });
+            Assert.Equal("Foo Bar", output);
+        }
+
+        [Fact]
+        public void It_Can_Render_With_LambdaSection_Dynamic()
+        {
+            var stubble = new Stubble();
+            var output = stubble.Render("{{#Foo}}Foo{{/Foo}}", new
+            {
+                BarValue = "Bar", Foo = new Func<dynamic, string, object>((context, str) => str + " " + context.BarValue)
+            });
+            Assert.Equal("Foo Bar", output);
+        }
     }
 }

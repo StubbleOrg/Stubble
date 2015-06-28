@@ -24,7 +24,6 @@ namespace Stubble.Core.Tests
         {
             var parserOutputA = new ParserOutput { TokenType = "name", Value = "hi", Start = 0, End = 6 };
             var parserOutputB = new ParserOutput { TokenType = "name", Value = "hi", Start = 0, End = 6 };
-            
 
             Assert.Equal(parserOutputA, parserOutputB);
         }
