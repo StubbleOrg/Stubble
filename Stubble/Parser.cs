@@ -17,6 +17,7 @@ namespace Stubble.Core
         private static readonly Regex EqualsRegex = new Regex(@"\s*=", RegexOptions.Compiled);
         private static readonly Regex CurlyRegex = new Regex(@"\s*\}", RegexOptions.Compiled);
         private static readonly Regex TagRegex = new Regex(@"#|\^|\/|>|\{|&|=|!", RegexOptions.Compiled);
+        private static readonly Regex EscapeRegex = new Regex(@"[\-\[\]{}()*+?.,\^$|#\s]", RegexOptions.Compiled);
         #endregion
 
         private Regex _openingTagRegex;
@@ -162,24 +163,22 @@ namespace Stubble.Core
 
         private static IEnumerable<ParserOutput> SquishTokens(IEnumerable<ParserOutput> tokens)
         {
-            var output = new List<ParserOutput>();
-
-            ParserOutput lastToken = null;
-            foreach (var token in tokens)
+            using (var iterator = tokens.GetEnumerator())
             {
-                if (token.TokenType.Equals("text") && lastToken != null && lastToken.TokenType.Equals("text"))
+                ParserOutput lastItem = null;
+                while (iterator.MoveNext())
                 {
-                    lastToken.Value += token.Value;
-                    lastToken.End = token.End;
-                }
-                else
-                {
-                    output.Add(token);
-                    lastToken = token;
+                    var item = iterator.Current;
+                    if (lastItem != null && item.TokenType.Equals("text") && lastItem.TokenType.Equals("text"))
+                    {
+                        lastItem.Value += item.Value;
+                        lastItem.End = item.End;
+                        continue;
+                    }
+                    lastItem = item;
+                    yield return item;
                 }
             }
-
-            return output;
         }
 
         private static IList<ParserOutput> NestTokens(IEnumerable<ParserOutput> tokens)
@@ -227,7 +226,7 @@ namespace Stubble.Core
 
         private static string EscapeRegexExpression(string expression)
         {
-            return Regex.Replace(expression, @"[\-\[\]{}()*+?.,\^$|#\s]", @"\$&");
+            return EscapeRegex.Replace(expression, @"\$&");
         }
 
         private static ParserOutput GetCorrectTypedToken(string tokenType, Tags currentTags)
