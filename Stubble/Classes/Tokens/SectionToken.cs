@@ -17,8 +17,6 @@ namespace Stubble.Core.Classes.Tokens
             var buffer = new StringBuilder();
             var value = context.Lookup(Value);
 
-            Func<string, string> subRender = (template) => writer.Render(template, context, partials);
-
             if (!ValueHelpers.IsTruthy(value)) return null;
 
             if (value is IEnumerable && !(value is IDictionary))
