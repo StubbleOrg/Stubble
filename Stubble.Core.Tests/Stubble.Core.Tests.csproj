@@ -75,6 +75,7 @@
     <Compile Include="Spec\SpecTestDefinition.cs" />
     <Compile Include="Spec\SpecTestHelper.cs" />
     <Compile Include="Spec\SpecTests.cs" />
+    <Compile Include="StubbleBuilderTest.cs" />
     <Compile Include="StubbleTest.cs" />
     <Compile Include="WriterTest.cs" />
     <Compile Include="Fixtures\WriterTestFixture.cs" />
