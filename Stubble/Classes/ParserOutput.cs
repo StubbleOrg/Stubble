@@ -35,7 +35,7 @@ namespace Stubble.Core.Classes
                 return !ChildTokens.Where((token, i) => !token.Equals(a.ChildTokens[i])).Any();
             }
 
-            return true;
+            return !(ChildTokens == null & a.ChildTokens != null) && !(ChildTokens != null & a.ChildTokens == null);
         }
 
         public override int GetHashCode()
