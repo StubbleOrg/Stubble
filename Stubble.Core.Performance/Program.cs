@@ -37,7 +37,6 @@ namespace Stubble.Core.Performance
 
         public static void Main(string[] args)
         {
-
             const int iterations = 10;
 
             var increments = new[] { 100, 1000, 10000, 100000, 1000000 };
