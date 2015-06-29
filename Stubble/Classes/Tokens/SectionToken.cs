@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes.Tokens
 {
-    public class SectionToken : ParserOutput, IRenderableToken
+    internal class SectionToken : ParserOutput, IRenderableToken
     {
         public Tags Tags { get; set; }
 

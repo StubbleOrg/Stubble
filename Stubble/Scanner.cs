@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace Stubble.Core
 {
-    public class Scanner
+    public sealed class Scanner
     {
         public string Template { get; set; }
         public string Tail { get; set; }

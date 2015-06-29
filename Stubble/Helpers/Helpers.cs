@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Stubble.Core.Helpers
 {
-    public static class ValueHelpers
+    internal static class ValueHelpers
     {
         internal static bool IsTruthy(object value)
         {
@@ -46,7 +46,7 @@ namespace Stubble.Core.Helpers
         /// <param name="me"></param>
         /// <param name="others"></param>
         /// <returns></returns>
-        public static IDictionary<TK, TV> MergeLeft<TK, TV>(this IDictionary<TK, TV> me, params IDictionary<TK, TV>[] others)
+        internal static IDictionary<TK, TV> MergeLeft<TK, TV>(this IDictionary<TK, TV> me, params IDictionary<TK, TV>[] others)
         {
             var newMap = new Dictionary<TK, TV>(me);
             foreach (var p in (new List<IDictionary<TK, TV>> { me }).Concat(others).SelectMany(src => src))

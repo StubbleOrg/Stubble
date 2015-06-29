@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Stubble.Core.Classes;
 
 namespace Stubble.Core
 {
-    public class Writer
+    public sealed class Writer
     {
         internal LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
         internal Parser Parser;

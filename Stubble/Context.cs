@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Stubble.Core.Helpers;
 
 namespace Stubble.Core
 {
-    public class Context
+    public sealed class Context
     {
         private IDictionary<string, object> Cache { get; set; }
         private IReadOnlyDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }

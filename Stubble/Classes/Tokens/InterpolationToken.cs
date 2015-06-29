@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Stubble.Core.Classes.Tokens
 {
-    public abstract class InterpolationToken : ParserOutput
+    internal abstract class InterpolationToken : ParserOutput
     {
         internal object InterpolateLambdaValueIfPossible(object value, Writer writer, Context context, IDictionary<string, string> partials)
         {

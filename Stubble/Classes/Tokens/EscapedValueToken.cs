@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Stubble.Core.Classes.Tokens
 {
-    public class EscapedValueToken : InterpolationToken, IRenderableToken
+    internal class EscapedValueToken : InterpolationToken, IRenderableToken
     {
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {

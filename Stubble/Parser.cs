@@ -2,15 +2,13 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Tokens;
 
 namespace Stubble.Core
 {
-    public class Parser
+    public sealed class Parser
     {
         #region Static Regex
         private static readonly Regex WhitespaceRegex = new Regex(@"\s*", RegexOptions.Compiled);

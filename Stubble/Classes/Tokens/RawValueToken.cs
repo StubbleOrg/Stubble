@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Stubble.Core.Classes.Tokens
 {
-    public class RawValueToken : ParserOutput, IRenderableToken
+    internal class RawValueToken : ParserOutput, IRenderableToken
     {
         public readonly StringBuilder ValueBuilder = new StringBuilder();
 

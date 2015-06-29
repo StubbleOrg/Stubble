@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes.Tokens
 {
-    public class InvertedToken : InterpolationToken, IRenderableToken
+    internal class InvertedToken : InterpolationToken, IRenderableToken
     {
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
