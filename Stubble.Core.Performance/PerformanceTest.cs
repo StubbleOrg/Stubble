@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Nustache.Core;
+using Stubble.Core.Tests;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -19,14 +20,17 @@ namespace Stubble.Core.Performance
         public PerformanceTest(ITestOutputHelper output)
         {
             OutputStream = output;
+            StronglyTypedTestClass.StaticField = 1;
+            StronglyTypedTestClass.StaticProperty = 1;
         }
 
         [Theory]
-        [InlineData(10, false)]
-        [InlineData(100, false)]
-        [InlineData(1000, false)]
-        [InlineData(10000, false)]
-        [InlineData(100000, false)]
+        [InlineData(10)]
+        [InlineData(100)]
+        [InlineData(1000)]
+        [InlineData(10000)]
+        [InlineData(100000)]
+        [InlineData(1000000)]
         public TimeSpan Simple_Template_Test(int iterations)
         {
             return Simple_Template_Test(iterations, false);
@@ -58,6 +62,7 @@ namespace Stubble.Core.Performance
         [InlineData(1000)]
         [InlineData(10000)]
         [InlineData(100000)]
+        [InlineData(1000000)]
         public TimeSpan Simple_Template_Test_With_Cache(int iterations)
         {
             return Simple_Template_Test(iterations, true);
@@ -69,6 +74,7 @@ namespace Stubble.Core.Performance
         [InlineData(1000)]
         [InlineData(10000)]
         [InlineData(100000)]
+        [InlineData(1000000)]
         public TimeSpan Simple_Template_Test_Nustache(int iterations)
         {
             var stopwatch = Stopwatch.StartNew();
@@ -90,7 +96,7 @@ namespace Stubble.Core.Performance
 
         public KeyValuePair<string, object> GetRenderTestCase(int index)
         {
-            switch (index % 7)
+            switch (index % 13)
             {
                 case 0:
                     return new KeyValuePair<string, object>("{{Foo}}", new { Foo = "Bar" });
@@ -106,6 +112,18 @@ namespace Stubble.Core.Performance
                     return new KeyValuePair<string, object>("{{Foo}} New Tags {{=<% %>=}} <% Bar %> ", new { Foo = "Bar", Bar = "Foo" });
                 case 6:
                     return new KeyValuePair<string, object>("{{Foo}} New Tags {{=<% %>=}} <% Bar %> <%=<| |>=%> <|Foo|>", new { Foo = "Bar", Bar = "Foo" });
+                case 7:
+                    return new KeyValuePair<string, object>("{{Property}}", new StronglyTypedTestClass { Property = 1 });
+                case 8:
+                    return new KeyValuePair<string, object>("{{StaticField}}", new StronglyTypedTestClass());
+                case 9:
+                    return new KeyValuePair<string, object>("{{StaticProperty}}", new StronglyTypedTestClass());
+                case 10:
+                    return new KeyValuePair<string, object>("{{Field}}", new StronglyTypedTestClass { Field = 1 });
+                case 11:
+                    return new KeyValuePair<string, object>("{{StaticMethodWithNoArgs}}", new StronglyTypedTestClass());
+                case 12:
+                    return new KeyValuePair<string, object>("{{^StaticMethodWithArgs}}Stuff{{/StaticMethodWithArgs}}", new StronglyTypedTestClass());
                 default:
                     return new KeyValuePair<string, object>("Not Happening", null);
             }
