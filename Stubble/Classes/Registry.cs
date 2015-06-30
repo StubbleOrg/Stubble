@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes
@@ -35,8 +36,13 @@ namespace Stubble.Core.Classes
                 typeof (object), (value, key) =>
                 {
                     var type = value.GetType();
-                    var propertyInfo = type.GetProperty(key);
-                    return propertyInfo != null ? propertyInfo.GetValue(value, null) : null;
+                    var propertyInfo = type.GetProperty(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                    if (propertyInfo != null) return propertyInfo.GetValue(value, null);
+                    var fieldInfo = type.GetField(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                    if (fieldInfo != null) return fieldInfo.GetValue(value);
+                    var methodInfo = type.GetMethod(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                    if (methodInfo != null && methodInfo.GetParameters().Length == 0) return methodInfo.Invoke(value, null);
+                    return null;
                 }
             }
         };

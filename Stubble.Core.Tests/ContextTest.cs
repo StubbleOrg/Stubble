@@ -110,6 +110,68 @@ namespace Stubble.Core.Tests
             Assert.Equal("Test", output3);
         }
 
+        [Fact]
+        public void It_Can_Retrive_Properties_From_Object()
+        {
+            StronglyTypedTestClass.StaticProperty = 1;
+            StronglyTypedTestClass.StaticField = 1;
+            var context = new Context(new StronglyTypedTestClass()
+            {
+                Field = 1,
+                Property = 1
+            }, new Registry().ValueGetters);
+
+            var instanceProperty = context.Lookup("Property");
+            var staticProperty = context.Lookup("StaticProperty");
+            var instanceField = context.Lookup("Field");
+            var staticField = context.Lookup("StaticField");
+            var instanceMethodWithoutArgs = context.Lookup("MethodWithoutArgs");
+            var instanceMethodWithArgs = context.Lookup("MethodWithArgs");
+            var staticMethodWithoutArgs = context.Lookup("StaticMethodWithNoArgs");
+            var staticMethodWithArgs = context.Lookup("StaticMethodWithArgs");
+
+            Assert.Equal(1, staticProperty);
+            Assert.Equal(1, instanceProperty);
+            Assert.Equal(1, instanceField);
+            Assert.Equal(1, staticField);
+            Assert.Equal(1, instanceMethodWithoutArgs);
+            Assert.Equal(1, staticMethodWithoutArgs);
+            Assert.Null(instanceMethodWithArgs);
+            Assert.Null(staticMethodWithArgs);
+        }
+
+        [Fact]
+        public void It_Can_Retrive_Properties_From_Object_And_Parent()
+        {
+            StronglyTypedTestClass.StaticProperty = 1;
+            StronglyTypedTestClass.StaticField = 1;
+            StronglyTypedChildTestClass.ChildStaticField = 2;
+            StronglyTypedChildTestClass.ChildStaticProperty = 2;
+
+            var context = new Context(new StronglyTypedChildTestClass()
+            {
+                Field = 1,
+                Property = 1,
+                ChildField = 2,
+                ChildProperty = 2
+            }, new Registry().ValueGetters);
+
+            var parentInstanceProperty = context.Lookup("Property");
+            var parentInstanceField = context.Lookup("Field");
+            var instanceProperty = context.Lookup("ChildProperty");
+            var instanceField = context.Lookup("ChildField");
+            var parentInstanceMethodWithoutArgs = context.Lookup("MethodWithoutArgs");
+            var parentInstanceMethodWithArgs = context.Lookup("MethodWithArgs");
+            var instanceMethodWithoutArgs = context.Lookup("ChildMethodWithoutArgs");
+
+            Assert.Equal(1, parentInstanceProperty);
+            Assert.Equal(1, parentInstanceField);
+            Assert.Equal(1, parentInstanceMethodWithoutArgs);
+            Assert.Equal(2, instanceProperty);
+            Assert.Equal(2, instanceField);
+            Assert.Equal(2, instanceMethodWithoutArgs);
+            Assert.Null(parentInstanceMethodWithArgs);
+        }
     }
 
     [Collection("ChildContextCollection")]
@@ -152,5 +214,57 @@ namespace Stubble.Core.Tests
         {
             Assert.Equal("b", Context.Lookup("A.B"));
         }
+    }
+
+    public class StronglyTypedTestClass
+    {
+        #region Statics
+        public static int StaticProperty
+        {
+            get;
+            set;
+        }
+        public static int StaticField;
+        public static int StaticMethodWithNoArgs()
+        {
+            return 1;
+        }
+        public static int StaticMethodWithArgs(int i)
+        {
+            return i;
+        }
+        #endregion
+        #region Instance Variables
+        public int Property { get; set; }
+        public int Field;
+        public int MethodWithoutArgs()
+        {
+            return 1;
+        }
+        public int MethodWithArgs(int i)
+        {
+            return i;
+        }
+        #endregion
+    }
+
+    public class StronglyTypedChildTestClass : StronglyTypedTestClass
+    {
+        #region Statics
+        public static int ChildStaticProperty { get; set; }
+        public static int ChildStaticField;
+        public static int ChildStaticMethodWithoutArgs()
+        {
+            return 2;
+        }
+        #endregion
+        #region Instance Variables
+        public int ChildProperty { get; set; }
+        public int ChildField { get; set; }
+        public int ChildMethodWithoutArgs()
+        {
+            return 2;
+        }
+        #endregion
     }
 }
