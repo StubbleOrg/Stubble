@@ -20,10 +20,10 @@ This is only the release and these are preliminary simple tests against the clos
 There are three different measures:
 
 	- Nustache (RenderToString)
-	- Stubble (No Cache)
+	- Stubble (Without Cache)
 	- Stubble (With Cache)
 
-Stubble caches its parsed templates for speed and so one of the tests is with this cache cleared each time and another when it isn't. Nustache does no caching so the closed comparison in raw performance would be *Nustache vs Stubble (No Cache)*.
+Stubble caches its parsed templates for speed and so one of the tests is with this cache cleared each time and another when it isn't. Nustache does no caching so the closed comparison in raw performance would be *Nustache vs Stubble (Without Cache)*.
 
 The testing was done over 10 iterations, over a set of increments (100 | 1,000 | 10,000 | 100,000 | 1,000,000) for each library. The results are stored in TotalMiliseconds and then averaged over all the iterations for a final result for each library for each increment.
 
