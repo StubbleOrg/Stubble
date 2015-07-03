@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+    <metadata>
+        <id>Stubble.Core</id>
+        <version>$version$</version>
+        <title>Stubble</title>
+        <authors>Alex McAuliffe</authors>
+        <owners>Alex McAuliffe</owners>
+        <description>Trimmed down {{mustache}} templates in .NET</description>
+        <language>en-US</language>
+        <projectUrl>https://github.com/romanx/stubble</projectUrl>
+        <licenseUrl>https://github.com/Romanx/Stubble/blob/master/licence.md</licenseUrl>
+        <copyright>Copyright © 2015</copyright>
+        <tags>template mustache text generation fast</tags>
+    </metadata>
+</package>
