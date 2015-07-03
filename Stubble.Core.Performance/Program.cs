@@ -6,12 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Humanizer;
+using Newtonsoft.Json;
+using Stubble.Core.Performance.Data;
 using Xunit.Abstractions;
 
 namespace Stubble.Core.Performance
 {
     public class Program
     {
+        public const int Iterations = 10;
+        public static readonly int[] Increments = { 100 , 1000, 10000, 100000, 1000000 };
+
         internal class NothingWriter : ITestOutputHelper
         {
             public void WriteLine(string format, params object[] args)
@@ -23,62 +28,70 @@ namespace Stubble.Core.Performance
             }
         }
 
-        public static Dictionary<string, Dictionary<int, List<TimeSpan>>> Durations = new Dictionary<string, Dictionary<int, List<TimeSpan>>>();
-
-        public static Dictionary<int, Dictionary<string, List<TimeSpan>>> DurationByIncrement = new Dictionary<int, Dictionary<string, List<TimeSpan>>>();
-
         readonly static PerformanceTest PerformanceTest = new PerformanceTest(new NothingWriter());
-        readonly static Dictionary<string, Func<int, TimeSpan>> TestFunctions = new Dictionary<string, Func<int, TimeSpan>>
+
+        public static readonly List<OutputData> Outputs = new List<OutputData>
         {
-            { "Stubble (Without Cache)", PerformanceTest.Simple_Template_Test },
-            { "Stubble (With Cache)", PerformanceTest.Simple_Template_Test_With_Cache },
-            { "Nustache", PerformanceTest.Simple_Template_Test_Nustache }
+            new OutputData("Stubble (Without Cache)", PerformanceTest.Simple_Template_Test),
+            new OutputData("Stubble (With Cache)", PerformanceTest.Simple_Template_Test_With_Cache),
+            new OutputData("Nustache", PerformanceTest.Simple_Template_Test_Nustache),
         };
 
         public static void Main(string[] args)
         {
-            const int iterations = 10;
-
-            var increments = new[] { 100, 1000, 10000, 100000, 1000000 };
-            
-            for (var i = 1; i <= iterations; i++)
+            for (var i = 1; i <= Iterations; i++)
             {
                 Console.WriteLine("Iteration {0}", i);
 
-                foreach (var increment in increments)
+                foreach (var increment in Increments)
                 {
-                    if (!DurationByIncrement.ContainsKey(increment))
-                        DurationByIncrement.Add(increment, new Dictionary<string, List<TimeSpan>>());
-                    var item = DurationByIncrement[increment];
-
-                    foreach (var testFunction in TestFunctions)
-                    {
-                        Console.WriteLine("****** {0} ******", testFunction.Key.ToUpper());
-                        if (!item.ContainsKey(testFunction.Key))
-                            item.Add(testFunction.Key, new List<TimeSpan>());
-
-                        var timeElapsed = testFunction.Value(increment);
-                        item[testFunction.Key].Add(timeElapsed);
-                        Console.WriteLine("iteration {0:N0}: {1} ({2})", increment, timeElapsed.Humanize(), timeElapsed);
-                    }
+                    RunIncrement(increment);
                     Console.WriteLine();
                 }
             }
 
             Console.WriteLine("Done");
+            WriteJson();
             WriteOutputCsv();
             Console.ReadLine();
+        }
+
+        public static void RunIncrement(int increment)
+        {
+            foreach (var output in Outputs)
+            {
+                Console.WriteLine("****** {0} ******", output.Name.ToUpper());
+                var timeElapsed = output.Test(increment);
+                output.AddIncrement(increment, timeElapsed);
+                Console.WriteLine("iteration {0:N0}: {1} ({2})", increment, timeElapsed.Humanize(), timeElapsed);
+            }
+        }
+
+        public static void WriteJson()
+        {
+            var serializer = new JsonSerializer {Formatting = Formatting.Indented};
+            using (var sw = new StreamWriter(string.Format("./results-{0:dd-MM-yyyy}.json", DateTime.UtcNow)))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                serializer.Serialize(writer, Outputs);
+            }
         }
 
         public static void WriteOutputCsv()
         {
             using (var writer = new StreamWriter("./results.csv"))
             {
-                writer.WriteLine(string.Join(",", "Increment", string.Join(",", TestFunctions.Keys)));
-                foreach (var item in DurationByIncrement)
+                writer.WriteLine(string.Join(",", "Increment", string.Join(",", Outputs.Select(x => x.Name))));
+                foreach (var increment in Increments)
                 {
-                    var res = item.Value.Select(x => x.Value.Average(y => y.TotalMilliseconds).ToString(CultureInfo.InvariantCulture));
-                    writer.WriteLine(string.Join(",", item.Key.ToString(), string.Join(",", res)));
+                    var incrementVal = increment;
+                    writer.WriteLine(string.Join(",", incrementVal, string.Join(",", Outputs.Select(x => x.IncrementResultsAverage[incrementVal].ToString(CultureInfo.InvariantCulture)))));
+                }
+                writer.WriteLine(new string(',', Outputs.Count + 1));
+                foreach (var increment in Increments)
+                {
+                    var incrementVal = increment;
+                    writer.WriteLine(string.Join(",", incrementVal, string.Join(",", Outputs.Select(x => x.RelativeValues[incrementVal].ToString(CultureInfo.InvariantCulture)))));
                 }
             }
         }
