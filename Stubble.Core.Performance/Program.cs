@@ -41,7 +41,7 @@ namespace Stubble.Core.Performance
         {
             for (var i = 1; i <= Iterations; i++)
             {
-                Console.WriteLine("Iteration {0}", i);
+                ConsoleExtensions.WriteLineGreen("Iteration {0}", i);
 
                 foreach (var increment in Increments)
                 {
@@ -94,6 +94,16 @@ namespace Stubble.Core.Performance
                     writer.WriteLine(string.Join(",", incrementVal, string.Join(",", Outputs.Select(x => x.RelativeValues[incrementVal].ToString(CultureInfo.InvariantCulture)))));
                 }
             }
+        }
+    }
+
+    public static class ConsoleExtensions
+    {
+        public static void WriteLineGreen(string line, params object[] args)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(line, args);
+            Console.ResetColor();
         }
     }
 }
