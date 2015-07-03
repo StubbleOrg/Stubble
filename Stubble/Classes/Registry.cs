@@ -36,13 +36,24 @@ namespace Stubble.Core.Classes
                 typeof (object), (value, key) =>
                 {
                     var type = value.GetType();
-                    var propertyInfo = type.GetProperty(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-                    if (propertyInfo != null) return propertyInfo.GetValue(value, null);
-                    var fieldInfo = type.GetField(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-                    if (fieldInfo != null) return fieldInfo.GetValue(value);
-                    var methodInfo = type.GetMethod(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-                    if (methodInfo != null && methodInfo.GetParameters().Length == 0) return methodInfo.Invoke(value, null);
-                    return null;
+                    var memberArr = type.GetMember(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+                    if (memberArr.Length != 1) return null;
+
+                    var member = memberArr[0];
+                    switch (member.MemberType)
+                    {
+                        case MemberTypes.Field:
+                            return ((FieldInfo)member).GetValue(value);
+                        case MemberTypes.Property:
+                            return ((PropertyInfo)member).GetValue(value, null);
+                        case MemberTypes.Method:
+                            var methodMember = (MethodInfo) member;
+                            return methodMember.GetParameters().Length == 0
+                                ? methodMember.Invoke(value, null)
+                                : null;
+                        default:
+                            return null;
+                    }
                 }
             }
         };
