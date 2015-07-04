@@ -24,13 +24,6 @@ namespace Stubble.Core.Performance
             StronglyTypedTestClass.StaticProperty = 1;
         }
 
-        [Theory]
-        [InlineData(10)]
-        [InlineData(100)]
-        [InlineData(1000)]
-        [InlineData(10000)]
-        [InlineData(100000)]
-        [InlineData(1000000)]
         public TimeSpan Simple_Template_Test(int iterations)
         {
             return Simple_Template_Test(iterations, false);
@@ -57,24 +50,13 @@ namespace Stubble.Core.Performance
             return stopwatch.Elapsed;
         }
 
-        [InlineData(10)]
-        [InlineData(100)]
-        [InlineData(1000)]
-        [InlineData(10000)]
-        [InlineData(100000)]
-        [InlineData(1000000)]
+
         public TimeSpan Simple_Template_Test_With_Cache(int iterations)
         {
             return Simple_Template_Test(iterations, true);
         }
 
-        [Theory]
-        [InlineData(10)]
-        [InlineData(100)]
-        [InlineData(1000)]
-        [InlineData(10000)]
-        [InlineData(100000)]
-        [InlineData(1000000)]
+
         public TimeSpan Simple_Template_Test_Nustache(int iterations)
         {
             var stopwatch = Stopwatch.StartNew();
