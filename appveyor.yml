@@ -15,12 +15,9 @@ install:
 - ps: >-
     $version = Get-Content ./Stubble/version.json -Raw | ConvertFrom-Json;
 
-
     $assembly_version = "$($version.major).$($version.minor).$($version.patch).$($env:APPVEYOR_BUILD_NUMBER)";
 
-
     $env:assembly_version=$assembly_version;
-
 
     if($version.packagePostfix) {
         $assembly_informational_version = $assembly_version + "-" + $version.packagePostfix;
@@ -40,7 +37,7 @@ test_script:
     $Xunit_Location = Get-ChildItem ($Package_Locations + "\xunit.runner.console*\tools") | Select-Object -First 1 -ExpandProperty FullName;
     $CoverallsNet_Location = Get-ChildItem ($Package_Locations + "\coveralls.io*\tools") | Select-Object -First 1 -ExpandProperty FullName;
 
-    iex ($OpenCover_Location + '" -register:user -target:"' + $Xunit_Location + '\xunit.console.exe" "-targetargs:"".\Stubble.Core.Tests\bin\$env:CONFIGURATION\Stubble.Core.Tests.dll"" /noshadow /appveyor" -filter:"+[Stubble.*]*" -skipautoprops -output:coverage.xml)
-    iex ($CoverallsNet_Location + '\coveralls.net.exe --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID');
+    iex "$OpenCover_Location\OpenCover.Console.exe -register:user -target:""$Xunit_Location\xunit.console.exe"" -targetargs:"".\Stubble.Core.Tests\bin\$env:CONFIGURATION\Stubble.Core.Tests.dll"" /noshadow /appveyor -filter:""+[Stubble.*]*"" -skipautoprops -output:coverage.xml"
+    iex "$CoverallsNet_Location\coveralls.net.exe --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID";  
 artifacts:
 - path: Stubble\bin\$(Configuration)\Stubble.Core.dll
