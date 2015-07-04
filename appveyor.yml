@@ -38,7 +38,7 @@ test_script:
     $CoverallsNet_Location = Get-ChildItem ($Package_Locations + "\coveralls.net*") | Select-Object -First 1 -ExpandProperty FullName;
 
     $openCoverExe = "$OpenCover_Location\OpenCover.Console.exe -register:user -target:""$Xunit_Location\xunit.console.exe"" -targetargs:"".\Stubble.Core.Tests\bin\$env:CONFIGURATION\Stubble.Core.Tests.dll"" /noshadow /appveyor -filter:""+[Stubble.*]*"" -skipautoprops -output:coverage.xml";
-    $coverallsExe = "$CoverallsNet_Location\csmacnz.Coveralls.exe --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID"
+    $coverallsExe = "$CoverallsNet_Location\csmacnz.Coveralls.exe --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage ""$env:APPVEYOR_REPO_COMMIT_MESSAGE"" --jobId $env:APPVEYOR_JOB_ID"
 
     Write-Host $openCoverExe;
     Write-Host $coverallsExe;
