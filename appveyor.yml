@@ -1,0 +1,46 @@
+version: 1.0.{build}
+configuration: Release
+platform: Any CPU
+environment:
+  COVERALLS_REPO_TOKEN:
+    secure: v1m3Krz+KWHSzoYRL2qt6BklzozgVlT5HTiHYigBLR0snXEPE9thURqSLBTJQiaT
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: $(assembly_version)
+  assembly_file_version: $(assembly_version)
+  assembly_informational_version: $(assembly_informational_version)
+install:
+- cmd: git submodule update --init --recursive
+- ps: >-
+    $version = Get-Content ./Stubble/version.json -Raw | ConvertFrom-Json;
+
+
+    $assembly_version = "$($version.major).$($version.minor).$($version.patch).$($env:APPVEYOR_BUILD_NUMBER)";
+
+
+    $env:assembly_version=$assembly_version;
+
+
+    if($version.packagePostfix) {
+        $assembly_informational_version = $assembly_version + "-" + $version.packagePostfix;
+        $env:assembly_informational_version=$assembly_informational_version;
+    }
+before_build:
+- nuget restore
+build:
+  project: Stubble.sln
+  publish_nuget: true
+  publish_nuget_symbols: true
+  verbosity: minimal
+test_script:
+- ps: >-
+    $Package_Locations = ".\packages";
+    $OpenCover_Location = Get-ChildItem ($Package_Locations + "\OpenCover*") | Select-Object -First 1 -ExpandProperty FullName;
+    $Xunit_Location = Get-ChildItem ($Package_Locations + "\xunit.runner.console*\tools") | Select-Object -First 1 -ExpandProperty FullName;
+    $CoverallsNet_Location = Get-ChildItem ($Package_Locations + "\coveralls.io*\tools") | Select-Object -First 1 -ExpandProperty FullName;
+
+    iex ($OpenCover_Location + '" -register:user -target:"' + $Xunit_Location + '\xunit.console.exe" "-targetargs:"".\Stubble.Core.Tests\bin\$env:CONFIGURATION\Stubble.Core.Tests.dll"" /noshadow /appveyor" -filter:"+[Stubble.*]*" -skipautoprops -output:coverage.xml)
+    iex ($CoverallsNet_Location + '\coveralls.net.exe --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID');
+artifacts:
+- path: Stubble\bin\$(Configuration)\Stubble.Core.dll
