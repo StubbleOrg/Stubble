@@ -36,7 +36,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Stubble.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Stubble.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <DelaySign>false</DelaySign>
@@ -78,7 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Stubble.Core.nuspec" />
-    <None Include="Stubble.pfx" />
+    <None Include="Stubble.snk" />
     <None Include="version.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

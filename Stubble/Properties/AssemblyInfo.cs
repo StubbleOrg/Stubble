@@ -14,11 +14,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: InternalsVisibleTo("Stubble.Core.Tests,PublicKey=" +
-"002400000480000094000000060200000024000052534131000400000100010019009f832e2170" +
-"5580ec3a2b12212159825355989853ceb857774e50f4d066572e17a55f050c06c91e458cd1c19a" +
-"62545fce5eeae15ac65ab9a734997f9c60632b13cc663c4e318ac01de16a2d761ae2eedbf04bc5" +
-"792ae156e6a698197bb3b7e0270fc43fd48a7e8925344ac92ef314aa91b67f55f38b74a27096da" +
-"a723e1d3")]
+"00240000048000009400000006020000002400005253413100040000010001004704c42e715bb3" +
+"70ce2b5662560a34210a9bb2f25ca48687d7a35879a2a96472c80edb71fe8b4cc05cf1f5a0397c" +
+"5e4dbd40022d41c5e2f73780bd398adde68fe355148b9d370376eb908ccb5e7db4383b1dedc039" +
+"b58d8f7066e6b7ca8d5bf8b26f326f5e589ce1658ae9e9b581b483a7989fb6f3ecd37a9132c334" +
+"8c90b8b2")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
