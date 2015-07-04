@@ -1,7 +1,7 @@
 # Stubble
-### Trimmed down {{mustache}} templates in .Net
+### Trimmed down {{mustache}} templates in .NET
 
-Stubble is implementation of the [Mustache](http://mustache.github.com/) template system in C# (but usable from any .Net language).
+Stubble is implementation of the [Mustache](http://mustache.github.com/) template system in C# (but usable from any .NET language).
 
 For a language-agnostic overview of mustache's template syntax, see the `mustache(5)` [manpage](http://mustache.github.com/mustache.5.html).
 
@@ -13,6 +13,11 @@ It is licenced under the MIT License which can be found [here.](/licence.md)
 Stubble is designed to be a spec complient mustache renderer with only the bare essentials, *you could say the rest has been trimmed down!*
 
 Stubble provides no methods of finding your templates, no complicated logic for getting values from your objects or special types, no non-spec tags for rendering or logic and only the nessaries to make it a simple and fast parser and renderer.
+
+### Okay I'm convinced how do I get it and use it?
+At the moment there is no nuget feed for this but I plan to publish it to nuget.org so watch this space for that, until then feel free to download the source.
+
+To use stubble I'd recommend reading the how to use guide [here.](https://github.com/Romanx/Stubble/wiki)
 
 ### Performance
 This is only the release and these are preliminary simple tests against the closest comparable measure which is [Nustache](https://github.com/jdiamond/Nustache/).
@@ -27,12 +32,12 @@ Stubble caches its parsed templates for speed and so one of the tests is with th
 
 The testing was done over 10 iterations, over a set of increments (100 | 1,000 | 10,000 | 100,000 | 1,000,000) for each library. The results are stored in TotalMiliseconds and then averaged over all the iterations for a final result for each library for each increment.
 
-![image](https://cloud.githubusercontent.com/assets/3742408/8418260/df51c708-1ea9-11e5-8695-f890d0a3ab32.png)
-![image](https://cloud.githubusercontent.com/assets/3742408/8418282/017bfee8-1eaa-11e5-88d7-b2bb06b133db.png)
+![image](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/pubchart?oid=1144583373&format=image)
+![image](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/pubchart?oid=1298111014&format=image)
 
 *Note:* that the bars in each group of each graph are scaled so that the fastest library is 100.
 
-I will upload the exact timings for these graphs to google docs which will be available [here.](./)
+I will upload the exact timings for these graphs to google docs which will be available [here.](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/edit?usp=sharing)
 
 ### Extensibility
 Since the goal of Stubble is to provide a trimmed down bare-bones implementation the basic library will not contain any extensions to the Mustache spec and only simple ValueGetting functionality.
