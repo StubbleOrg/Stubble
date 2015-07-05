@@ -1,5 +1,7 @@
 # Stubble
 ### Trimmed down {{mustache}} templates in .NET
+[![Build Status](https://img.shields.io/appveyor/ci/Romanx/Stubble.svg)](https://ci.appveyor.com/project/Romanx/stubble/)
+[![Coverage Status](https://img.shields.io/coveralls/Romanx/Stubble.svg)](https://coveralls.io/r/Romanx/Stubble)
 
 Stubble is implementation of the [Mustache](http://mustache.github.com/) template system in C# (but usable from any .NET language).
 
