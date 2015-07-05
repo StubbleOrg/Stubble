@@ -5,11 +5,6 @@ namespace Stubble.Core.Tests.Helpers
 {
     public static class JsonHelper
     {
-        public static object Deserialize(string json)
-        {
-            return ToObject(JToken.Parse(json));
-        }
-
         internal static object ToObject(JToken token)
         {
             switch (token.Type)
