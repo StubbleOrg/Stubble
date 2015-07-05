@@ -1,7 +1,9 @@
 # Stubble
 ### Trimmed down {{mustache}} templates in .NET
-[![Build Status](https://img.shields.io/appveyor/ci/Romanx/Stubble.svg)](https://ci.appveyor.com/project/Romanx/stubble/)
-[![Coverage Status](https://img.shields.io/coveralls/Romanx/Stubble.svg)](https://coveralls.io/r/Romanx/Stubble)
+[![Build Status](https://img.shields.io/appveyor/ci/Romanx/Stubble.svg?style=flat-square)](https://ci.appveyor.com/project/Romanx/stubble/)
+[![Coverage Status](https://img.shields.io/coveralls/Romanx/Stubble.svg?style=flat-square)](https://coveralls.io/r/Romanx/Stubble)
+[![Prerelease Build Status](https://img.shields.io/nuget/vpre/Stubble.Core.svg?style=flat-square&label=nuget%20pre)](https://www.nuget.org/packages/Stubble.Core/)
+[![Build Status](https://img.shields.io/nuget/v/Stubble.Core.svg?style=flat-square)](https://www.nuget.org/packages/Stubble.Core/)
 
 Stubble is implementation of the [Mustache](http://mustache.github.com/) template system in C# (but usable from any .NET language).
 
@@ -17,7 +19,7 @@ Stubble is designed to be a spec complient mustache renderer with only the bare 
 Stubble provides no methods of finding your templates, no complicated logic for getting values from your objects or special types, no non-spec tags for rendering or logic and only the nessaries to make it a simple and fast parser and renderer.
 
 ### Okay I'm convinced how do I get it and use it?
-At the moment there is no nuget feed for this but I plan to publish it to nuget.org so watch this space for that, until then feel free to download the source.
+At the moment stubble is in alpha but please feel free to graph it from the pre-release feed on nuget.org by clicking on the badge above! Another option is to download the source and build it yourself.
 
 To use stubble I'd recommend reading the how to use guide [here.](https://github.com/Romanx/Stubble/wiki)
 
