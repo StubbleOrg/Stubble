@@ -18,6 +18,7 @@ install:
     $assembly_version = "$($version.major).$($version.minor).$($version.patch).$($env:APPVEYOR_BUILD_NUMBER)";
 
     $env:assembly_version=$assembly_version;
+    $env:assembly_informational_version=$assembly_version;
 
     Update-AppveyorBuild -Version $assembly_version;
 
