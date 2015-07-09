@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using Stubble.Core.Classes.Tokens;
 using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes
@@ -11,6 +12,7 @@ namespace Stubble.Core.Classes
     public sealed class Registry
     {
         public IReadOnlyDictionary<Type, Func<object, string, object>> ValueGetters { get; private set; }
+        public IReadOnlyDictionary<string, Func<string, Tags, IRenderableToken>> TokenGetters { get; private set; }
 
         #region Default Value Getters
         private static readonly IDictionary<Type, Func<object, string, object>> DefaultValueGetters = new Dictionary
@@ -59,6 +61,19 @@ namespace Stubble.Core.Classes
         };
         #endregion
 
+        #region Default Token Getters
+        private static readonly IDictionary<string, Func<string, Tags, IRenderableToken>> DefaultTokenGetters = new Dictionary
+            <string, Func<string, Tags, IRenderableToken>>
+        {
+            { "#", (s, tags) => new SectionToken() { TokenType = s, Tags = tags } },
+            { "^", (s, tags) => new InvertedToken() { TokenType = s } },
+            { ">", (s, tags) => new PartialToken() { TokenType = s } },
+            { "&", (s, tags) => new UnescapedValueToken() { TokenType = s } },
+            { "name", (s, tags) => new EscapedValueToken() { TokenType = s } },
+            { "text", (s, tags) => new RawValueToken() { TokenType = s } }
+        };
+        #endregion
+
         public Registry()
         {
             ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(DefaultValueGetters);
@@ -78,6 +93,13 @@ namespace Stubble.Core.Classes
                 .ToDictionary(item => item.Key, item => item.Value);
 
             ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(mergedGetters);
+        }
+
+        private void SetTokenGetters(IDictionary<string, Func<string, Tags, IRenderableToken>> tokenGetters)
+        {
+            var mergedGetters = DefaultTokenGetters.MergeLeft(tokenGetters);
+
+            TokenGetters = new ReadOnlyDictionary<string, Func<string, Tags, IRenderableToken>>(mergedGetters);
         }
     }
 }
