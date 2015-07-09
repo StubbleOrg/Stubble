@@ -6,8 +6,8 @@ namespace Stubble.Core
 {
     public sealed class Stubble : IStubble
     {
-        public Writer Writer;
-        private readonly Registry _registry;
+        internal Writer Writer;
+        internal readonly Registry Registry;
 
         public Stubble() : this(new Registry())
         {
@@ -15,8 +15,8 @@ namespace Stubble.Core
 
         internal Stubble(Registry registry)
         {
-            _registry = registry;
-            Writer = new Writer { ValueRegistry = _registry.ValueGetters };
+            Registry = registry;
+            Writer = new Writer { ValueRegistry = Registry.ValueGetters };
         }
 
         /// <summary>
