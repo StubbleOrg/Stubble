@@ -107,7 +107,12 @@ namespace Stubble.Core
                         {
                             nonSpace = true;
                         }
-                        tokens.Add(new RawValueToken() { TokenType = "text", Value = c.ToString(), Start = start, End = start + 1 });
+
+                        var textToken = GetCorrectTypedToken("text", tags);
+                        textToken.Value = c.ToString();
+                        textToken.Start = start;
+                        textToken.End = start + 1;
+                        tokens.Add(textToken);
                         start += 1;
 
                         if (c != '\n') continue;
