@@ -16,7 +16,7 @@ namespace Stubble.Core
         internal Stubble(Registry registry)
         {
             Registry = registry;
-            Writer = new Writer { ValueRegistry = Registry.ValueGetters };
+            Writer = new Writer(Registry);
         }
 
         /// <summary>

@@ -9,7 +9,6 @@ namespace Stubble.Core.Tests.Fixtures
         public WriterTestFixture()
         {
             Writer = new Writer();
-            Writer.ValueRegistry = new Registry().ValueGetters;
         }
     }
 }

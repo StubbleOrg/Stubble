@@ -10,18 +10,22 @@ namespace Stubble.Core
     {
         internal LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
         internal Parser Parser;
-        internal IReadOnlyDictionary<Type, Func<object, string, object>> ValueRegistry { get; set; }
+        internal readonly Registry Registry;
 
-        public Writer(int cacheLimit)
+        public Writer(int cacheLimit, Registry registry)
         {
+            Registry = registry;
             Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>(cacheLimit);
-            Parser = new Parser();
+            Parser = new Parser(Registry);
+        }
+
+        public Writer(Registry registry)
+            : this(15, registry)
+        {
         }
 
         public Writer()
-            : this(15)
-        {
-        }
+            : this(15, new Registry()) { }
 
         public IList<ParserOutput> Parse(string template)
         {
@@ -53,7 +57,7 @@ namespace Stubble.Core
 
         public string Render(string template, object view, IDictionary<string, string> partials)
         {
-            return Render(template, new Context(view, ValueRegistry), partials, null);
+            return Render(template, new Context(view, Registry.ValueGetters), partials, null);
         }
 
         public string Render(string template, Context context, IDictionary<string, string> partials)
