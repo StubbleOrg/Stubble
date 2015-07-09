@@ -8,8 +8,8 @@ namespace Stubble.Core.Interfaces
     {
         IStubbleBuilder AddValueGetter(KeyValuePair<Type, Func<object, string, object>> valueGetter);
         IStubbleBuilder AddValueGetter(Type type, Func<object, string, object> valueGetter);
-        IStubbleBuilder AddTokenGetter(string tokenType, Func<string, Tags, IRenderableToken> tokenGetter);
-        IStubbleBuilder AddTokenGetter(KeyValuePair<string, Func<string, Tags, IRenderableToken>> tokenGetter);
+        IStubbleBuilder AddTokenGetter(string tokenType, Func<string, Tags, ParserOutput> tokenGetter);
+        IStubbleBuilder AddTokenGetter(KeyValuePair<string, Func<string, Tags, ParserOutput>> tokenGetter);
         Stubble Build();
     }
 }

@@ -10,8 +10,8 @@ namespace Stubble.Core
         internal readonly IDictionary<Type, Func<object, string, object>> ValueGetters =
             new Dictionary<Type, Func<object, string, object>>();
 
-        internal readonly IDictionary<string, Func<string, Tags, IRenderableToken>> TokenGetters = 
-            new Dictionary<string, Func<string, Tags, IRenderableToken>>();
+        internal readonly IDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters =
+            new Dictionary<string, Func<string, Tags, ParserOutput>>();
 
         public Stubble Build()
         {
@@ -30,12 +30,12 @@ namespace Stubble.Core
             return AddValueGetter(new KeyValuePair<Type, Func<object, string, object>>(type, valueGetter));
         }
 
-        public IStubbleBuilder AddTokenGetter(string tokenType, Func<string, Tags, IRenderableToken> tokenGetter)
+        public IStubbleBuilder AddTokenGetter(string tokenType, Func<string, Tags, ParserOutput> tokenGetter)
         {
-            return AddTokenGetter(new KeyValuePair<string, Func<string, Tags, IRenderableToken>>(tokenType, tokenGetter));
+            return AddTokenGetter(new KeyValuePair<string, Func<string, Tags, ParserOutput>>(tokenType, tokenGetter));
         }
 
-        public IStubbleBuilder AddTokenGetter(KeyValuePair<string, Func<string, Tags, IRenderableToken>> tokenGetter)
+        public IStubbleBuilder AddTokenGetter(KeyValuePair<string, Func<string, Tags, ParserOutput>> tokenGetter)
         {
             TokenGetters.Add(tokenGetter);
             return this;
