@@ -92,9 +92,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="Stubble.Tests.snk" />
-    <None Include="tests.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Stubble\Stubble.Core.csproj">
