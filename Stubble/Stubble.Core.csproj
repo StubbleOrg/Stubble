@@ -67,6 +67,8 @@
     <Compile Include="Context.cs" />
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
+    <Compile Include="Classes\Tokens\Interface\INonSpace.cs" />
+    <Compile Include="Classes\Tokens\Interface\ISection.cs" />
     <Compile Include="Interfaces\IStubbleBuilder.cs" />
     <Compile Include="Interfaces\IStubble.cs" />
     <Compile Include="Parser.cs" />

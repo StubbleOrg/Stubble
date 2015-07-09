@@ -3,7 +3,7 @@ using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes.Tokens
 {
-    internal class InvertedToken : InterpolationToken, IRenderableToken
+    internal class InvertedToken : InterpolationToken, IRenderableToken, ISection
     {
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {

@@ -6,7 +6,7 @@ using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes.Tokens
 {
-    internal class SectionToken : ParserOutput, IRenderableToken
+    internal class SectionToken : ParserOutput, IRenderableToken, ISection
     {
         public Tags Tags { get; set; }
 
