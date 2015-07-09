@@ -79,9 +79,10 @@ namespace Stubble.Core.Classes
             ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(DefaultValueGetters);
         }
 
-        public Registry(IDictionary<Type, Func<object, string, object>> valueGetters)
+        public Registry(IDictionary<Type, Func<object, string, object>> valueGetters, IDictionary<string, Func<string, Tags, IRenderableToken>> tokenGetters)
         {
             SetValueGetters(valueGetters);
+            SetTokenGetters(tokenGetters);
         }
 
         private void SetValueGetters(IDictionary<Type, Func<object, string, object>> valueGetters)
