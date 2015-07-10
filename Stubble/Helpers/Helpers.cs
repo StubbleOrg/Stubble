@@ -9,34 +9,6 @@ namespace Stubble.Core.Helpers
 {
     internal static class ValueHelpers
     {
-        internal static bool IsTruthy(object value)
-        {
-            if (value == null)
-            {
-                return false;
-            }
-
-            bool boolValue;
-            var parseResult = bool.TryParse(value.ToString(), out boolValue) ? (bool?)boolValue : null;
-            
-            if (parseResult.HasValue || value is bool)
-            {
-                return parseResult ?? (bool)value;
-            }
-
-            if (value is string)
-            {
-                return !string.IsNullOrEmpty((string)value);
-            }
-
-            if (value is IEnumerable)
-            {
-                return ((IEnumerable)value).GetEnumerator().MoveNext();
-            }
-
-            return true;
-        }
-
         /// <summary>
         /// A way to merge IDictionaries together with the right most keys overriding the left keys.
         /// Found here: http://stackoverflow.com/questions/294138/merging-dictionaries-in-c-sharp

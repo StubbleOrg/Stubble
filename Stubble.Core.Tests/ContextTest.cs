@@ -172,6 +172,13 @@ namespace Stubble.Core.Tests
             Assert.Equal(2, instanceMethodWithoutArgs);
             Assert.Null(parentInstanceMethodWithArgs);
         }
+
+        [Fact]
+        public void It_Is_Truthy_For_Strings()
+        {
+            Assert.True(Fixture.Context.IsTruthyValue("Yes"));
+            Assert.False(Fixture.Context.IsTruthyValue(""));
+        }
     }
 
     [Collection("ChildContextCollection")]

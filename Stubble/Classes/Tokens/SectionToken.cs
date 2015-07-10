@@ -15,7 +15,7 @@ namespace Stubble.Core.Classes.Tokens
             var buffer = new StringBuilder();
             var value = context.Lookup(Value);
 
-            if (!ValueHelpers.IsTruthy(value)) return null;
+            if (!context.IsTruthyValue(value)) return null;
 
             if (value is IEnumerable && !(value is IDictionary))
             {

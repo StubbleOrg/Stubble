@@ -104,5 +104,34 @@ namespace Stubble.Core
             }
             return null;
         }
+
+        public bool IsTruthyValue(object value)
+        {
+            if (value == null)
+            {
+                return false;
+            }
+
+            bool boolValue;
+            var parseResult = bool.TryParse(value.ToString(), out boolValue) ? (bool?)boolValue : null;
+            if (parseResult.HasValue || value is bool)
+            {
+                return parseResult ?? (bool)value;
+            }
+
+            var strValue = value as string;
+            if (strValue != null)
+            {
+                return !string.IsNullOrEmpty(strValue);
+            }
+
+            var enumerableValue = value as IEnumerable;
+            if (enumerableValue != null)
+            {
+                return enumerableValue.GetEnumerator().MoveNext();
+            }
+
+            return true;
+        }
     }
 }
