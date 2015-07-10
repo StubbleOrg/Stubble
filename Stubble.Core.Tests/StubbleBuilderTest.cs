@@ -30,6 +30,25 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
+        public void It_Can_Add_Truthy_Checks()
+        {
+            var builder = (StubbleBuilder) new StubbleBuilder()
+                .AddTruthyCheck((val) =>
+                {
+                    if (val is string)
+                    {
+                        return val.Equals("Foo");
+                    }
+                    return null;
+                });
+
+            Assert.Equal(1, builder.TruthyChecks.Count);
+            Assert.True(builder.TruthyChecks[0]("Foo"));
+            Assert.False(builder.TruthyChecks[0]("Bar"));
+            Assert.Null(builder.TruthyChecks[0](null));
+        }
+
+        [Fact]
         public void It_Can_Build_Stubble_Instance()
         {
             var stubble = new StubbleBuilder().Build();

@@ -112,6 +112,12 @@ namespace Stubble.Core
                 return false;
             }
 
+            foreach (var func in _registry.TruthyChecks)
+            {
+                var funcResult = func(value);
+                if (funcResult.HasValue) return funcResult.Value;
+            }
+
             bool boolValue;
             var parseResult = bool.TryParse(value.ToString(), out boolValue) ? (bool?)boolValue : null;
             if (parseResult.HasValue || value is bool)
@@ -129,12 +135,6 @@ namespace Stubble.Core
             if (enumerableValue != null)
             {
                 return enumerableValue.GetEnumerator().MoveNext();
-            }
-
-            foreach (var func in _registry.TruthyChecks)
-            {
-                var funcResult = func(value);
-                if (funcResult.HasValue) return funcResult.Value;
             }
 
             return true;

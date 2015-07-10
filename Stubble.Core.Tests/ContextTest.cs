@@ -179,6 +179,44 @@ namespace Stubble.Core.Tests
             Assert.True(Fixture.Context.IsTruthyValue("Yes"));
             Assert.False(Fixture.Context.IsTruthyValue(""));
         }
+
+        [Fact]
+        public void It_Can_Use_Truthy_Checks()
+        {
+            var registry = new Registry(
+                new Dictionary<Type, Func<object, string, object>>(),
+                new Dictionary<string, Func<string, Tags, ParserOutput>>(),
+                new List<Func<object, bool?>>
+                {
+                    (val) =>
+                    {
+                        if (val is string)
+                        {
+                            return val.Equals("Foo");
+                        }
+                        return null;
+                    },
+                    (val) =>
+                    {
+                        if (val is uint)
+                        {
+                            return (uint)val > 0;
+                        }
+                        return null;
+                    }
+                });
+
+            var context = new Context(new StronglyTypedChildTestClass()
+            {
+                Field = 1,
+                Property = 1,
+                ChildField = 2,
+                ChildProperty = 2
+            }, registry);
+
+            Assert.True(context.IsTruthyValue("Foo"));
+            Assert.True(context.IsTruthyValue((uint)5));
+        }
     }
 
     [Collection("ChildContextCollection")]
