@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Stubble.Core.Classes.Tokens
 {
-    internal abstract class InterpolationToken : ParserOutput
+    public abstract class InterpolationToken : ParserOutput
     {
-        internal object InterpolateLambdaValueIfPossible(object value, Writer writer, Context context, IDictionary<string, string> partials)
+        public object InterpolateLambdaValueIfPossible(object value, Writer writer, Context context, IDictionary<string, string> partials)
         {
             var functionValueDynamic = value as Func<dynamic, object>;
             var functionValue = value as Func<object>;
