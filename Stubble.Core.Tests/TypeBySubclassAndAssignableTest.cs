@@ -77,5 +77,14 @@ namespace Stubble.Core.Tests
 
             Assert.True(jtokenIndex < enumerableIndex);
         }
+
+        [Fact]
+        public void It_Should_Perform_Standard_Equality()
+        {
+            var comparer = TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable();
+            Assert.Equal(0, comparer.Compare(null, null));
+            Assert.Equal(1, comparer.Compare(null, typeof(string)));
+            Assert.Equal(-1, comparer.Compare(typeof(string), null));
+        }
     }
 }
