@@ -131,6 +131,12 @@ namespace Stubble.Core
                 return enumerableValue.GetEnumerator().MoveNext();
             }
 
+            foreach (var func in _registry.TruthyChecks)
+            {
+                var funcResult = func(value);
+                if (funcResult.HasValue) return funcResult.Value;
+            }
+
             return true;
         }
     }
