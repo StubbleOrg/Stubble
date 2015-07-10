@@ -23,7 +23,7 @@ namespace Stubble.Core.Tests.Fixtures
                 {
                     B = "b"
                 }
-            }, new Registry().ValueGetters);
+            }, new Registry());
         }
     }
 }
