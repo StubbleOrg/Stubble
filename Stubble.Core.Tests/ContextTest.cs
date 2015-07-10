@@ -216,6 +216,7 @@ namespace Stubble.Core.Tests
 
             Assert.True(context.IsTruthyValue("Foo"));
             Assert.True(context.IsTruthyValue((uint)5));
+            Assert.True(context.IsTruthyValue(true));
         }
     }
 
