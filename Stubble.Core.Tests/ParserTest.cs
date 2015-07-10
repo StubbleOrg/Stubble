@@ -67,6 +67,13 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
+        public void It_Errors_When_You_Close_The_Wrong_Section()
+        {
+            var ex = Assert.Throws<Exception>(delegate { Parser.ParseTemplate("{{#Section}}Herp De Derp{{/wrongSection}}"); });
+            Assert.Equal("Unclosed Section 'Section' at 24", ex.Message);
+        }
+
+        [Fact]
         public void It_Only_Cache_Four_Regex_Tags()
         {
             Parser.RegexCacheSize = 4;
