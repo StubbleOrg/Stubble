@@ -16,7 +16,8 @@ namespace Stubble.Core.Classes
         private static readonly string[] ReservedTokens = { "name", "text" }; //Name and text are used internally for tokens so must exist
 
         public IReadOnlyDictionary<Type, Func<object, string, object>> ValueGetters { get; private set; }
-        public IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters { get; private set; }
+        //public IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters { get; private set; }
+        public TokenGetter[] TokenGetters { get; private set; }
         public IReadOnlyList<Func<object, bool?>> TruthyChecks { get; private set; }
         public Regex TokenMatchRegex { get; private set; }
 
@@ -82,11 +83,11 @@ namespace Stubble.Core.Classes
         public Registry()
         {
             ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(DefaultValueGetters);
-            TokenGetters = new ReadOnlyDictionary<string, Func<string, Tags, ParserOutput>>(DefaultTokenGetters);
+            TokenGetters = DefaultTokenGetters.Select(x => new TokenGetter {Getter = x.Value, TokenType = x.Key}).ToArray();
             TruthyChecks = new List<Func<object, bool?>>();
             TokenMatchRegex = new Regex(
-                string.Join("|", TokenGetters.Keys.Where(s => !ReservedTokens.Contains(s))
-                                        .Select(Parser.EscapeRegexExpression)
+                string.Join("|", TokenGetters.Where(s => !ReservedTokens.Contains(s.TokenType))
+                                        .Select(s => Parser.EscapeRegexExpression(s.TokenType))
                                         .Concat(DefaultTokenTypes)));
         }
 
@@ -112,7 +113,7 @@ namespace Stubble.Core.Classes
         {
             var mergedGetters = DefaultTokenGetters.MergeLeft(tokenGetters);
 
-            TokenGetters = new ReadOnlyDictionary<string, Func<string, Tags, ParserOutput>>(mergedGetters);
+            TokenGetters = mergedGetters.Select(x => new TokenGetter { Getter = x.Value, TokenType = x.Key }).ToArray();
         }
     }
 }
