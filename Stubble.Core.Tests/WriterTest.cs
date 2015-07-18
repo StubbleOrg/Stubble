@@ -41,5 +41,14 @@ namespace Stubble.Core.Tests
             var output = Writer.Render("{{foo}}", new { foo = "Bar" }, null);
             Assert.Equal("Bar", output);
         }
+
+        [Fact]
+        public void You_Can_Access_Cache_By_KeyLookup()
+        {
+            var output = Writer.Parse("{{foo}}");
+            Assert.Equal(1, Writer.Cache.Count);
+            var cacheValue = Writer.Cache["{{foo}}"];
+            Assert.Equal(output, cacheValue);
+        }
     }
 }

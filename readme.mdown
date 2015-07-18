@@ -5,54 +5,87 @@
 [![Prerelease Build Status](https://img.shields.io/nuget/vpre/Stubble.Core.svg?style=flat-square&label=nuget%20pre)](https://www.nuget.org/packages/Stubble.Core/)
 [![Build Status](https://img.shields.io/nuget/v/Stubble.Core.svg?style=flat-square)](https://www.nuget.org/packages/Stubble.Core/)
 
-Stubble is implementation of the [Mustache](http://mustache.github.com/) template system in C# (but usable from any .NET language).
+Stubble is an implementation of the [Mustache](http://mustache.github.com/) template system in C# (but is usable from any .NET language).
 
 For a language-agnostic overview of mustache's template syntax, see the `mustache(5)` [manpage](http://mustache.github.com/mustache.5.html).
 
-Stubble is tested against the mustache specification and so is `v.1.1.2, including lambdas` compliant meaning that your templates in other languages will work with Stubble provided they match the spec!
+Stubble is tested against the mustache specification and is `v.1.1.2, including lambdas` compliant, this means that your templates in other languages will work with Stubble provided they match the spec!
 
 It is licenced under the MIT License which can be found [here.](/licence.md)
 
 ### Why should I use Stubble?
-Stubble is designed to be a spec complient mustache renderer with only the bare essentials, *you could say the rest has been trimmed down!*
+Stubble is designed to be a spec compliant mustache renderer with only the bare essentials, *you could say the rest has been trimmed down!*
 
 Stubble provides no methods of finding your templates, no complicated logic for getting values from your objects or special types, no non-spec tags for rendering or logic and only the nessaries to make it a simple and fast parser and renderer.
 
-### Okay I'm convinced how do I get it and use it?
-At the moment stubble is in alpha but please feel free to graph it from the pre-release feed on nuget.org by clicking on the badge above! Another option is to download the source and build it yourself.
+### Okay I'm convinced, how do I get it and use it?
+At the moment Stubble is in alpha but please feel free to grab it from the pre-release feed on nuget.org by clicking on the badge above! Another option for the more adventurious is to download the source and build it yourself.
 
-To use stubble I'd recommend reading the how to use guide [here.](https://github.com/Romanx/Stubble/wiki)
+For how to use Stubble I'd recommend reading the how to use guide [here.](https://github.com/Romanx/Stubble/wiki)
 
 ### Performance
-This is only the release and these are preliminary simple tests against the closest comparable measure which is [Nustache](https://github.com/jdiamond/Nustache/).
+This is only the alpha release and these are simple tests against the closest comparable measure which is [Nustache](https://github.com/jdiamond/Nustache/).
 
-There are three different measures:
+There are three different test cases:
 
 	- Nustache (RenderToString)
 	- Stubble (Without Cache)
 	- Stubble (With Cache)
 
-Stubble caches its parsed templates for speed and so one of the tests is with this cache cleared each time and another when it isn't. Nustache does no caching so the closed comparison in raw performance would be *Nustache vs Stubble (Without Cache)*.
+Stubble caches its parsed templates for speed so one of the test cases is with this cache cleared after each render and another when it isn't. Nustache does no caching so the closest comparison in raw performance would be *Nustache vs Stubble (Without Cache)* graph below.
 
-The testing was done over 10 iterations, over a set of increments (100 | 1,000 | 10,000 | 100,000 | 1,000,000) for each library. The results are stored in TotalMiliseconds and then averaged over all the iterations for a final result for each library for each increment.
+The testing was done over 100 iterations, over a set of increments (100 | 1,000 | 10,000 | 100,000 | 1,000,000) for each library. The results are stored as the total number of miliseconds taken to perform the number of actions, and then averaged over all the iterations for a final result for each library for each increment.
 
 ![image](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/pubchart?oid=1144583373&format=image)
 ![image](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/pubchart?oid=1298111014&format=image)
 
 *Note:* that the bars in each group of each graph are scaled so that the fastest library is 100.
 
-I will upload the exact timings for these graphs to google docs which will be available [here.](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/edit?usp=sharing)
+The exact timings for these graphs is on Google Docs which will is available [here.](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/edit?usp=sharing)
 
 ### Extensibility
-Since the goal of Stubble is to provide a trimmed down bare-bones implementation the basic library will not contain any extensions to the Mustache spec and only simple ValueGetting functionality.
+Stubble exposes certain internal structures for Extensions to be added in a loosely coupled way. The access these endpoints you need to use the StubbleBuilder interface to build instance of Stubble, as this can be an expensive operation it should be performed once and the instance of Stubble should be stored and injected either statically or using Dependency Injection.
 
-However in future i plan to add the ability to add integrations and overries within the Stubble core to allow the adding/overring of new tags, value accessor mappings from `Type => Value Getter Function`
+This is currently under development and with incomplete documentation. 
+They will be better documented when these have been completed.
 
-These extension points will be exposed by Stubble however none will be provided so you can add in your own wonderful overrides or even include a nuget package which adds these overrides in.
+However simple descriptions of the endpoints are:
 
-This will be better documented when these have been exposed.
+#### Defaults
+Each of these maps have default values which are defined in their respective sections. These can be overwritten by passing in overriding Getters with the same Keys. 
+
+**NOTE: This can break default functionality! and cause Stubble to fail catastrophically**
+
+#### Value Getters
+You can add your own ValueGetters for mapping how to retrive values from given types by a key. Stubble provides a set of defaults for:
+
+- `IDictionary<string, object>`
+- `IDictionary`
+- `object`
+
+You have to register a Func maping a Type which is used during value discovery. The Func has to be the type `Func<string, object, object>(key, value) => object`
+
+#### Token Getters
+Tokens in Stubble are resolved using a map of keys (e.g. **#**) to Functions which return instances of ParserOutput the base class for all Tokens in Stubble. By default the following are defined:
+```csharp
+{ "#", (s, tags) => new SectionToken() { TokenType = s, Tags = tags } },
+{ "^", (s, tags) => new InvertedToken() { TokenType = s } },
+{ ">", (s, tags) => new PartialToken() { TokenType = s } },
+{ "&", (s, tags) => new UnescapedValueToken() { TokenType = s } },
+{ "name", (s, tags) => new EscapedValueToken() { TokenType = s } },
+{ "text", (s, tags) => new RawValueToken() { TokenType = s } }
+```
+
+The Getter functions recieve the TokenTag which is the parsed key (e.g. **#**) and the set of Tags that are active at the moment of parsing. These are used for lambdas and parsing the sections using the correct tags as they can be changed from the default.
+
+To have your tags rendered you require `IRenderableToken`, and if you wish to use the LambdaInterpolation (which all non-section renderable tokens should be using) you should inherit from `InterpolationToken` which provides the utility method `InterpolateLambdaValueIfPossible`.
+
+#### Truthyness Evaluation
+There needs to be some way to add to the truthful-ness checks for an object, this is due to the separation of concerns and loosely coupled state of Stubble.
+
+An example of why is is required is a Truthy check on DataTable would be that it has a Rows.Count > 0 to be truthy as it does not implement `IEnumerable`. See Nustache for this specific bug.
 
 ### Why not use [Nustache](https://github.com/jdiamond/Nustache/) instead?
-If Stubble doesn't do what you want then use Nustache! It's a great tool and provides the same functionality as Stubble provides for the default Mustache spec *(I know because I'm a contributor and current maintainer of that project!)*.
+If Stubble doesn't do what you need then you should use Nustache! It's a great tool and provides the same base functionality as Stubble provides for the default Mustache spec *(I know because I'm a contributor and current maintainer of that project!)*.
 
-However it does provide lots of extra features, such as a variety of input types, helpers and compliation which increases its complexity and some which are extensions to the Mustache spec (such as helpers) If you need any of those pieces of functionality I'd highly recommend you use Nustache... at least until there are Extensions for Stubble which provide the functionality your after!
+However it does provide lots of extra features, such as a variety of input types, helpers and compliation which increases its complexity and some which are extensions to the Mustache spec (such as helpers). If you need any of those pieces of functionality I'd highly recommend you use Nustache... at least until there are Extensions for Stubble which provide the functionality your after!

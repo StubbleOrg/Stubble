@@ -2,7 +2,7 @@
 
 namespace Stubble.Core.Classes.Tokens
 {
-    internal class UnescapedValueToken : InterpolationToken, IRenderableToken
+    internal class UnescapedValueToken : InterpolationToken, IRenderableToken, INonSpace
     {
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {

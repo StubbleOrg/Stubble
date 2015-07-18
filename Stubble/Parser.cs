@@ -15,7 +15,6 @@ namespace Stubble.Core
         private static readonly Regex SpaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
         private static readonly Regex EqualsRegex = new Regex(@"\s*=", RegexOptions.Compiled);
         private static readonly Regex CurlyRegex = new Regex(@"\s*\}", RegexOptions.Compiled);
-        private static readonly Regex TagRegex = new Regex(@"#|\^|\/|>|\{|&|=|!", RegexOptions.Compiled);
         private static readonly Regex EscapeRegex = new Regex(@"[\-\[\]{}()*+?.,\^$|#\s]", RegexOptions.Compiled);
         #endregion
 
@@ -58,11 +57,18 @@ namespace Stubble.Core
         }
         #endregion
 
+        public static readonly Tags DefaultTags = new Tags("{{", "}}");
+
         private Regex _openingTagRegex;
         private Regex _closingTagRegex;
         private Regex _closingCurlyRegex;
         private Tags _currentTags;
-        public static readonly Tags DefaultTags = new Tags("{{", "}}");
+        private readonly Registry _registry;
+
+        public Parser(Registry registry)
+        {
+            _registry = registry;
+        }
 
         public IList<ParserOutput> ParseTemplate(string template)
         {
@@ -101,7 +107,12 @@ namespace Stubble.Core
                         {
                             nonSpace = true;
                         }
-                        tokens.Add(new RawValueToken() { TokenType = "text", Value = c.ToString(), Start = start, End = start + 1 });
+
+                        var textToken = GetCorrectTypedToken("text", tags);
+                        textToken.Value = c.ToString();
+                        textToken.Start = start;
+                        textToken.End = start + 1;
+                        tokens.Add(textToken);
                         start += 1;
 
                         if (c != '\n') continue;
@@ -127,7 +138,7 @@ namespace Stubble.Core
 
                 hasTag = true;
 
-                var type = scanner.Scan(TagRegex);
+                var type = scanner.Scan(_registry.TokenMatchRegex);
                 type = string.IsNullOrEmpty(type) ? "name" : type;
                 scanner.Scan(WhitespaceRegex);
 
@@ -160,12 +171,16 @@ namespace Stubble.Core
                 token.End = scanner.Pos;
                 tokens.Add(token);
 
-                switch (type)
+                if (token is ISection)
                 {
-                    case "#":
-                    case "^":
-                        sections.Push(token);
-                        break;
+                    sections.Push(token);
+                }
+                else if(token is INonSpace)
+                {
+                    nonSpace = true;
+                }
+                else switch (type)
+                {
                     case "/":
                         if (sections.Count == 0)
                         {
@@ -177,11 +192,6 @@ namespace Stubble.Core
                         {
                             throw new Exception("Unclosed Section '" + openSection.Value + "' at " + start);
                         }
-                        break;
-                    case "name":
-                    case "{":
-                    case "&":
-                        nonSpace = true;
                         break;
                     case "=":
                         CompileTags(value);
@@ -227,22 +237,21 @@ namespace Stubble.Core
 
             foreach (var token in tokens)
             {
-                switch (token.TokenType)
+                if (token is ISection)
                 {
-                    case "#":
-                    case "^":
-                        collector.Add(token);
-                        sections.Push(token);
-                        collector = token.ChildTokens = new List<ParserOutput>();
-                        break;
-                    case "/":
-                        var section = sections.Pop();
-                        section.ParentSectionEnd = token.Start;
-                        collector = sections.Count > 0 ? sections.Peek().ChildTokens : nestedTokens;
-                        break;
-                    default:
-                        collector.Add(token);
-                        break;
+                    collector.Add(token);
+                    sections.Push(token);
+                    collector = token.ChildTokens = new List<ParserOutput>();
+                }
+                else if (token.TokenType == "/")
+                {
+                    var section = sections.Pop();
+                    section.ParentSectionEnd = token.Start;
+                    collector = sections.Count > 0 ? sections.Peek().ChildTokens : nestedTokens;
+                }
+                else
+                {
+                    collector.Add(token);
                 }
             }
 
@@ -275,30 +284,16 @@ namespace Stubble.Core
             _closingCurlyRegex = tagRegexes.ClosingTag;
         }
 
-        private static string EscapeRegexExpression(string expression)
+        public static string EscapeRegexExpression(string expression)
         {
             return EscapeRegex.Replace(expression, @"\$&");
         }
 
-        private static ParserOutput GetCorrectTypedToken(string tokenType, Tags currentTags)
+        private ParserOutput GetCorrectTypedToken(string tokenType, Tags currentTags)
         {
-            switch (tokenType)
-            {
-                case "#":
-                    return new SectionToken { TokenType = tokenType, Tags = currentTags };
-                case "^":
-                    return new InvertedToken { TokenType = tokenType };
-                case ">":
-                    return new PartialToken { TokenType = tokenType };
-                case "&":
-                    return new UnescapedValueToken { TokenType = tokenType };
-                case "name":
-                    return new EscapedValueToken { TokenType = tokenType };
-                case "text":
-                    return new RawValueToken { TokenType = tokenType };
-                default:
-                    return new ParserOutput { TokenType = tokenType };
-            }
+            return _registry.TokenGetters.ContainsKey(tokenType) ?
+                _registry.TokenGetters[tokenType](tokenType, currentTags)
+                : new ParserOutput { TokenType = tokenType };
         }
 
         private static void AddToRegexCache(string dictionaryKey, TagRegexes regex)

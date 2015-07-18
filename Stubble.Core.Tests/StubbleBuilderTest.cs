@@ -16,6 +16,36 @@ namespace Stubble.Core.Tests
                                 .AddValueGetter(typeof (string), (o, s) => null);
 
             Assert.Contains(typeof(string), builder.ValueGetters.Keys);
+            Assert.Null(builder.ValueGetters[typeof(string)](null, null));
+        }
+
+        [Fact]
+        public void It_Can_Add_Add_Token_Getters()
+        {
+            var builder = (StubbleBuilder) new StubbleBuilder()
+                            .AddTokenGetter("MyToken", (s, tags) => null);
+
+            Assert.Contains("MyToken", builder.TokenGetters.Keys);
+            Assert.Null(builder.TokenGetters["MyToken"](null, null));
+        }
+
+        [Fact]
+        public void It_Can_Add_Truthy_Checks()
+        {
+            var builder = (StubbleBuilder) new StubbleBuilder()
+                .AddTruthyCheck((val) =>
+                {
+                    if (val is string)
+                    {
+                        return val.Equals("Foo");
+                    }
+                    return null;
+                });
+
+            Assert.Equal(1, builder.TruthyChecks.Count);
+            Assert.True(builder.TruthyChecks[0]("Foo"));
+            Assert.False(builder.TruthyChecks[0]("Bar"));
+            Assert.Null(builder.TruthyChecks[0](null));
         }
 
         [Fact]
@@ -24,8 +54,11 @@ namespace Stubble.Core.Tests
             var stubble = new StubbleBuilder().Build();
 
             Assert.NotNull(stubble);
-            Assert.NotNull(stubble.Writer.ValueRegistry);
-            Assert.NotEmpty(stubble.Writer.ValueRegistry);
+            Assert.NotNull(stubble.Registry.ValueGetters);
+            Assert.NotNull(stubble.Registry.TokenGetters);
+            Assert.NotEmpty(stubble.Registry.ValueGetters);
+            Assert.NotEmpty(stubble.Registry.TokenGetters);
         }
+
     }
 }

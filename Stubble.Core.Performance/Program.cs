@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Humanizer;
 using Newtonsoft.Json;
 using Stubble.Core.Performance.Data;
@@ -15,7 +13,9 @@ namespace Stubble.Core.Performance
     public class Program
     {
         public const int Iterations = 10;
-        public static readonly int[] Increments = { 100 , 1000, 10000, 100000, 1000000 };
+        public static readonly int[] Increments = {100, 1000, 10000, 100000, 1000000 };
+        public static bool ShouldLog { get; set; }
+        public static bool ShouldHaltOnEnd { get; set; }
 
         internal class NothingWriter : ITestOutputHelper
         {
@@ -32,13 +32,16 @@ namespace Stubble.Core.Performance
 
         public static readonly List<OutputData> Outputs = new List<OutputData>
         {
-            new OutputData("Stubble (Without Cache)", PerformanceTest.Simple_Template_Test),
-            new OutputData("Stubble (With Cache)", PerformanceTest.Simple_Template_Test_With_Cache),
-            new OutputData("Nustache", PerformanceTest.Simple_Template_Test_Nustache),
+            new OutputData("Stubble (Without Cache)", PerformanceTest.Simple_Template_Test, ConsoleColor.White),
+            new OutputData("Stubble (With Cache)", PerformanceTest.Simple_Template_Test_With_Cache, ConsoleColor.Yellow),
+            new OutputData("Nustache", PerformanceTest.Simple_Template_Test_Nustache, ConsoleColor.DarkGray),
         };
 
         public static void Main(string[] args)
         {
+            ShouldHaltOnEnd = args.Length < 1 || bool.Parse(args[0]);
+            ShouldLog = args.Length < 2 || bool.Parse(args[1]);
+
             for (var i = 1; i <= Iterations; i++)
             {
                 ConsoleExtensions.WriteLineGreen("Iteration {0}", i);
@@ -46,40 +49,45 @@ namespace Stubble.Core.Performance
                 foreach (var increment in Increments)
                 {
                     RunIncrement(increment);
-                    Console.WriteLine();
+                    if(ShouldLog) Console.WriteLine();
                 }
             }
-
-            Console.WriteLine("Done");
-            WriteJson();
-            WriteOutputCsv();
-            Console.ReadLine();
+            WriteOutputs(DateTime.UtcNow);
+            if (ShouldHaltOnEnd) Console.ReadLine();
         }
 
         public static void RunIncrement(int increment)
         {
             foreach (var output in Outputs)
             {
-                Console.WriteLine("****** {0} ******", output.Name.ToUpper());
+                if (ShouldLog) Console.WriteLine("****** {0} ******", output.Name.ToUpper());
                 var timeElapsed = output.Test(increment);
                 output.AddIncrement(increment, timeElapsed);
-                Console.WriteLine("iteration {0:N0}: {1} ({2})", increment, timeElapsed.Humanize(), timeElapsed);
+                if (ShouldLog) ConsoleExtensions.WriteLineColor(output.OutputColor, "iteration {0:N0}: {1} ({2})", increment, timeElapsed.Humanize(), timeElapsed);
             }
         }
 
-        public static void WriteJson()
+        public static void WriteOutputs(DateTime now)
+        {
+            var outputDir = string.Format("./Perf/{0:dd-MM-yyyy}", now);
+            CreateDirectoryIfNotExists(outputDir);
+            WriteJson(outputDir, now);
+            WriteOutputCsv(outputDir, now);
+        }
+
+        public static void WriteJson(string dir, DateTime now)
         {
             var serializer = new JsonSerializer {Formatting = Formatting.Indented};
-            using (var sw = new StreamWriter(string.Format("./results-{0:dd-MM-yyyy}.json", DateTime.UtcNow)))
+            using (var sw = new StreamWriter(string.Format("{0}/results-{1:H-mm-ss}.json", dir, now)))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, Outputs);
             }
         }
 
-        public static void WriteOutputCsv()
+        public static void WriteOutputCsv(string dir, DateTime now)
         {
-            using (var writer = new StreamWriter("./results.csv"))
+            using (var writer = new StreamWriter(string.Format("{0}/results-{1:H-mm-ss}.csv", dir, now)))
             {
                 writer.WriteLine(string.Join(",", "Increment", string.Join(",", Outputs.Select(x => x.Name))));
                 foreach (var increment in Increments)
@@ -95,15 +103,11 @@ namespace Stubble.Core.Performance
                 }
             }
         }
-    }
 
-    public static class ConsoleExtensions
-    {
-        public static void WriteLineGreen(string line, params object[] args)
+        public static void CreateDirectoryIfNotExists(string path)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(line, args);
-            Console.ResetColor();
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
         }
     }
 }

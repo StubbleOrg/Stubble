@@ -67,6 +67,13 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
+        public void It_Errors_When_You_Close_The_Wrong_Section()
+        {
+            var ex = Assert.Throws<Exception>(delegate { Parser.ParseTemplate("{{#Section}}Herp De Derp{{/wrongSection}}"); });
+            Assert.Equal("Unclosed Section 'Section' at 24", ex.Message);
+        }
+
+        [Fact]
         public void It_Only_Cache_Four_Regex_Tags()
         {
             Parser.RegexCacheSize = 4;
@@ -79,6 +86,29 @@ namespace Stubble.Core.Tests
             Assert.Equal(4, Parser.TagRegexCache.Count);
             Parser.ParseTemplate("Test 4 {{=|# #|=}}");
             Assert.Equal(4, Parser.TagRegexCache.Count);
+        }
+
+        [Fact]
+        public void It_Can_Change_Cache_Size_At_Runtime()
+        {
+            Parser.RegexCacheSize = 4;
+            Assert.Equal(4, Parser.RegexCacheSize);
+            Parser.TagRegexCache.Clear();
+            Parser.ParseTemplate("Test 1 {{=<% %>=}}");
+            Assert.Equal(2, Parser.TagRegexCache.Count);
+            Parser.ParseTemplate("Test 2 {{={| |}=}}");
+            Assert.Equal(3, Parser.TagRegexCache.Count);
+            Parser.ParseTemplate("Test 3 {{=<: :>=}}");
+            Assert.Equal(4, Parser.TagRegexCache.Count);
+            Parser.ParseTemplate("Test 4 {{=|# #|=}}");
+            Assert.Equal(4, Parser.TagRegexCache.Count);
+            Parser.ParseTemplate("Test 5 {{=|# #|=}}");
+
+            Assert.Equal(4, Parser.TagRegexCache.Count);
+
+            Parser.RegexCacheSize = 2;
+            Assert.Equal(2, Parser.RegexCacheSize);
+            Assert.Equal(2, Parser.TagRegexCache.Count);
         }
 
         public static IEnumerable<object[]> TemplateParsingData()

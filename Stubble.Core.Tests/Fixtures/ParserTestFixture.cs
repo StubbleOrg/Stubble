@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Stubble.Core.Classes;
 
 namespace Stubble.Core.Tests.Fixtures
 {
@@ -12,7 +13,7 @@ namespace Stubble.Core.Tests.Fixtures
 
         public ParserTestFixture()
         {
-            Parser = new Parser();
+            Parser = new Parser(new Registry());
         }
     }
 }

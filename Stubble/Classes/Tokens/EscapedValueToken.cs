@@ -3,7 +3,7 @@ using System.Net;
 
 namespace Stubble.Core.Classes.Tokens
 {
-    internal class EscapedValueToken : InterpolationToken, IRenderableToken
+    internal class EscapedValueToken : InterpolationToken, IRenderableToken, INonSpace
     {
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {

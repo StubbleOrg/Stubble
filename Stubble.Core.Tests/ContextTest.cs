@@ -45,7 +45,7 @@ namespace Stubble.Core.Tests
             var context = new Context(new
             {
                 Foo = new Func<object>(() => "TestyTest")
-            }, new Registry().ValueGetters);
+            }, new Registry());
             var output = context.Lookup("Foo");
             var functionOutput = output as Func<object>;
             Assert.Equal("TestyTest", functionOutput.Invoke());
@@ -58,7 +58,7 @@ namespace Stubble.Core.Tests
             {
                 MyData = "Data!",
                 Foo = new Func<dynamic, object>((data) => data.MyData)
-            }, new Registry().ValueGetters);
+            }, new Registry());
             var output = context.Lookup("Foo");
             var functionOutput = output as Func<dynamic, object>;
 
@@ -71,7 +71,7 @@ namespace Stubble.Core.Tests
             var context = new Context(new
             {
                 MyData = "Data!"
-            }, new Registry().ValueGetters);
+            }, new Registry());
             var output = context.Lookup("MyData");
 
             Assert.Equal("Data!", output);
@@ -84,7 +84,7 @@ namespace Stubble.Core.Tests
             {
                 { "Foo", "Bar"},
                 { "Foo2", 1 }
-            }, new Registry().ValueGetters);
+            }, new Registry());
             var output = context.Lookup("Foo");
             var output2 = context.Lookup("Foo2");
 
@@ -100,7 +100,7 @@ namespace Stubble.Core.Tests
             input.Number = 1;
             input.Blah = new { String = "Test" };
 
-            var context = new Context(input, new Registry().ValueGetters);
+            var context = new Context(input, new Registry());
             var output = context.Lookup("Foo");
             var output2 = context.Lookup("Number");
             var output3 = context.Lookup("Blah.String");
@@ -119,7 +119,7 @@ namespace Stubble.Core.Tests
             {
                 Field = 1,
                 Property = 1
-            }, new Registry().ValueGetters);
+            }, new Registry());
 
             var instanceProperty = context.Lookup("Property");
             var staticProperty = context.Lookup("StaticProperty");
@@ -154,7 +154,7 @@ namespace Stubble.Core.Tests
                 Property = 1,
                 ChildField = 2,
                 ChildProperty = 2
-            }, new Registry().ValueGetters);
+            }, new Registry());
 
             var parentInstanceProperty = context.Lookup("Property");
             var parentInstanceField = context.Lookup("Field");
@@ -171,6 +171,52 @@ namespace Stubble.Core.Tests
             Assert.Equal(2, instanceField);
             Assert.Equal(2, instanceMethodWithoutArgs);
             Assert.Null(parentInstanceMethodWithArgs);
+        }
+
+        [Fact]
+        public void It_Is_Truthy_For_Strings()
+        {
+            Assert.True(Fixture.Context.IsTruthyValue("Yes"));
+            Assert.False(Fixture.Context.IsTruthyValue(""));
+        }
+
+        [Fact]
+        public void It_Can_Use_Truthy_Checks()
+        {
+            var registry = new Registry(
+                new Dictionary<Type, Func<object, string, object>>(),
+                new Dictionary<string, Func<string, Tags, ParserOutput>>(),
+                new List<Func<object, bool?>>
+                {
+                    (val) =>
+                    {
+                        if (val is string)
+                        {
+                            return val.Equals("Foo");
+                        }
+                        return null;
+                    },
+                    (val) =>
+                    {
+                        if (val is uint)
+                        {
+                            return (uint)val > 0;
+                        }
+                        return null;
+                    }
+                });
+
+            var context = new Context(new StronglyTypedChildTestClass()
+            {
+                Field = 1,
+                Property = 1,
+                ChildField = 2,
+                ChildProperty = 2
+            }, registry);
+
+            Assert.True(context.IsTruthyValue("Foo"));
+            Assert.True(context.IsTruthyValue((uint)5));
+            Assert.True(context.IsTruthyValue(true));
         }
     }
 

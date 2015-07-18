@@ -9,6 +9,9 @@ namespace Stubble.Core.Performance.Data
     {
         public readonly string Name;
         public readonly Dictionary<int, List<TimeSpan>> IncrementResults;
+        [JsonIgnore]
+        public readonly ConsoleColor OutputColor;
+
         public Dictionary<int, double> IncrementResultsAverage
         {
             get { return IncrementResults.ToDictionary(k => k.Key, x => x.Value.Average(y => y.TotalMilliseconds)); }
@@ -29,10 +32,11 @@ namespace Stubble.Core.Performance.Data
         [JsonIgnore]
         public readonly Func<int, TimeSpan> Test;
 
-        public OutputData(string name, Func<int, TimeSpan> test)
+        public OutputData(string name, Func<int, TimeSpan> test, ConsoleColor outputColor)
         {
             Name = name;
             Test = test;
+            OutputColor = outputColor;
             IncrementResults = new Dictionary<int, List<TimeSpan>>();
             foreach (var increment in Program.Increments)
             {
