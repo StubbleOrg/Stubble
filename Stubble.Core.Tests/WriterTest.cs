@@ -45,6 +45,7 @@ namespace Stubble.Core.Tests
         [Fact]
         public void You_Can_Access_Cache_By_KeyLookup()
         {
+            Writer.ClearCache();
             var output = Writer.Parse("{{foo}}");
             Assert.Equal(1, Writer.Cache.Count);
             var cacheValue = Writer.Cache["{{foo}}"];
