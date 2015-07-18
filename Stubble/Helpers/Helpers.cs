@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Stubble.Core.Helpers
 {
-    internal static class ValueHelpers
+    internal static class Helpers
     {
         /// <summary>
         /// A way to merge IDictionaries together with the right most keys overriding the left keys.
