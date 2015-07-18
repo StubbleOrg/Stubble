@@ -9,6 +9,7 @@ namespace Stubble.Core.Performance.Data
     {
         public readonly string Name;
         public readonly Dictionary<int, List<TimeSpan>> IncrementResults;
+        [JsonIgnore]
         public readonly ConsoleColor OutputColor;
 
         public Dictionary<int, double> IncrementResultsAverage
