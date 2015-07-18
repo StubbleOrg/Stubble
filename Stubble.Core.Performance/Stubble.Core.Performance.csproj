@@ -70,6 +70,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleExtensions.cs" />
     <Compile Include="Data\OutputData.cs" />
     <Compile Include="PerformanceTest.cs" />
     <Compile Include="Program.cs" />
