@@ -84,6 +84,7 @@
     <Compile Include="Spec\SpecTestHelper.cs" />
     <Compile Include="Spec\SpecTests.cs" />
     <Compile Include="StubbleBuilderTest.cs" />
+    <Compile Include="StubbleStaticTest.cs" />
     <Compile Include="StubbleTest.cs" />
     <Compile Include="TypeBySubclassAndAssignableTest.cs" />
     <Compile Include="WriterTest.cs" />
