@@ -36,8 +36,8 @@ Stubble caches its parsed templates for speed so one of the test cases is with t
 
 The testing was done over 100 iterations, over a set of increments (100 | 1,000 | 10,000 | 100,000 | 1,000,000) for each library. The results are stored as the total number of miliseconds taken to perform the number of actions, and then averaged over all the iterations for a final result for each library for each increment.
 
-![image](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/pubchart?oid=1144583373&format=image)
-![image](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/pubchart?oid=1298111014&format=image)
+![image](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/pubchart?oid=1781166596&format=image)
+![image](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/pubchart?oid=306204948&format=image)
 
 *Note:* that the bars in each group of each graph are scaled so that the fastest library is 100.
 
