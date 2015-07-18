@@ -291,13 +291,9 @@ namespace Stubble.Core
 
         private ParserOutput GetCorrectTypedToken(string tokenType, Tags currentTags)
         {
-            for (var i = 0; i < _registry.TokenGetters.Length; i++)
-            {
-                if (_registry.TokenGetters[i].TokenType == tokenType)
-                    return _registry.TokenGetters[i].Getter(tokenType, currentTags);
-            }
-
-            return new ParserOutput { TokenType = tokenType };
+            return _registry.TokenGetters.ContainsKey(tokenType) ?
+                _registry.TokenGetters[tokenType](tokenType, currentTags)
+                : new ParserOutput { TokenType = tokenType };
         }
 
         private static void AddToRegexCache(string dictionaryKey, TagRegexes regex)

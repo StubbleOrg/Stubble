@@ -16,9 +16,9 @@ namespace Stubble.Core.Classes
         private static readonly string[] ReservedTokens = { "name", "text" }; //Name and text are used internally for tokens so must exist
 
         public IReadOnlyDictionary<Type, Func<object, string, object>> ValueGetters { get; private set; }
-        //public IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters { get; private set; }
-        public TokenGetter[] TokenGetters { get; private set; }
+        public IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters { get; private set; }
         public IReadOnlyList<Func<object, bool?>> TruthyChecks { get; private set; }
+
         public Regex TokenMatchRegex { get; private set; }
 
         #region Default Value Getters
@@ -83,19 +83,19 @@ namespace Stubble.Core.Classes
         public Registry()
         {
             ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(DefaultValueGetters);
-            TokenGetters = DefaultTokenGetters.Select(x => new TokenGetter {Getter = x.Value, TokenType = x.Key}).ToArray();
+            TokenGetters = new ReadOnlyDictionary<string, Func<string, Tags, ParserOutput>>(DefaultTokenGetters);
             TruthyChecks = new List<Func<object, bool?>>();
-            TokenMatchRegex = new Regex(
-                string.Join("|", TokenGetters.Where(s => !ReservedTokens.Contains(s.TokenType))
-                                        .Select(s => Parser.EscapeRegexExpression(s.TokenType))
-                                        .Concat(DefaultTokenTypes)));
+            SetTokenMatchRegex();
         }
 
-        public Registry(IDictionary<Type, Func<object, string, object>> valueGetters, IDictionary<string, Func<string, Tags, ParserOutput>> tokenGetters, IReadOnlyList<Func<object, bool?>> truthyChecks)
+        public Registry(IDictionary<Type, Func<object, string, object>> valueGetters, 
+                        IDictionary<string, Func<string, Tags, ParserOutput>> tokenGetters, 
+                        IReadOnlyList<Func<object, bool?>> truthyChecks)
         {
             SetValueGetters(valueGetters);
             SetTokenGetters(tokenGetters);
             TruthyChecks = truthyChecks;
+            SetTokenMatchRegex();
         }
 
         private void SetValueGetters(IDictionary<Type, Func<object, string, object>> valueGetters)
@@ -113,7 +113,15 @@ namespace Stubble.Core.Classes
         {
             var mergedGetters = DefaultTokenGetters.MergeLeft(tokenGetters);
 
-            TokenGetters = mergedGetters.Select(x => new TokenGetter { Getter = x.Value, TokenType = x.Key }).ToArray();
+            TokenGetters = new ReadOnlyDictionary<string, Func<string, Tags, ParserOutput>>(mergedGetters);
+        }
+
+        private void SetTokenMatchRegex()
+        {
+            TokenMatchRegex = new Regex(
+                string.Join("|", TokenGetters.Where(s => !ReservedTokens.Contains(s.Key))
+                                        .Select(s => Parser.EscapeRegexExpression(s.Key))
+                                        .Concat(DefaultTokenTypes)));
         }
     }
 }

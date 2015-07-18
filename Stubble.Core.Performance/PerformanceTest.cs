@@ -50,12 +50,10 @@ namespace Stubble.Core.Performance
             return stopwatch.Elapsed;
         }
 
-
         public TimeSpan Simple_Template_Test_With_Cache(int iterations)
         {
             return Simple_Template_Test(iterations, true);
         }
-
 
         public TimeSpan Simple_Template_Test_Nustache(int iterations)
         {
