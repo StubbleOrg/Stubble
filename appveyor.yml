@@ -36,7 +36,7 @@ build:
 test_script:
 - ps: >-
     $Package_Locations = ".\packages";
-    $OpenCover_Location = Get-ChildItem ($Package_Locations + "\OpenCover*") | Select-Object -First 1 -ExpandProperty FullName;
+    $OpenCover_Location = Get-ChildItem ($Package_Locations + "\OpenCover*\tools") | Select-Object -First 1 -ExpandProperty FullName;
     $Xunit_Location = Get-ChildItem ($Package_Locations + "\xunit.runner.console*\tools") | Select-Object -First 1 -ExpandProperty FullName;
     $CoverallsNet_Location = Get-ChildItem ($Package_Locations + "\coveralls.net*") | Select-Object -First 1 -ExpandProperty FullName;
 
