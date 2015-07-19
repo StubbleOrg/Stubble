@@ -24,7 +24,8 @@ namespace Stubble.Core
                 ValueGetters = ValueGetters,
                 TokenGetters = TokenGetters,
                 TruthyChecks = TruthyChecks,
-                TemplateLoader = TemplateLoader
+                TemplateLoader = TemplateLoader,
+                PartialTemplateLoader = PartialTemplateLoader
             });
             return new Stubble(registry);
         }
