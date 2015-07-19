@@ -10,5 +10,6 @@ namespace Stubble.Core.Classes
         public IDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters { get; set; }
         public IReadOnlyList<Func<object, bool?>> TruthyChecks { get; set; }
         public IStubbleLoader TemplateLoader { get; set; }
+        public IStubbleLoader PartialTemplateLoader { get; set; }
     }
 }
