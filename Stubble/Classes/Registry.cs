@@ -19,8 +19,8 @@ namespace Stubble.Core.Classes
         public IReadOnlyDictionary<Type, Func<object, string, object>> ValueGetters { get; private set; }
         public IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters { get; private set; }
         public IReadOnlyList<Func<object, bool?>> TruthyChecks { get; private set; }
-
         public Regex TokenMatchRegex { get; private set; }
+        public IStubbleLoader TemplateLoader { get; private set; }
 
         #region Default Value Getters
         private static readonly IDictionary<Type, Func<object, string, object>> DefaultValueGetters = new Dictionary
@@ -90,6 +90,7 @@ namespace Stubble.Core.Classes
             SetValueGetters(settings.ValueGetters);
             SetTokenGetters(settings.TokenGetters);
             SetTruthyChecks(settings.TruthyChecks);
+            SetTemplateLoader(settings.TemplateLoader);
             SetTokenMatchRegex();
         }
 
@@ -130,7 +131,9 @@ namespace Stubble.Core.Classes
             TruthyChecks = truthyChecks ?? new List<Func<object, bool?>>();
         }
 
-            TokenGetters = new ReadOnlyDictionary<string, Func<string, Tags, ParserOutput>>(mergedGetters);
+        private void SetTemplateLoader(IStubbleLoader loader)
+        {
+            TemplateLoader = loader ?? new StringLoader();
         }
 
         private void SetTokenMatchRegex()

@@ -14,6 +14,8 @@ namespace Stubble.Core
         internal readonly List<Func<object, bool?>> TruthyChecks =
             new List<Func<object, bool?>>();
 
+        internal IStubbleLoader TemplateLoader;
+
         public Stubble Build()
         {
             var registry = new Registry(new RegistrySettings
@@ -50,6 +52,12 @@ namespace Stubble.Core
         public IStubbleBuilder AddTruthyCheck(Func<object, bool?> truthyCheck)
         {
             TruthyChecks.Add(truthyCheck);
+            return this;
+        }
+
+        public IStubbleBuilder SetTemplateLoader(IStubbleLoader loader)
+        {
+            TemplateLoader = loader;
             return this;
         }
     }
