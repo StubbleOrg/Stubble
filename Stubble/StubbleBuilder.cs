@@ -15,6 +15,7 @@ namespace Stubble.Core
         internal readonly List<Func<object, bool?>> TruthyChecks =
             new List<Func<object, bool?>>();
         internal IStubbleLoader TemplateLoader = new StringLoader();
+        internal IStubbleLoader PartialTemplateLoader;
 
         public Stubble Build()
         {
@@ -59,6 +60,12 @@ namespace Stubble.Core
         public IStubbleBuilder SetTemplateLoader(IStubbleLoader loader)
         {
             TemplateLoader = loader;
+            return this;
+        }
+
+        public IStubbleBuilder SetPartialTemplateLoader(IStubbleLoader loader)
+        {
+            PartialTemplateLoader = loader;
             return this;
         }
     }

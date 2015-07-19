@@ -11,6 +11,8 @@ namespace Stubble.Core.Interfaces
         IStubbleBuilder AddTokenGetter(string tokenType, Func<string, Tags, ParserOutput> tokenGetter);
         IStubbleBuilder AddTokenGetter(KeyValuePair<string, Func<string, Tags, ParserOutput>> tokenGetter);
         IStubbleBuilder AddTruthyCheck(Func<object, bool?> truthyCheck);
+        IStubbleBuilder SetTemplateLoader(IStubbleLoader loader);
+        IStubbleBuilder SetPartialTemplateLoader(IStubbleLoader loader);
         Stubble Build();
     }
 }
