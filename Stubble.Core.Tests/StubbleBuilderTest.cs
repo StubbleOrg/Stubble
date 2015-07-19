@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Xunit;
 
 namespace Stubble.Core.Tests
@@ -49,6 +45,16 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
+        public void It_Can_Set_Template_Loader()
+        {
+            var builder = (StubbleBuilder) new StubbleBuilder()
+                .SetTemplateLoader(new DictionaryLoader(new Dictionary<string, string> {{"test", "{{foo}}"}}));
+
+            Assert.NotNull(builder.TemplateLoader);
+            Assert.True(builder.TemplateLoader is DictionaryLoader);
+        }
+
+        [Fact]
         public void It_Can_Build_Stubble_Instance()
         {
             var stubble = new StubbleBuilder().Build();
@@ -56,6 +62,8 @@ namespace Stubble.Core.Tests
             Assert.NotNull(stubble);
             Assert.NotNull(stubble.Registry.ValueGetters);
             Assert.NotNull(stubble.Registry.TokenGetters);
+            Assert.NotNull(stubble.Registry.TokenMatchRegex);
+            Assert.NotNull(stubble.Registry.TruthyChecks);
             Assert.NotEmpty(stubble.Registry.ValueGetters);
             Assert.NotEmpty(stubble.Registry.TokenGetters);
         }
