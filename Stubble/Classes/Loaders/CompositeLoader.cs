@@ -27,7 +27,7 @@ namespace Stubble.Core.Classes.Loaders
                 if (loadedTemplate != null) return loadedTemplate;
             }
 
-            throw new UnknownTemplateException("No template was found with the name " + name);
+            throw new UnknownTemplateException("No template was found with the name '" + name + "'");
         }
     }
 }
