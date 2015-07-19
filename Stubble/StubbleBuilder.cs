@@ -13,8 +13,7 @@ namespace Stubble.Core
             new Dictionary<string, Func<string, Tags, ParserOutput>>();
         internal readonly List<Func<object, bool?>> TruthyChecks =
             new List<Func<object, bool?>>();
-
-        internal IStubbleLoader TemplateLoader;
+        internal IStubbleLoader TemplateLoader = new StringLoader();
 
         public Stubble Build()
         {
@@ -22,7 +21,8 @@ namespace Stubble.Core
             {
                 ValueGetters = ValueGetters,
                 TokenGetters = TokenGetters,
-                TruthyChecks = TruthyChecks
+                TruthyChecks = TruthyChecks,
+                TemplateLoader = TemplateLoader
             });
             return new Stubble(registry);
         }
