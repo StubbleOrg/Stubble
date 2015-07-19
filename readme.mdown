@@ -81,9 +81,11 @@ The Getter functions recieve the TokenTag which is the parsed key (e.g. **#**) a
 To have your tags rendered you require `IRenderableToken`, and if you wish to use the LambdaInterpolation (which all non-section renderable tokens should be using) you should inherit from `InterpolationToken` which provides the utility method `InterpolateLambdaValueIfPossible`.
 
 #### Truthyness Evaluation
-There needs to be some way to add to the truthful-ness checks for an object, this is due to the separation of concerns and loosely coupled state of Stubble.
+Stubble performs truthy checks to determine if a section should be rendered (or if you're using an inverted tag should not be rendered). Defaults are provided for all common falsey types however these don't cover all possibilites that could be added using the ValueGetter extensions above.
 
-An example of why is is required is a Truthy check on DataTable would be that it has a Rows.Count > 0 to be truthy as it does not implement `IEnumerable`. See Nustache for this specific bug.
+The solution to this is that you can provide check functions which are ran through sequentially until a true or false value is returned. To pass on the check (as the value isn't applicable for your check) a null should be returned.
+
+An example of why is is required is a Truthy check on DataTable would be that it has a `MyDataTable.Rows.Count > 0` to be truthy as it does not implement `IEnumerable`. See Nustache for this [specific bug](https://github.com/jdiamond/Nustache/issues/92).
 
 ### Why not use [Nustache](https://github.com/jdiamond/Nustache/) instead?
 If Stubble doesn't do what you need then you should use Nustache! It's a great tool and provides the same base functionality as Stubble provides for the default Mustache spec *(I know because I'm a contributor and current maintainer of that project!)*.
