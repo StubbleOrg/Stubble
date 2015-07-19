@@ -1,6 +1,6 @@
 ﻿using Stubble.Core.Interfaces;
 
-namespace Stubble.Core.Classes
+namespace Stubble.Core.Classes.Loaders
 {
     public class StringLoader : IStubbleLoader
     {

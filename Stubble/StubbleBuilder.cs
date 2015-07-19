@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Loaders;
 using Stubble.Core.Interfaces;
 
 namespace Stubble.Core
