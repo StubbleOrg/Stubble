@@ -2,7 +2,7 @@
 
 namespace Stubble.Core.Classes.Loaders
 {
-    public class StringLoader : IStubbleLoader
+    public sealed class StringLoader : IStubbleLoader
     {
         public string Load(string name)
         {
