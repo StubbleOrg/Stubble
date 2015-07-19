@@ -10,7 +10,7 @@ namespace Stubble.Core
     public sealed class Context
     {
         private IDictionary<string, object> Cache { get; set; }
-        private readonly Registry _registry;
+        internal readonly Registry Registry;
         private readonly object _view;
 
         public Context ParentContext { get; set; }
@@ -30,7 +30,7 @@ namespace Stubble.Core
                 {".", _view}
             };
             ParentContext = parentContext;
-            _registry = registry;
+            Registry = registry;
         }
 
         public object Lookup(string name)
@@ -92,12 +92,12 @@ namespace Stubble.Core
 
         public Context Push(object view)
         {
-            return new Context(view, _registry, this);
+            return new Context(view, Registry, this);
         }
 
         public object GetValueFromRegistry(object value, string key)
         {
-            foreach (var entry in _registry.ValueGetters.Where(x => x.Key.IsInstanceOfType(value)))
+            foreach (var entry in Registry.ValueGetters.Where(x => x.Key.IsInstanceOfType(value)))
             {
                 var outputVal = entry.Value(value, key);
                 if (outputVal != null) return outputVal;
@@ -112,7 +112,7 @@ namespace Stubble.Core
                 return false;
             }
 
-            foreach (var func in _registry.TruthyChecks)
+            foreach (var func in Registry.TruthyChecks)
             {
                 var funcResult = func(value);
                 if (funcResult.HasValue) return funcResult.Value;

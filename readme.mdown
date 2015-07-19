@@ -87,6 +87,19 @@ The solution to this is that you can provide check functions which are ran throu
 
 An example of why is is required is a Truthy check on DataTable would be that it has a `MyDataTable.Rows.Count > 0` to be truthy as it does not implement `IEnumerable`. See Nustache for this [specific bug](https://github.com/jdiamond/Nustache/issues/92).
 
+#### Template Loaders
+While Stubble doesn't come with any template loaders by default it does provide an interface and extension points for you to provide your own or use one that has already been created in a separate package.
+
+The implementation of this feature is heavily inspired by [bobthecow's](https://github.com/bobthecow/) implementation of loaders in [mustache.php](https://github.com/bobthecow/mustache.php/).
+
+The Loaders provided are:
+
+ - StringLoader : Simply passes through the given Template without any changes (*Default for TemplateLocator*)
+ - CompositeLoader : Takes an array of `IStubbleLoader` and sequentially goes through them until a template is found.
+   **NOTE: If no template is found at all an exception is thrown of type UnknownTemplateException**
+
+Partials will be located from the dictionary passed to the Render method or from an `IStubbleLoader` instance added to the StubbleBuilder allowing you to add common Partials which will be accessable to all your templates.
+
 ### Why not use [Nustache](https://github.com/jdiamond/Nustache/) instead?
 If Stubble doesn't do what you need then you should use Nustache! It's a great tool and provides the same base functionality as Stubble provides for the default Mustache spec *(I know because I'm a contributor and current maintainer of that project!)*.
 

@@ -40,7 +40,8 @@ namespace Stubble.Core
         /// <returns>A mustache rendered string</returns>
         public string Render(string template, object view, IDictionary<string, string> partials)
         {
-            return Writer.Render(template, view, partials);
+            var loadedTemplate = Registry.TemplateLoader.Load(template);
+            return Writer.Render(loadedTemplate, view, partials);
         }
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace Stubble.Core
         /// <returns>Returns a list of tokens</returns>
         public IList<ParserOutput> Parse(string template)
         {
-            return Writer.Parse(template, null);
+            return Parse(template, (Tags)null);
         }
 
         /// <summary>
@@ -69,7 +70,8 @@ namespace Stubble.Core
         /// <returns>Returns a list of tokens</returns>
         public IList<ParserOutput> Parse(string template, Tags tags)
         {
-            return Writer.Parse(template, tags);
+            var loadedTemplate = Registry.TemplateLoader.Load(template);
+            return Writer.Parse(loadedTemplate, tags);
         }
 
         /// <summary>

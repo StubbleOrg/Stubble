@@ -10,7 +10,7 @@ namespace Stubble.Core
     {
         internal LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
         internal Parser Parser;
-        internal readonly Registry Registry;
+        private readonly Registry Registry;
 
         public Writer(int cacheLimit, Registry registry)
         {

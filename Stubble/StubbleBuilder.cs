@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Loaders;
 using Stubble.Core.Interfaces;
 
 namespace Stubble.Core
@@ -9,15 +10,23 @@ namespace Stubble.Core
     {
         internal readonly IDictionary<Type, Func<object, string, object>> ValueGetters =
             new Dictionary<Type, Func<object, string, object>>();
-
         internal readonly IDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters =
             new Dictionary<string, Func<string, Tags, ParserOutput>>();
         internal readonly List<Func<object, bool?>> TruthyChecks =
             new List<Func<object, bool?>>();
+        internal IStubbleLoader TemplateLoader = new StringLoader();
+        internal IStubbleLoader PartialTemplateLoader;
 
         public Stubble Build()
         {
-            var registry = new Registry(ValueGetters, TokenGetters, TruthyChecks);
+            var registry = new Registry(new RegistrySettings
+            {
+                ValueGetters = ValueGetters,
+                TokenGetters = TokenGetters,
+                TruthyChecks = TruthyChecks,
+                TemplateLoader = TemplateLoader,
+                PartialTemplateLoader = PartialTemplateLoader
+            });
             return new Stubble(registry);
         }
 
@@ -46,6 +55,18 @@ namespace Stubble.Core
         public IStubbleBuilder AddTruthyCheck(Func<object, bool?> truthyCheck)
         {
             TruthyChecks.Add(truthyCheck);
+            return this;
+        }
+
+        public IStubbleBuilder SetTemplateLoader(IStubbleLoader loader)
+        {
+            TemplateLoader = loader;
+            return this;
+        }
+
+        public IStubbleBuilder SetPartialTemplateLoader(IStubbleLoader loader)
+        {
+            PartialTemplateLoader = loader;
             return this;
         }
     }

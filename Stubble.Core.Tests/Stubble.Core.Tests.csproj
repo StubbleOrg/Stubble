@@ -70,11 +70,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContextTest.cs" />
+    <Compile Include="ExceptionTests.cs" />
     <Compile Include="ExtensionTest.cs" />
     <Compile Include="Fixtures\ChildContextTestFixture.cs" />
     <Compile Include="Fixtures\ContextTestFixture.cs" />
     <Compile Include="Fixtures\ParserTestFixture.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
+    <Compile Include="LoaderTest.cs" />
     <Compile Include="ParserOutputTest.cs" />
     <Compile Include="ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

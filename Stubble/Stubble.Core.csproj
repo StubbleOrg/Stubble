@@ -51,10 +51,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Exceptions\UnknownTemplateException.cs" />
     <Compile Include="Classes\IRenderableToken.cs" />
     <Compile Include="Classes\LimitedSizeConcurrentDictionary.cs" />
+    <Compile Include="Classes\Loaders\CompositeLoader.cs" />
     <Compile Include="Classes\ParserOutput.cs" />
     <Compile Include="Classes\Registry.cs" />
+    <Compile Include="Classes\RegistrySettings.cs" />
+    <Compile Include="Classes\Loaders\StringLoader.cs" />
     <Compile Include="Classes\Tags.cs" />
     <Compile Include="Classes\TokenGetter.cs" />
     <Compile Include="Classes\Tokens\EscapedValueToken.cs" />
@@ -72,6 +76,7 @@
     <Compile Include="Classes\Tokens\Interface\ISection.cs" />
     <Compile Include="Interfaces\IStubbleBuilder.cs" />
     <Compile Include="Interfaces\IStubble.cs" />
+    <Compile Include="Interfaces\IStubbleLoader.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanner.cs" />

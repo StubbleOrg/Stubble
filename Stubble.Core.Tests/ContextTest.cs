@@ -183,10 +183,9 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Can_Use_Truthy_Checks()
         {
-            var registry = new Registry(
-                new Dictionary<Type, Func<object, string, object>>(),
-                new Dictionary<string, Func<string, Tags, ParserOutput>>(),
-                new List<Func<object, bool?>>
+            var registry = new Registry(new RegistrySettings
+            {
+                TruthyChecks = new List<Func<object, bool?>>
                 {
                     (val) =>
                     {
@@ -204,7 +203,8 @@ namespace Stubble.Core.Tests
                         }
                         return null;
                     }
-                });
+                }
+            });
 
             var context = new Context(new StronglyTypedChildTestClass()
             {
