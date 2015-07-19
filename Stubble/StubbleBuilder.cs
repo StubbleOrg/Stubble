@@ -9,7 +9,6 @@ namespace Stubble.Core
     {
         internal readonly IDictionary<Type, Func<object, string, object>> ValueGetters =
             new Dictionary<Type, Func<object, string, object>>();
-
         internal readonly IDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters =
             new Dictionary<string, Func<string, Tags, ParserOutput>>();
         internal readonly List<Func<object, bool?>> TruthyChecks =
@@ -17,7 +16,12 @@ namespace Stubble.Core
 
         public Stubble Build()
         {
-            var registry = new Registry(ValueGetters, TokenGetters, TruthyChecks);
+            var registry = new Registry(new RegistrySettings
+            {
+                ValueGetters = ValueGetters,
+                TokenGetters = TokenGetters,
+                TruthyChecks = TruthyChecks
+            });
             return new Stubble(registry);
         }
 

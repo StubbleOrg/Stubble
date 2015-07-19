@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Stubble.Core.Classes.Tokens;
 using Stubble.Core.Helpers;
+using Stubble.Core.Interfaces;
 
 namespace Stubble.Core.Classes
 {
@@ -80,38 +81,54 @@ namespace Stubble.Core.Classes
         };
         #endregion
 
-        public Registry()
+        public Registry() : this(new RegistrySettings())
         {
-            ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(DefaultValueGetters);
-            TokenGetters = new ReadOnlyDictionary<string, Func<string, Tags, ParserOutput>>(DefaultTokenGetters);
-            TruthyChecks = new List<Func<object, bool?>>();
-            SetTokenMatchRegex();
         }
 
-        public Registry(IDictionary<Type, Func<object, string, object>> valueGetters, 
-                        IDictionary<string, Func<string, Tags, ParserOutput>> tokenGetters, 
-                        IReadOnlyList<Func<object, bool?>> truthyChecks)
+        public Registry(RegistrySettings settings)
         {
-            SetValueGetters(valueGetters);
-            SetTokenGetters(tokenGetters);
-            TruthyChecks = truthyChecks;
+            SetValueGetters(settings.ValueGetters);
+            SetTokenGetters(settings.TokenGetters);
+            SetTruthyChecks(settings.TruthyChecks);
             SetTokenMatchRegex();
         }
 
         private void SetValueGetters(IDictionary<Type, Func<object, string, object>> valueGetters)
         {
-            var mergedGetters = DefaultValueGetters.MergeLeft(valueGetters);
+            if (valueGetters != null)
+            {
+                var mergedGetters = DefaultValueGetters.MergeLeft(valueGetters);
 
-            mergedGetters = mergedGetters
-                .OrderBy(x => x.Key, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable())
-                .ToDictionary(item => item.Key, item => item.Value);
+                mergedGetters = mergedGetters
+                    .OrderBy(x => x.Key, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable())
+                    .ToDictionary(item => item.Key, item => item.Value);
 
-            ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(mergedGetters);
+                ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(mergedGetters);
+            }
+            else
+            {
+                ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(DefaultValueGetters);
+            }
         }
 
         private void SetTokenGetters(IDictionary<string, Func<string, Tags, ParserOutput>> tokenGetters)
         {
-            var mergedGetters = DefaultTokenGetters.MergeLeft(tokenGetters);
+            if (tokenGetters != null)
+            {
+                var mergedGetters = DefaultTokenGetters.MergeLeft(tokenGetters);
+
+                TokenGetters = new ReadOnlyDictionary<string, Func<string, Tags, ParserOutput>>(mergedGetters);
+            }
+            else
+            {
+                TokenGetters = new ReadOnlyDictionary<string, Func<string, Tags, ParserOutput>>(DefaultTokenGetters);
+            }
+        }
+
+        private void SetTruthyChecks(IReadOnlyList<Func<object, bool?>> truthyChecks)
+        {
+            TruthyChecks = truthyChecks ?? new List<Func<object, bool?>>();
+        }
 
             TokenGetters = new ReadOnlyDictionary<string, Func<string, Tags, ParserOutput>>(mergedGetters);
         }
