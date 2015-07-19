@@ -6,9 +6,7 @@ namespace Stubble.Core.Classes.Tokens
     {
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
-            if (partials == null) return null;
-
-            var value = partials.ContainsKey(Value) ? partials[Value] : null;
+            var value = partials != null && partials.ContainsKey(Value) ? partials[Value] : null;
             if (value == null && context.Registry.PartialTemplateLoader != null)
                 value = context.Registry.PartialTemplateLoader.Load(Value);
 
