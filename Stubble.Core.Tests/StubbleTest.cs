@@ -71,6 +71,19 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
+        public void It_Should_Not_Render_If_Partial_Doesnt_Exist_In_Loader()
+        {
+            var stubble = new StubbleBuilder()
+                  .SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
+                {
+                    {"foo", "{{Foo}} this"}
+                })).Build();
+
+            var output = stubble.Render("{{> foo2}}", new { Foo = "Bar" });
+            Assert.Equal("", output);
+        }
+
+        [Fact]
         public void It_Doesnt_Error_When_Partial_Is_Used_But_None_Are_Given()
         {
             var stubble = new Stubble();
