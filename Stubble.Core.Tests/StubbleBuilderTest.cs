@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Stubble.Core.Classes.Loaders;
 using Xunit;
 
 namespace Stubble.Core.Tests
@@ -55,6 +56,16 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
+        public void It_Can_Set_A_Partial_Template_Loader()
+        {
+            var builder = (StubbleBuilder)new StubbleBuilder()
+                   .SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string> { { "test", "{{foo}}" } }));
+
+            Assert.NotNull(builder.PartialTemplateLoader);
+            Assert.True(builder.PartialTemplateLoader is DictionaryLoader);
+        }
+
+        [Fact]
         public void It_Can_Build_Stubble_Instance()
         {
             var stubble = new StubbleBuilder().Build();
@@ -64,6 +75,9 @@ namespace Stubble.Core.Tests
             Assert.NotNull(stubble.Registry.TokenGetters);
             Assert.NotNull(stubble.Registry.TokenMatchRegex);
             Assert.NotNull(stubble.Registry.TruthyChecks);
+            Assert.True(stubble.Registry.TemplateLoader is StringLoader);
+            Assert.Null(stubble.Registry.PartialTemplateLoader);
+
             Assert.NotEmpty(stubble.Registry.ValueGetters);
             Assert.NotEmpty(stubble.Registry.TokenGetters);
         }
