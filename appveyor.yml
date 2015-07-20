@@ -3,7 +3,7 @@ configuration: Release
 platform: Any CPU
 environment:
   COVERALLS_REPO_TOKEN:
-    secure: v1m3Krz+KWHSzoYRL2qt6BklzozgVlT5HTiHYigBLR0snXEPE9thURqSLBTJQiaT
+    secure: VyyiHIJv/p8KuVZ+2RWsU/NqCHxNM7hcLupLOzhtKf0gRygNzr7ZInC28MQjs/fA
 assembly_info:
   patch: true
   file: '**\AssemblyInfo.*'
