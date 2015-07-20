@@ -29,6 +29,20 @@ namespace Stubble.Core.Classes
             <Type, Func<object, string, object>>
         {
             {
+                typeof (IList),
+                (value, key) =>
+                {
+                    var castValue = value as IList;
+
+                    int intVal;
+                    if (int.TryParse(key, out intVal))
+                    {
+                        return castValue != null && intVal < castValue.Count ? castValue[intVal] : null;
+                    }
+                    return null;
+                }
+            },
+            {
                 typeof (IDictionary<string, object>),
                 (value, key) =>
                 {
