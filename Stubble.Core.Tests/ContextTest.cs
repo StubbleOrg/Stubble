@@ -272,6 +272,19 @@ namespace Stubble.Core.Tests
             var output = context.Lookup("Array.Foo");
             Assert.Null(output);
         }
+
+        [Fact]
+        public void It_Should_Allow_Index_Access_On_Lists()
+        {
+            var input = new
+            {
+                List = new List<string> { "Foo", "Bar" }
+            };
+
+            var context = new Context(input, new Registry());
+            var output = context.Lookup("List.0");
+            Assert.Equal("Foo", output);
+        }
     }
 
     [Collection("ChildContextCollection")]
