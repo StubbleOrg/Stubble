@@ -218,6 +218,60 @@ namespace Stubble.Core.Tests
             Assert.True(context.IsTruthyValue((uint)5));
             Assert.True(context.IsTruthyValue(true));
         }
+
+        [Fact]
+        public void It_Can_Retrieve_Array_Values_By_Index()
+        {
+            var input = new
+            {
+                Array = new[] {"Foo", "Bar"}
+            };
+
+            var context = new Context(input, new Registry());
+            var output = context.Lookup("Array.0");
+            Assert.Equal("Foo", output);
+        }
+
+        [Fact]
+        public void It_Can_Retrieve_Nested_Array_Values_By_Multiple_Indexes()
+        {
+            var input = new
+            {
+                Array = new[] {new[] {"Foo"}}
+            };
+
+            var context = new Context(input, new Registry());
+            var output = context.Lookup("Array.0.0");
+            Assert.Equal("Foo", output);
+        }
+
+        [Fact]
+        public void It_Should_Skip_Indexes_Outside_Of_Array()
+        {
+            var input = new
+            {
+                Array = new[] { "Foo", "Bar" }
+            };
+
+            var context = new Context(input, new Registry());
+            var output = context.Lookup("Array.2");
+            var output2 = context.Lookup("Array.10");
+            Assert.Null(output);
+            Assert.Null(output2);
+        }
+
+        [Fact]
+        public void It_Should_Skip_If_Index_Isnt_Int()
+        {
+            var input = new
+            {
+                Array = new[] { "Foo", "Bar" }
+            };
+
+            var context = new Context(input, new Registry());
+            var output = context.Lookup("Array.Foo");
+            Assert.Null(output);
+        }
     }
 
     [Collection("ChildContextCollection")]
