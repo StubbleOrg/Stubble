@@ -2,8 +2,8 @@
 ### Trimmed down {{mustache}} templates in .NET
 [![Build Status](https://img.shields.io/appveyor/ci/Romanx/stubble-ceybe.svg?style=flat-square)](https://ci.appveyor.com/project/Romanx/stubble-ceybe/)
 [![Coverage Status](https://img.shields.io/coveralls/StubbleOrg/Stubble.svg?style=flat-square)](https://coveralls.io/r/Romanx/StubbleOrg)
-[![Prerelease Build Status](https://img.shields.io/nuget/vpre/Stubble.Core.svg?style=flat-square&label=nuget%20pre)](https://www.nuget.org/packages/Stubble.Core/)
-[![Build Status](https://img.shields.io/nuget/v/Stubble.Core.svg?style=flat-square)](https://www.nuget.org/packages/Stubble.Core/)
+[![Prerelease Build Nuget](https://img.shields.io/nuget/vpre/Stubble.Core.svg?style=flat-square&label=nuget%20pre)](https://www.nuget.org/packages/Stubble.Core/)
+[![Stable Nuget](https://img.shields.io/nuget/v/Stubble.Core.svg?style=flat-square)](https://www.nuget.org/packages/Stubble.Core/)
 
 Stubble is an implementation of the [Mustache](http://mustache.github.com/) template system in C# (but is usable from any .NET language).
 
