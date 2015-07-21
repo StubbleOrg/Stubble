@@ -13,6 +13,7 @@ namespace Stubble.Core.Interfaces
         IStubbleBuilder AddTruthyCheck(Func<object, bool?> truthyCheck);
         IStubbleBuilder SetTemplateLoader(IStubbleLoader loader);
         IStubbleBuilder SetPartialTemplateLoader(IStubbleLoader loader);
+        IStubbleBuilder SetMaxRecursionDepth(int maxRecursionDepth);
         Stubble Build();
     }
 }

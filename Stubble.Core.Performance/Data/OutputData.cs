@@ -16,6 +16,7 @@ namespace Stubble.Core.Performance.Data
         {
             get { return IncrementResults.ToDictionary(k => k.Key, x => x.Value.Average(y => y.TotalMilliseconds)); }
         }
+
         public Dictionary<int, double> RelativeValues
         {
             get

@@ -23,6 +23,7 @@ namespace Stubble.Core.Classes
         public Regex TokenMatchRegex { get; private set; }
         public IStubbleLoader TemplateLoader { get; private set; }
         public IStubbleLoader PartialTemplateLoader { get; private set; }
+        public int MaxRecursionDepth { get; set; }
 
         #region Default Value Getters
         private static readonly IDictionary<Type, Func<object, string, object>> DefaultValueGetters = new Dictionary
@@ -109,6 +110,7 @@ namespace Stubble.Core.Classes
             SetTemplateLoader(settings.TemplateLoader);
             SetPartialTemplateLoader(settings.PartialTemplateLoader);
             SetTokenMatchRegex();
+            MaxRecursionDepth = settings.MaxRecursionDepth ?? 256;
         }
 
         private void SetValueGetters(IDictionary<Type, Func<object, string, object>> valueGetters)

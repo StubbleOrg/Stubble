@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Exceptions;
 using Xunit;
 
 namespace Stubble.Core.Tests
@@ -60,7 +61,7 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Can_Render_WithPartials_FromLoader()
         {
-            var stubble =new StubbleBuilder()
+            var stubble = new StubbleBuilder()
                 .SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
                 {
                     {"foo", "{{Foo}} this"}
@@ -129,9 +130,126 @@ namespace Stubble.Core.Tests
             var stubble = new Stubble();
             var output = stubble.Render("{{#Foo}}Foo{{/Foo}}", new
             {
-                BarValue = "Bar", Foo = new Func<dynamic, string, object>((context, str) => str + " " + context.BarValue)
+                BarValue = "Bar",
+                Foo = new Func<dynamic, string, object>((context, str) => str + " " + context.BarValue)
             });
             Assert.Equal("Foo Bar", output);
+        }
+
+        [Fact]
+        public void It_Should_Error_After_N_Recursions()
+        {
+            const string rowTemplate = @"
+            <div class='row'>
+                {{#content}}
+                    {{#is_column}}
+                        {{>column}}
+                    {{/is_column}}
+                {{/content}}
+            </div>";
+
+            const string columnTemplate = @"
+            <div class='column'>
+                {{#content}}
+                    {{#is_text}}
+                        {{>text}}
+                    {{/is_text}}
+                    {{#is_row}}
+                        {{>row}}
+                    {{/is_row}}
+                {{/content}}
+            </div>";
+
+            const string textTemplate = @"
+            <span class='text'>
+                {{text}}
+            </span>";
+
+            var treeData = new
+            {
+                is_row = true,
+                content = new
+                {
+                    is_column = true,
+                    content = new[]
+                    {
+                        new
+                        {
+                            is_text = true,
+                            text = "Hello World!"
+                        }
+                    }
+                }
+            };
+
+            var stubble = new Stubble();
+            var ex =
+                Assert.Throws<StubbleException>(() => stubble.Render(rowTemplate, treeData, new Dictionary<string, string>
+                {
+                    {"row", rowTemplate},
+                    {"column", columnTemplate},
+                    {"text", textTemplate}
+                }));
+
+            Assert.Equal("You have reached the maximum recursion limit of 256.", ex.Message);
+        }
+
+        [Fact]
+        public void It_Should_Be_Able_To_Change_Max_Recursion_Depth()
+        {
+            const string rowTemplate = @"
+            <div class='row'>
+                {{#content}}
+                    {{#is_column}}
+                        {{>column}}
+                    {{/is_column}}
+                {{/content}}
+            </div>";
+
+            const string columnTemplate = @"
+            <div class='column'>
+                {{#content}}
+                    {{#is_text}}
+                        {{>text}}
+                    {{/is_text}}
+                    {{#is_row}}
+                        {{>row}}
+                    {{/is_row}}
+                {{/content}}
+            </div>";
+
+            const string textTemplate = @"
+            <span class='text'>
+                {{text}}
+            </span>";
+
+            var treeData = new
+            {
+                is_row = true,
+                content = new
+                {
+                    is_column = true,
+                    content = new[]
+                    {
+                        new
+                        {
+                            is_text = true,
+                            text = "Hello World!"
+                        }
+                    }
+                }
+            };
+
+            var stubble = new StubbleBuilder().SetMaxRecursionDepth(128).Build();
+            var ex =
+                Assert.Throws<StubbleException>(() => stubble.Render(rowTemplate, treeData, new Dictionary<string, string>
+                {
+                    {"row", rowTemplate},
+                    {"column", columnTemplate},
+                    {"text", textTemplate}
+                }));
+
+            Assert.Equal("You have reached the maximum recursion limit of 128.", ex.Message);
         }
     }
 }
