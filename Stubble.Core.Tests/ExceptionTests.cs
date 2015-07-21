@@ -13,5 +13,13 @@ namespace Stubble.Core.Tests
             Assert.NotNull(new UnknownTemplateException("Test"));
             Assert.NotNull(new UnknownTemplateException("Test", new Exception("Inner Test")));
         }
+
+        [Fact]
+        public void StubbleException_Constructor_Should_Work()
+        {
+            Assert.NotNull(new StubbleException());
+            Assert.NotNull(new StubbleException("Test"));
+            Assert.NotNull(new StubbleException("Test", new Exception("Inner Test")));
+        }
     }
 }

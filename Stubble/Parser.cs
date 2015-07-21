@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Classes.Tokens;
 
 namespace Stubble.Core
@@ -184,13 +185,13 @@ namespace Stubble.Core
                     case "/":
                         if (sections.Count == 0)
                         {
-                            throw new Exception("Unopened Section '" + value + "' at " + start);
+                            throw new StubbleException("Unopened Section '" + value + "' at " + start);
                         }
                         openSection = sections.Pop();
 
                         if (openSection.Value != token.Value)
                         {
-                            throw new Exception("Unclosed Section '" + openSection.Value + "' at " + start);
+                            throw new StubbleException("Unclosed Section '" + openSection.Value + "' at " + start);
                         }
                         break;
                     case "=":
@@ -203,7 +204,7 @@ namespace Stubble.Core
             if (sections.Count > 0)
             {
                 openSection = sections.Pop();
-                throw new Exception("Unclosed Section '" + openSection.Value + "' at " + scanner.Pos);
+                throw new StubbleException("Unclosed Section '" + openSection.Value + "' at " + scanner.Pos);
             }
 
             return NestTokens(SquishTokens(tokens));
