@@ -11,5 +11,6 @@ namespace Stubble.Core.Classes
         public IReadOnlyList<Func<object, bool?>> TruthyChecks { get; set; }
         public IStubbleLoader TemplateLoader { get; set; }
         public IStubbleLoader PartialTemplateLoader { get; set; }
+        public int? MaxRecursionDepth { get; set; }
     }
 }

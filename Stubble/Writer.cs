@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Exceptions;
 
 namespace Stubble.Core
 {
@@ -11,6 +12,7 @@ namespace Stubble.Core
         internal LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
         internal Parser Parser;
         private readonly Registry Registry;
+        private int currentDepth = 0;
 
         public Writer(int cacheLimit, Registry registry)
         {
@@ -46,6 +48,10 @@ namespace Stubble.Core
 
         public string RenderTokens(IList<ParserOutput> tokens, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
+            currentDepth++;
+            if(currentDepth >= Registry.MaxRecursionDepth)
+                throw new StubbleException(string.Format("You have reached the maximum recursion limit of {0}.", Registry.MaxRecursionDepth));
+
             var sb = new StringBuilder();
             foreach (var token in tokens.OfType<IRenderableToken>( ))
             {

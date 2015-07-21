@@ -16,6 +16,7 @@ namespace Stubble.Core
             new List<Func<object, bool?>>();
         internal IStubbleLoader TemplateLoader = new StringLoader();
         internal IStubbleLoader PartialTemplateLoader;
+        internal int MaxRecursionDepth = 256;
 
         public Stubble Build()
         {
@@ -25,7 +26,8 @@ namespace Stubble.Core
                 TokenGetters = TokenGetters,
                 TruthyChecks = TruthyChecks,
                 TemplateLoader = TemplateLoader,
-                PartialTemplateLoader = PartialTemplateLoader
+                PartialTemplateLoader = PartialTemplateLoader,
+                MaxRecursionDepth = MaxRecursionDepth
             });
             return new Stubble(registry);
         }
@@ -67,6 +69,12 @@ namespace Stubble.Core
         public IStubbleBuilder SetPartialTemplateLoader(IStubbleLoader loader)
         {
             PartialTemplateLoader = loader;
+            return this;
+        }
+
+        public IStubbleBuilder SetMaxRecursionDepth(int maxRecursionDepth)
+        {
+            MaxRecursionDepth = maxRecursionDepth;
             return this;
         }
     }
