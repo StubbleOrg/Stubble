@@ -2,14 +2,14 @@
 {
     public class RenderSettings
     {
-        public bool RecursiveLookup { get; set; }
+        public bool SkipRecursiveLookup { get; set; }
         public bool ThrowOnDataMiss { get; set; }
 
         public static RenderSettings GetDefaultRenderSettings()
         {
             return new RenderSettings
             {
-                RecursiveLookup = true,
+                SkipRecursiveLookup = false,
                 ThrowOnDataMiss = false
             };
         }
