@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Tests.Fixtures;
 using Xunit;
 
@@ -293,6 +294,20 @@ namespace Stubble.Core.Tests
             }, new Registry(), RenderSettings.GetDefaultRenderSettings());
 
             Assert.Null(context.Lookup("Foo"));
+        }
+
+        [Fact]
+        public void It_Should_Throw_On_Data_Miss_Based_On_RenderSettings()
+        {
+            var context = new Context(new
+            {
+                Foo = "Foo"
+            }, new Registry(), new RenderSettings { ThrowOnDataMiss = true });
+
+            var ex = Assert.Throws<StubbleDataMissException>(() => context.Lookup("Bar"));
+            Assert.Equal("'Bar' is undefined.", ex.Message);
+            Assert.NotNull(ex.Data["Name"]);
+            Assert.NotNull(ex.Data["SkipRecursiveLookup"]);
         }
     }
 

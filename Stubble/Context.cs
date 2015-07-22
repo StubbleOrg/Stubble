@@ -90,7 +90,7 @@ namespace Stubble.Core
 
             if (!RenderSettings.ThrowOnDataMiss || value != null) return value;
 
-            var ex = new StubbleDataMissException(name + " is undefined.");
+            var ex = new StubbleDataMissException(string.Format("'{0}' is undefined.", name));
             ex.Data["Name"] = name;
             ex.Data["SkipRecursiveLookup"] = RenderSettings.SkipRecursiveLookup;
             throw ex;
