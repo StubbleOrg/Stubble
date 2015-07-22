@@ -27,8 +27,6 @@ namespace Stubble.Core.Classes.Tokens
             }
             else if (value is Func<dynamic, string, object> || value is Func<string, object>)
             {
-                if (originalTemplate == null) throw new Exception("Cannot use higher-order sections without the original template");
-
                 var functionDynamicValue = value as Func<dynamic, string, object>;
                 var functionStringValue = value as Func<string, object>;
                 var sectionContent = originalTemplate.Slice(End, ParentSectionEnd);

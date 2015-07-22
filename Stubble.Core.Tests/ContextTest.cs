@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using Stubble.Core.Classes;
 using Stubble.Core.Tests.Fixtures;
 using Xunit;
@@ -326,6 +322,24 @@ namespace Stubble.Core.Tests
         public void It_Is_Able_To_Lookup_Nested_Properties_Of_Its_Parents_View()
         {
             Assert.Equal("b", Context.Lookup("A.B"));
+        }
+
+        [Fact]
+        public void It_Skips_Recursive_Lookup_By_RenderSettings()
+        {
+            var context = new Context(new
+            {
+                Name = "parent",
+                Message = "hi",
+                A = new
+                {
+                    B = "b"
+                }
+            }, new Registry(), new RenderSettings {SkipRecursiveLookup = true});
+
+            var childContext = context.Push(new {Name = "child", B = "b"});
+
+            Assert.Null(childContext.Lookup("Message"));
         }
     }
 
