@@ -27,7 +27,20 @@ namespace Stubble.Core
         /// <returns>A mustache rendered string</returns>
         public string Render(string template, object view)
         {
-            return Render(template, view, null);
+            return Render(template, view, null, null);
+        }
+
+        /// <summary>
+        /// Renders the template with the given view using the writer 
+        /// and the given render settings. 
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="view"></param>
+        /// <param name="settings"></param>
+        /// <returns>A mustache rendered string</returns>
+        public string Render(string template, object view, RenderSettings settings)
+        {
+            return Render(template, view, null, settings);
         }
 
         /// <summary>
@@ -40,8 +53,22 @@ namespace Stubble.Core
         /// <returns>A mustache rendered string</returns>
         public string Render(string template, object view, IDictionary<string, string> partials)
         {
+            return Render(template, view, partials, null);
+        }
+
+        /// <summary>
+        /// Renders the template with the given view and partials using 
+        /// the writer and the given Render Settings
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="view"></param>
+        /// <param name="partials">A hash of Partials</param>
+        /// <param name="settings"></param>
+        /// <returns>A mustache rendered string</returns>
+        public string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
+        {
             var loadedTemplate = Registry.TemplateLoader.Load(template);
-            return Writer.Render(loadedTemplate, view, partials);
+            return Writer.Render(loadedTemplate, view, partials, settings ?? Registry.RenderSettings);
         }
 
         /// <summary>

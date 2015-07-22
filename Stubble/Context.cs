@@ -10,16 +10,17 @@ namespace Stubble.Core
         private IDictionary<string, object> Cache { get; set; }
         internal readonly Registry Registry;
         private readonly object _view;
+        private readonly RenderSettings _renderSettings;
 
         public Context ParentContext { get; set; }
         public dynamic View { get; set; }
 
-        public Context(object view, Registry registry)
-            : this(view, registry, null)
+        public Context(object view, Registry registry, RenderSettings settings)
+            : this(view, registry, null, settings)
         {
         }
 
-        public Context(object view, Registry registry, Context parentContext)
+        public Context(object view, Registry registry, Context parentContext, RenderSettings settings)
         {
             _view = view;
             View = _view;
@@ -29,6 +30,7 @@ namespace Stubble.Core
             };
             ParentContext = parentContext;
             Registry = registry;
+            _renderSettings = settings;
         }
 
         public object Lookup(string name)
@@ -77,7 +79,7 @@ namespace Stubble.Core
                         }
                     }
 
-                    if (lookupHit || Registry.RenderSettings.SkipRecursiveLookup) break;
+                    if (lookupHit || _renderSettings.SkipRecursiveLookup) break;
 
                     context = context.ParentContext;
                 }
@@ -90,7 +92,7 @@ namespace Stubble.Core
 
         public Context Push(object view)
         {
-            return new Context(view, Registry, this);
+            return new Context(view, Registry, this, _renderSettings);
         }
 
         public object GetValueFromRegistry(object value, string key)

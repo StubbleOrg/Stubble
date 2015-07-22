@@ -45,7 +45,7 @@ namespace Stubble.Core.Tests
             var context = new Context(new
             {
                 Foo = new Func<object>(() => "TestyTest")
-            }, new Registry());
+            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Foo");
             var functionOutput = output as Func<object>;
             Assert.Equal("TestyTest", functionOutput.Invoke());
@@ -58,7 +58,7 @@ namespace Stubble.Core.Tests
             {
                 MyData = "Data!",
                 Foo = new Func<dynamic, object>((data) => data.MyData)
-            }, new Registry());
+            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Foo");
             var functionOutput = output as Func<dynamic, object>;
 
@@ -71,7 +71,7 @@ namespace Stubble.Core.Tests
             var context = new Context(new
             {
                 MyData = "Data!"
-            }, new Registry());
+            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("MyData");
 
             Assert.Equal("Data!", output);
@@ -84,7 +84,7 @@ namespace Stubble.Core.Tests
             {
                 { "Foo", "Bar"},
                 { "Foo2", 1 }
-            }, new Registry());
+            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Foo");
             var output2 = context.Lookup("Foo2");
 
@@ -100,7 +100,7 @@ namespace Stubble.Core.Tests
             input.Number = 1;
             input.Blah = new { String = "Test" };
 
-            var context = new Context(input, new Registry());
+            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Foo");
             var output2 = context.Lookup("Number");
             var output3 = context.Lookup("Blah.String");
@@ -119,7 +119,7 @@ namespace Stubble.Core.Tests
             {
                 Field = 1,
                 Property = 1
-            }, new Registry());
+            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
 
             var instanceProperty = context.Lookup("Property");
             var staticProperty = context.Lookup("StaticProperty");
@@ -154,7 +154,7 @@ namespace Stubble.Core.Tests
                 Property = 1,
                 ChildField = 2,
                 ChildProperty = 2
-            }, new Registry());
+            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
 
             var parentInstanceProperty = context.Lookup("Property");
             var parentInstanceField = context.Lookup("Field");
@@ -212,7 +212,7 @@ namespace Stubble.Core.Tests
                 Property = 1,
                 ChildField = 2,
                 ChildProperty = 2
-            }, registry);
+            }, registry, RenderSettings.GetDefaultRenderSettings());
 
             Assert.True(context.IsTruthyValue("Foo"));
             Assert.True(context.IsTruthyValue((uint)5));
@@ -227,7 +227,7 @@ namespace Stubble.Core.Tests
                 Array = new[] {"Foo", "Bar"}
             };
 
-            var context = new Context(input, new Registry());
+            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Array.0");
             Assert.Equal("Foo", output);
         }
@@ -240,7 +240,7 @@ namespace Stubble.Core.Tests
                 Array = new[] {new[] {"Foo"}}
             };
 
-            var context = new Context(input, new Registry());
+            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Array.0.0");
             Assert.Equal("Foo", output);
         }
@@ -253,7 +253,7 @@ namespace Stubble.Core.Tests
                 Array = new[] { "Foo", "Bar" }
             };
 
-            var context = new Context(input, new Registry());
+            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Array.2");
             var output2 = context.Lookup("Array.10");
             Assert.Null(output);
@@ -268,7 +268,7 @@ namespace Stubble.Core.Tests
                 Array = new[] { "Foo", "Bar" }
             };
 
-            var context = new Context(input, new Registry());
+            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Array.Foo");
             Assert.Null(output);
         }
@@ -281,7 +281,7 @@ namespace Stubble.Core.Tests
                 List = new List<string> { "Foo", "Bar" }
             };
 
-            var context = new Context(input, new Registry());
+            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("List.0");
             Assert.Equal("Foo", output);
         }

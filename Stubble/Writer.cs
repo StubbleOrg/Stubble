@@ -61,9 +61,9 @@ namespace Stubble.Core
             return sb.ToString();
         }
 
-        public string Render(string template, object view, IDictionary<string, string> partials)
+        public string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
         {
-            return Render(template, new Context(view, Registry), partials, null);
+            return Render(template, new Context(view, Registry, settings), partials, null);
         }
 
         public string Render(string template, Context context, IDictionary<string, string> partials)

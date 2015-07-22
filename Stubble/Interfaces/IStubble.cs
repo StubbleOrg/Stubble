@@ -14,6 +14,16 @@ namespace Stubble.Core.Interfaces
         string Render(string template, object view);
 
         /// <summary>
+        /// Renders the template with the given view using the writer 
+        /// and the given render settings. 
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="view"></param>
+        /// <param name="settings"></param>
+        /// <returns>A mustache rendered string</returns>
+        string Render(string template, object view, RenderSettings settings);
+
+        /// <summary>
         /// Renders the template with the given view and partials using 
         /// the writer.
         /// </summary>
@@ -22,6 +32,17 @@ namespace Stubble.Core.Interfaces
         /// <param name="partials">A hash of Partials</param>
         /// <returns>A mustache rendered string</returns>
         string Render(string template, object view, IDictionary<string, string> partials);
+
+        /// <summary>
+        /// Renders the template with the given view and partials using 
+        /// the writer and the given Render Settings
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="view"></param>
+        /// <param name="partials">A hash of Partials</param>
+        /// <param name="settings"></param>
+        /// <returns>A mustache rendered string</returns>
+        string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings);
 
         /// <summary>
         /// Parses and caches the given template in the writer and returns the list 
