@@ -99,5 +99,37 @@ namespace Stubble.Core.Tests
             });
             Assert.Equal("Foo Bar", output);
         }
+
+        [Fact]
+        public void It_Should_Be_Able_To_Skip_Recursive_Lookups()
+        {
+            var output = StubbleStatic.Render("{{FooValue}} {{#Foo}}{{FooValue}}{{BarValue}}{{/Foo}}", new
+            {
+                FooValue = "Foo",
+                Foo = new
+                {
+                    BarValue = "Bar"
+                }
+            }, new RenderSettings { SkipRecursiveLookup = true });
+            Assert.Equal("Foo Bar", output);
+        }
+
+        [Fact]
+        public void It_Should_Be_Able_To_Take_Partials_And_Render_Settings()
+        {
+            var output = StubbleStatic.Render("{{FooValue}} {{#Foo}}{{> FooBar}}{{/Foo}}", new
+            {
+                FooValue = "Foo",
+                Foo = new
+                {
+                    BarValue = "Bar"
+                }
+            }, new Dictionary<string, string>
+            {
+                { "FooBar", "{{FooValue}}{{BarValue}}" }
+            }, new RenderSettings { SkipRecursiveLookup = true });
+            Assert.Equal("Foo Bar", output);
+        }
+
     }
 }
