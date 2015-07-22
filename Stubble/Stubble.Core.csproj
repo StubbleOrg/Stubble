@@ -60,6 +60,7 @@
     <Compile Include="Classes\Registry.cs" />
     <Compile Include="Classes\RegistrySettings.cs" />
     <Compile Include="Classes\Loaders\StringLoader.cs" />
+    <Compile Include="Classes\RenderSettings.cs" />
     <Compile Include="Classes\Tags.cs" />
     <Compile Include="Classes\TokenGetter.cs" />
     <Compile Include="Classes\Tokens\EscapedValueToken.cs" />

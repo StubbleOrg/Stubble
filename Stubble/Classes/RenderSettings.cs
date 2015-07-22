@@ -10,7 +10,7 @@
             return new RenderSettings
             {
                 RecursiveLookup = true,
-                ThrowOnDataMiss = true
+                ThrowOnDataMiss = false
             };
         }
     }

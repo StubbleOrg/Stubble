@@ -24,6 +24,7 @@ namespace Stubble.Core.Classes
         public IStubbleLoader TemplateLoader { get; private set; }
         public IStubbleLoader PartialTemplateLoader { get; private set; }
         public int MaxRecursionDepth { get; private set; }
+        public RenderSettings RenderSettings { get; private set; }
 
         #region Default Value Getters
         private static readonly IDictionary<Type, Func<object, string, object>> DefaultValueGetters = new Dictionary
@@ -111,6 +112,7 @@ namespace Stubble.Core.Classes
             SetPartialTemplateLoader(settings.PartialTemplateLoader);
             SetTokenMatchRegex();
             MaxRecursionDepth = settings.MaxRecursionDepth ?? 256;
+            RenderSettings = settings.RenderSettings ?? RenderSettings.GetDefaultRenderSettings();
         }
 
         private void SetValueGetters(IDictionary<Type, Func<object, string, object>> valueGetters)
