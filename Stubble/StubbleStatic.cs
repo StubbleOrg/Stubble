@@ -25,6 +25,19 @@ namespace Stubble.Core
         }
 
         /// <summary>
+        /// Helper method for calling the Render method on the enclosed instance with the 
+        /// given render settings. 
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="view"></param>
+        /// <param name="settings"></param>
+        /// <returns>A mustache rendered string</returns>
+        public static string Render(string template, object view, RenderSettings settings)
+        {
+            return Instance.Render(template, view, settings);
+        }
+
+        /// <summary>
         /// Helper method for calling the Render method on the enclosed instance.
         /// </summary>
         /// <param name="template"></param>
@@ -34,6 +47,21 @@ namespace Stubble.Core
         public static string Render(string template, object view, IDictionary<string, string> partials)
         {
             return Instance.Render(template, view, partials);
+        }
+
+        /// <summary>
+        /// Helper method for calling the Render method on the enclosed instance with the
+        /// given render settings
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="view"></param>
+        /// <param name="partials"></param>
+        /// <param name="settings"></param>
+        /// <returns>the template rendered with the given data</returns>
+        public static string Render(string template, object view, IDictionary<string, string> partials,
+            RenderSettings settings)
+        {
+            return Instance.Render(template, view, partials, settings);
         }
 
         /// <summary>
