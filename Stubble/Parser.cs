@@ -297,7 +297,7 @@ namespace Stubble.Core
                 : new ParserOutput { TokenType = tokenType };
         }
 
-        private static void AddToRegexCache(string dictionaryKey, TagRegexes regex)
+        internal static void AddToRegexCache(string dictionaryKey, TagRegexes regex)
         {
             if (TagRegexCache.Count >= regexCacheSize)
             {

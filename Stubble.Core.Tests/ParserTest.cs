@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Tests.Fixtures;
@@ -110,6 +111,34 @@ namespace Stubble.Core.Tests
             Parser.RegexCacheSize = 2;
             Assert.Equal(2, Parser.RegexCacheSize);
             Assert.Equal(2, Parser.TagRegexCache.Count);
+        }
+
+        /// <summary>
+        /// This is testing for a possible thread race condition. There should never be two
+        /// different tag regexes for the same key as they're built from the key.
+        /// </summary>
+        [Fact]
+        public void It_Should_Override_Existing_Regex_Cache_Entries()
+        {
+            var tagsA = new Tags("<|", "|>");
+            var tagsB = new Tags("<||", "||>");
+            var tagRegexA = new Parser.TagRegexes()
+            {
+                OpenTag = new Regex(Parser.EscapeRegexExpression(tagsA.StartTag) + @"\s*"),
+                CloseTag = new Regex(@"\s*" + Parser.EscapeRegexExpression(tagsA.EndTag)),
+                ClosingTag = new Regex(@"\s*" + Parser.EscapeRegexExpression("}" + tagsA.EndTag))
+            };
+            var tagRegexB = new Parser.TagRegexes()
+            {
+                OpenTag = new Regex(Parser.EscapeRegexExpression(tagsB.StartTag) + @"\s*"),
+                CloseTag = new Regex(@"\s*" + Parser.EscapeRegexExpression(tagsB.EndTag)),
+                ClosingTag = new Regex(@"\s*" + Parser.EscapeRegexExpression("}" + tagsB.EndTag))
+            };
+
+            Parser.AddToRegexCache("<| |>", tagRegexA);
+            Parser.AddToRegexCache("<| |>", tagRegexB);
+
+            Assert.Equal(tagRegexB, Parser.TagRegexCache["<| |>"]);
         }
 
         public static IEnumerable<object[]> TemplateParsingData()
