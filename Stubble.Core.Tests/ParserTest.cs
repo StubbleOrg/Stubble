@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Tests.Fixtures;
 using Xunit;
 
@@ -41,35 +42,35 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Knows_When_There_Is_An_Unclosed_Section()
         {
-            var ex = Assert.Throws<Exception>(delegate { Parser.ParseTemplate("A list: {{#people}}{{name}}"); });
+            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("A list: {{#people}}{{name}}"); });
             Assert.Equal("Unclosed Section 'people' at 27", ex.Message);
         }
 
         [Fact]
         public void It_Knows_When_There_Is_An_Unopened_Section()
         {
-            var ex = Assert.Throws<Exception>(delegate { Parser.ParseTemplate("The end of the list! {{/people}}"); });
+            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("The end of the list! {{/people}}"); });
             Assert.Equal("Unopened Section 'people' at 21", ex.Message);
         }
 
         [Fact]
         public void It_Errors_When_Given_Invalid_Tags()
         {
-            var ex = Assert.Throws<Exception>(delegate { Parser.ParseTemplate("A template <% name %>", new Tags(new[] { "<%" })); });
+            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("A template <% name %>", new Tags(new[] { "<%" })); });
             Assert.Equal("Invalid Tags", ex.Message);
         }
 
         [Fact]
         public void It_Errors_When_The_Template_Contains_Invalid_Tags()
         {
-            var ex = Assert.Throws<Exception>(delegate { Parser.ParseTemplate("A template {{=<%=}}", new Tags(new[] { "<%" })); });
+            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("A template {{=<%=}}", new Tags(new[] { "<%" })); });
             Assert.Equal("Invalid Tags", ex.Message);
         }
 
         [Fact]
         public void It_Errors_When_You_Close_The_Wrong_Section()
         {
-            var ex = Assert.Throws<Exception>(delegate { Parser.ParseTemplate("{{#Section}}Herp De Derp{{/wrongSection}}"); });
+            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("{{#Section}}Herp De Derp{{/wrongSection}}"); });
             Assert.Equal("Unclosed Section 'Section' at 24", ex.Message);
         }
 
