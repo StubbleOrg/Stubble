@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Exceptions\StubbleDataMissException.cs" />
     <Compile Include="Classes\Exceptions\StubbleException.cs" />
     <Compile Include="Classes\Exceptions\UnknownTemplateException.cs" />
     <Compile Include="Classes\IRenderableToken.cs" />

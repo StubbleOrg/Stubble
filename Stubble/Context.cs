@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Exceptions;
 
 namespace Stubble.Core
 {
@@ -87,7 +88,12 @@ namespace Stubble.Core
                 Cache[name] = value;
             }
 
-            return value;
+            if (!RenderSettings.ThrowOnDataMiss || value != null) return value;
+
+            var ex = new StubbleDataMissException(name + " is undefined.");
+            ex.Data["Name"] = name;
+            ex.Data["SkipRecursiveLookup"] = RenderSettings.SkipRecursiveLookup;
+            throw ex;
         }
 
         public Context Push(object view)
