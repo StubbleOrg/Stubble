@@ -1,4 +1,5 @@
 ﻿using System;
+using Stubble.Core.Classes.Exceptions;
 
 namespace Stubble.Core.Classes
 {
@@ -12,7 +13,7 @@ namespace Stubble.Core.Classes
 
         public Tags(string[] tags)
         {
-            if (tags.Length != 2) throw new Exception("Invalid Tags");
+            if (tags.Length != 2) throw new StubbleException("Invalid Tags");
             StartTag = tags[0];
             EndTag = tags[1];
         }
