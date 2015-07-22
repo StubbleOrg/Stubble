@@ -12,5 +12,6 @@ namespace Stubble.Core.Classes
         public IStubbleLoader TemplateLoader { get; set; }
         public IStubbleLoader PartialTemplateLoader { get; set; }
         public int? MaxRecursionDepth { get; set; }
+        public RenderSettings RenderSettings { get; set; }
     }
 }
