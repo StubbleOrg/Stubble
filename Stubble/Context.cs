@@ -77,7 +77,7 @@ namespace Stubble.Core
                         }
                     }
 
-                    if (lookupHit) break;
+                    if (lookupHit || Registry.RenderSettings.SkipRecursiveLookup) break;
 
                     context = context.ParentContext;
                 }
