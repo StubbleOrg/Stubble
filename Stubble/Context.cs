@@ -10,7 +10,7 @@ namespace Stubble.Core
         private IDictionary<string, object> Cache { get; set; }
         internal readonly Registry Registry;
         private readonly object _view;
-        private readonly RenderSettings _renderSettings;
+        internal readonly RenderSettings RenderSettings;
 
         public Context ParentContext { get; set; }
         public dynamic View { get; set; }
@@ -30,7 +30,7 @@ namespace Stubble.Core
             };
             ParentContext = parentContext;
             Registry = registry;
-            _renderSettings = settings;
+            RenderSettings = settings;
         }
 
         public object Lookup(string name)
@@ -79,7 +79,7 @@ namespace Stubble.Core
                         }
                     }
 
-                    if (lookupHit || _renderSettings.SkipRecursiveLookup) break;
+                    if (lookupHit || RenderSettings.SkipRecursiveLookup) break;
 
                     context = context.ParentContext;
                 }
@@ -92,7 +92,7 @@ namespace Stubble.Core
 
         public Context Push(object view)
         {
-            return new Context(view, Registry, this, _renderSettings);
+            return new Context(view, Registry, this, RenderSettings);
         }
 
         public object GetValueFromRegistry(object value, string key)
