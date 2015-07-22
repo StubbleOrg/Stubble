@@ -281,6 +281,19 @@ namespace Stubble.Core.Tests
             var output = context.Lookup("List.0");
             Assert.Equal("Foo", output);
         }
+
+
+        [Fact]
+        public void It_Should_Skip_Anything_Not_A_Valid_Property_Field_Method()
+        {
+            var context = new Context(new StronglyTypedTestClass()
+            {
+                Field = 1,
+                Property = 1
+            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
+
+            Assert.Null(context.Lookup("Foo"));
+        }
     }
 
     [Collection("ChildContextCollection")]
@@ -372,6 +385,9 @@ namespace Stubble.Core.Tests
         {
             return i;
         }
+
+        public event EventHandler Foo;
+
         #endregion
     }
 
