@@ -20,7 +20,8 @@ namespace Stubble.Core.Classes
         public IReadOnlyDictionary<Type, Func<object, string, object>> ValueGetters { get; private set; }
         public IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters { get; private set; }
         public IReadOnlyList<Func<object, bool?>> TruthyChecks { get; private set; }
-        public Regex TokenMatchRegex { get; private set; }
+        public IReadOnlyDictionary<Type, Func<object, IEnumerable>> EnumerationConverters { get; private set; }
+        internal Regex TokenMatchRegex { get; private set; }
         public IStubbleLoader TemplateLoader { get; private set; }
         public IStubbleLoader PartialTemplateLoader { get; private set; }
         public int MaxRecursionDepth { get; private set; }
@@ -98,6 +99,11 @@ namespace Stubble.Core.Classes
             { "text", (s, tags) => new RawValueToken() { TokenType = s } }
         };
         #endregion
+        #region Default Enumeration Converters
+
+        private static readonly IDictionary<Type, Func<object, IEnumerable>> DefaultEnumerationConverters = new Dictionary
+            <Type, Func<object, IEnumerable>>();
+        #endregion
 
         public Registry() : this(new RegistrySettings())
         {
@@ -108,6 +114,7 @@ namespace Stubble.Core.Classes
             SetValueGetters(settings.ValueGetters);
             SetTokenGetters(settings.TokenGetters);
             SetTruthyChecks(settings.TruthyChecks);
+            SetEnumerationConverters(settings.EnumerationConverters);
             SetTemplateLoader(settings.TemplateLoader);
             SetPartialTemplateLoader(settings.PartialTemplateLoader);
             SetTokenMatchRegex();
@@ -150,6 +157,19 @@ namespace Stubble.Core.Classes
         private void SetTruthyChecks(IReadOnlyList<Func<object, bool?>> truthyChecks)
         {
             TruthyChecks = truthyChecks ?? new List<Func<object, bool?>>();
+        }
+
+        private void SetEnumerationConverters(IDictionary<Type, Func<object, IEnumerable>> enumerationConverters)
+        {
+            if (enumerationConverters != null)
+            {
+                var mergedGetters = DefaultEnumerationConverters.MergeLeft(enumerationConverters);
+                EnumerationConverters = new ReadOnlyDictionary<Type, Func<object, IEnumerable>>(mergedGetters);
+            }
+            else
+            {
+                EnumerationConverters = new ReadOnlyDictionary<Type, Func<object, IEnumerable>>(DefaultEnumerationConverters);
+            }
         }
 
         private void SetTemplateLoader(IStubbleLoader loader)

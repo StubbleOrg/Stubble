@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Stubble.Core.Interfaces;
 
@@ -13,5 +14,6 @@ namespace Stubble.Core.Classes
         public IStubbleLoader PartialTemplateLoader { get; set; }
         public int? MaxRecursionDepth { get; set; }
         public RenderSettings RenderSettings { get; set; }
+        public IDictionary<Type, Func<object, IEnumerable>> EnumerationConverters { get; set; }
     }
 }
