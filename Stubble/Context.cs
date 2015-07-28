@@ -25,13 +25,13 @@ namespace Stubble.Core
         {
             _view = view;
             View = _view;
-            Cache = new Dictionary<string, object>()
-            {
-                {".", _view}
-            };
             ParentContext = parentContext;
             Registry = registry;
             RenderSettings = settings;
+            Cache = new Dictionary<string, object>()
+            {
+                {".", TryEnumerationConversionIfRequired(_view)}
+            };
         }
 
         public object Lookup(string name)
@@ -85,8 +85,7 @@ namespace Stubble.Core
                     context = context.ParentContext;
                 }
 
-                if (value != null && Registry.EnumerationConverters.ContainsKey(value.GetType()))
-                    value = Registry.EnumerationConverters[value.GetType()].Invoke(value);
+                value = TryEnumerationConversionIfRequired(value);
 
                 Cache[name] = value;
             }
@@ -112,6 +111,14 @@ namespace Stubble.Core
                 if (outputVal != null) return outputVal;
             }
             return null;
+        }
+
+        public object TryEnumerationConversionIfRequired(object value)
+        {
+            if (value != null && Registry.EnumerationConverters.ContainsKey(value.GetType()))
+                return Registry.EnumerationConverters[value.GetType()].Invoke(value);
+
+            return value;
         }
 
         public bool IsTruthyValue(object value)
