@@ -102,13 +102,7 @@ namespace Stubble.Core.Classes
         #region Default Enumeration Converters
 
         private static readonly IDictionary<Type, Func<object, IEnumerable>> DefaultEnumerationConverters = new Dictionary
-            <Type, Func<object, IEnumerable>>
-        {
-            {
-                typeof(IEnumerable),
-                (obj) => obj as IEnumerable
-            }
-        };
+            <Type, Func<object, IEnumerable>>();
         #endregion
 
         public Registry() : this(new RegistrySettings())

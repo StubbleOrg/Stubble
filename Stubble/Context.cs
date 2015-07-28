@@ -85,6 +85,9 @@ namespace Stubble.Core
                     context = context.ParentContext;
                 }
 
+                if (value != null && Registry.EnumerationConverters.ContainsKey(value.GetType()))
+                    value = Registry.EnumerationConverters[value.GetType()].Invoke(value);
+
                 Cache[name] = value;
             }
 
