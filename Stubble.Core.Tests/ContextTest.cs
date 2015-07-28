@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Dynamic;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
@@ -214,6 +216,35 @@ namespace Stubble.Core.Tests
             Assert.True(context.IsTruthyValue("Foo"));
             Assert.True(context.IsTruthyValue((uint)5));
             Assert.True(context.IsTruthyValue(true));
+        }
+
+        [Fact]
+        public void It_Uses_EnumerationConversion()
+        {
+            var registry = new Registry(new RegistrySettings
+            {
+                EnumerationConverters = new Dictionary<Type, Func<object, IEnumerable>>
+                {
+                    {
+                        typeof(DataTable),
+                        o =>
+                        {
+                            var dt = o as DataTable;
+                            return dt != null ? dt.Rows : null;
+                        }
+                    }
+                }
+            });
+
+            var dataTable = new DataTable();
+            dataTable.Columns.Add("IntColumn", typeof(int));
+            dataTable.Rows.Add(1);
+            dataTable.Rows.Add(2);
+            dataTable.Rows.Add(3);
+
+            var context = new Context(new { Foo = dataTable }, registry, RenderSettings.GetDefaultRenderSettings());
+
+            Assert.True(context.Lookup("Foo") is IEnumerable);
         }
 
         [Fact]
