@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Loaders;
@@ -14,6 +15,8 @@ namespace Stubble.Core
             new Dictionary<string, Func<string, Tags, ParserOutput>>();
         internal readonly List<Func<object, bool?>> TruthyChecks =
             new List<Func<object, bool?>>();
+        internal readonly IDictionary<Type, Func<object, IEnumerable>> EnumerationConverters = 
+            new Dictionary<Type, Func<object, IEnumerable>>();
         internal IStubbleLoader TemplateLoader = new StringLoader();
         internal IStubbleLoader PartialTemplateLoader;
         internal int MaxRecursionDepth = 256;
@@ -27,7 +30,8 @@ namespace Stubble.Core
                 TruthyChecks = TruthyChecks,
                 TemplateLoader = TemplateLoader,
                 PartialTemplateLoader = PartialTemplateLoader,
-                MaxRecursionDepth = MaxRecursionDepth
+                MaxRecursionDepth = MaxRecursionDepth,
+                EnumerationConverters = EnumerationConverters
             });
             return new Stubble(registry);
         }
@@ -52,6 +56,17 @@ namespace Stubble.Core
         {
             TokenGetters.Add(tokenGetter);
             return this;
+        }
+
+        public IStubbleBuilder AddEnumerationConversion(KeyValuePair<Type, Func<object, IEnumerable>> enumerationConversion)
+        {
+            EnumerationConverters.Add(enumerationConversion);
+            return this;
+        }
+
+        public IStubbleBuilder AddEnumerationConversion(Type type, Func<object, IEnumerable> enumerationConversion)
+        {
+            return AddEnumerationConversion(new KeyValuePair<Type, Func<object, IEnumerable>>(type, enumerationConversion));
         }
 
         public IStubbleBuilder AddTruthyCheck(Func<object, bool?> truthyCheck)
