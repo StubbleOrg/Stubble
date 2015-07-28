@@ -164,11 +164,6 @@ namespace Stubble.Core.Classes
             if (enumerationConverters != null)
             {
                 var mergedGetters = DefaultEnumerationConverters.MergeLeft(enumerationConverters);
-
-                mergedGetters = mergedGetters
-                    .OrderBy(x => x.Key, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable())
-                    .ToDictionary(item => item.Key, item => item.Value);
-
                 EnumerationConverters = new ReadOnlyDictionary<Type, Func<object, IEnumerable>>(mergedGetters);
             }
             else
