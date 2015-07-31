@@ -24,7 +24,7 @@ namespace Stubble.Core.Tests
         [Fact]
         public void CompositeLoader_Should_Be_Able_To_Contain_StringLoader()
         {
-            var loader = new CompositeLoader(new IStubbleLoader[] { new StringLoader() });
+            var loader = new CompositeLoader(new StringLoader());
             const string template = "{{foo}}";
             var loadedTemplate = loader.Load("{{foo}}");
             Assert.Equal(template, loadedTemplate);
@@ -33,12 +33,10 @@ namespace Stubble.Core.Tests
         [Fact]
         public void CompositeLoader_Should_Throw_Exception_If_No_Template_Found()
         {
-            var loader = new CompositeLoader(new IStubbleLoader[] { 
-                new DictionaryLoader(new Dictionary<string, string>
-                {
-                    { "test", "{{foo}}" }
-                })
-            });
+            var loader = new CompositeLoader(new DictionaryLoader(new Dictionary<string, string>
+            {
+                { "test", "{{foo}}" }
+            }));
             var ex = Assert.Throws<UnknownTemplateException>(() => loader.Load("test2"));
             Assert.Equal("No template was found with the name 'test2'", ex.Message);
         }
@@ -46,14 +44,10 @@ namespace Stubble.Core.Tests
         [Fact]
         public void CompositeLoader_Should_Fall_Through()
         {
-            var loader = new CompositeLoader(new IStubbleLoader[] 
-            { 
-                new DictionaryLoader(new Dictionary<string, string>
-                {
-                    { "test", "{{foo}}" }
-                }),
-                new StringLoader()
-            });
+            var loader = new CompositeLoader(new DictionaryLoader(new Dictionary<string, string>
+            {
+                { "test", "{{foo}}" }
+            }), new StringLoader());
             const string template = "{{foo}}";
             var loadedTemplate = loader.Load("{{foo}}");
             Assert.Equal(template, loadedTemplate);
