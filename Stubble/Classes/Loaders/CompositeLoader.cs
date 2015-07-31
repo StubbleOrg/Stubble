@@ -7,7 +7,7 @@ namespace Stubble.Core.Classes.Loaders
     {
         private readonly IStubbleLoader[] _loaders;
 
-        public CompositeLoader(IStubbleLoader[] loaders)
+        public CompositeLoader(params IStubbleLoader[] loaders)
         {
             _loaders = loaders;
         }
