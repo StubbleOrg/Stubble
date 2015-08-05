@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes.Tokens
@@ -22,9 +23,10 @@ namespace Stubble.Core.Classes.Tokens
 
             if (!context.IsTruthyValue(value)) return null;
 
-            if (value is IEnumerable && !EnumerableBlacklist.Contains(value.GetType()))
+            if (value is IEnumerable && !EnumerableBlacklist.Any(x => x.IsInstanceOfType(value)))
             {
                 var arrayValue = value as IEnumerable;
+
                 foreach (var v in arrayValue)
                 {
                     buffer.Append(writer.RenderTokens(ChildTokens, context.Push(v), partials, originalTemplate));
