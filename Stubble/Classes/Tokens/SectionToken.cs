@@ -8,6 +8,11 @@ namespace Stubble.Core.Classes.Tokens
 {
     internal class SectionToken : ParserOutput, IRenderableToken, ISection
     {
+        internal readonly static List<Type> EnumerableBlacklist = new List<Type>
+        {
+            typeof(IDictionary),
+            typeof(string)
+        };
         public Tags Tags { get; set; }
 
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
@@ -17,7 +22,7 @@ namespace Stubble.Core.Classes.Tokens
 
             if (!context.IsTruthyValue(value)) return null;
 
-            if (value is IEnumerable && !(value is IDictionary))
+            if (value is IEnumerable && !EnumerableBlacklist.Contains(value.GetType()))
             {
                 var arrayValue = value as IEnumerable;
                 foreach (var v in arrayValue)
