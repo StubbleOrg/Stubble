@@ -2,12 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes.Tokens
 {
     internal class SectionToken : ParserOutput, IRenderableToken, ISection
     {
+        internal readonly static List<Type> EnumerableBlacklist = new List<Type>
+        {
+            typeof(IDictionary),
+            typeof(string)
+        };
         public Tags Tags { get; set; }
 
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
@@ -17,12 +23,21 @@ namespace Stubble.Core.Classes.Tokens
 
             if (!context.IsTruthyValue(value)) return null;
 
-            if (value is IEnumerable && !(value is IDictionary))
+            if (value is IEnumerable && !EnumerableBlacklist.Any(x => x.IsInstanceOfType(value)))
             {
                 var arrayValue = value as IEnumerable;
+
                 foreach (var v in arrayValue)
                 {
                     buffer.Append(writer.RenderTokens(ChildTokens, context.Push(v), partials, originalTemplate));
+                }
+            }
+            else if (value is IEnumerator)
+            {
+                var enumeratorValue = value as IEnumerator;
+                while (enumeratorValue.MoveNext())
+                {
+                    buffer.Append(writer.RenderTokens(ChildTokens, context.Push(enumeratorValue.Current), partials, originalTemplate));
                 }
             }
             else if (value is Func<dynamic, string, object> || value is Func<string, object>)

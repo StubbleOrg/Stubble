@@ -51,5 +51,19 @@ namespace Stubble.Core.Tests
             var cacheValue = Writer.Cache["{{foo}}"];
             Assert.Equal(output, cacheValue);
         }
+
+        [Fact]
+        public void It_Treats_Strings_As_StringContent_Not_IEnumerable()
+        {
+            var output = Writer.Render("{{#foo}}{{foo}}{{/foo}}", new { foo = "Bar" }, null, RenderSettings.GetDefaultRenderSettings());
+            Assert.Equal("Bar", output);
+        }
+
+        [Fact]
+        public void It_Can_Treat_Strings_As_IEnumerable_With_Enumerator()
+        {
+            var output = Writer.Render("{{#foo.GetEnumerator}}{{.}}.{{/foo.GetEnumerator}}", new { foo = "Bar" }, null, RenderSettings.GetDefaultRenderSettings());
+            Assert.Equal("B.a.r.", output);
+        }
     }
 }
