@@ -32,6 +32,14 @@ namespace Stubble.Core.Classes.Tokens
                     buffer.Append(writer.RenderTokens(ChildTokens, context.Push(v), partials, originalTemplate));
                 }
             }
+            else if (value is IEnumerator)
+            {
+                var enumeratorValue = value as IEnumerator;
+                while (enumeratorValue.MoveNext())
+                {
+                    buffer.Append(writer.RenderTokens(ChildTokens, context.Push(enumeratorValue.Current), partials, originalTemplate));
+                }
+            }
             else if (value is Func<dynamic, string, object> || value is Func<string, object>)
             {
                 var functionDynamicValue = value as Func<dynamic, string, object>;
