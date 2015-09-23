@@ -9,10 +9,10 @@ using Xunit.Abstractions;
 
 namespace Stubble.Core.Tests
 {
-    public class StubbleStaticTest
+    public class StaticStubbleTest
     {
         private readonly ITestOutputHelper _output;
-        public StubbleStaticTest(ITestOutputHelper output)
+        public StaticStubbleTest(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -139,6 +139,35 @@ namespace Stubble.Core.Tests
                 { "FooBar", "{{FooValue}}{{BarValue}}" }
             }, new RenderSettings { SkipRecursiveLookup = true });
             Assert.Equal("Foo Bar", output);
+        }
+
+        [Fact]
+        public void It_Should_Map_To_The_IStubbleRenderer_Interface()
+        {
+            var staticMethods =
+                typeof (StaticStubbleRenderer).GetMethods(BindingFlags.Public | BindingFlags.Static)
+                    .Where(x => !x.IsSpecialName).ToList();
+            var interfaceMethods =
+                typeof (IStubbleRenderer).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(x => !x.IsSpecialName).ToList();
+
+            foreach (var method in interfaceMethods)
+            {
+                var methodParams = method.GetParameters();
+                var item = staticMethods.FirstOrDefault(x =>
+                {
+                    var staticParams = x.GetParameters();
+                    var allParamsMatch = staticParams
+                        .Any(z => methodParams.Any(y => y.ParameterType == z.ParameterType && y.Name == z.Name));
+
+                    return x.Name.Equals(method.Name) &&
+                           method.ReturnType.IsAssignableFrom(x.ReturnType) &&
+                           (!staticParams.Any() || allParamsMatch);
+
+                });
+                _output.WriteLine(method.ToString());
+                Assert.NotNull(item);
+            }
         }
     }
 }
