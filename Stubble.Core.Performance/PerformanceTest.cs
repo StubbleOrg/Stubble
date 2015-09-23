@@ -32,7 +32,7 @@ namespace Stubble.Core.Performance
         public TimeSpan Simple_Template_Test(int iterations, bool useCache)
         {
             var stopwatch = Stopwatch.StartNew();
-            var stubble = new Stubble();
+            var stubble = new StubbleRenderer();
 
             for (var i = 0; i < iterations; i++)
             {
