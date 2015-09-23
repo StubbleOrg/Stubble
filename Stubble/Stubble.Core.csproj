@@ -78,14 +78,14 @@
     <Compile Include="Classes\Tokens\Interface\INonSpace.cs" />
     <Compile Include="Classes\Tokens\Interface\ISection.cs" />
     <Compile Include="Interfaces\IStubbleBuilder.cs" />
-    <Compile Include="Interfaces\IStubble.cs" />
+    <Compile Include="Interfaces\IStubbleRenderer.cs" />
     <Compile Include="Interfaces\IStubbleLoader.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanner.cs" />
-    <Compile Include="Stubble.cs" />
+    <Compile Include="StubbleRenderer.cs" />
     <Compile Include="StubbleBuilder.cs" />
-    <Compile Include="StubbleStatic.cs" />
+    <Compile Include="StaticStubbleRenderer.cs" />
     <Compile Include="Writer.cs" />
   </ItemGroup>
   <ItemGroup>

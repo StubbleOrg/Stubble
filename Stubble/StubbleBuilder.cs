@@ -15,13 +15,13 @@ namespace Stubble.Core
             new Dictionary<string, Func<string, Tags, ParserOutput>>();
         internal readonly List<Func<object, bool?>> TruthyChecks =
             new List<Func<object, bool?>>();
-        internal readonly IDictionary<Type, Func<object, IEnumerable>> EnumerationConverters = 
+        internal readonly IDictionary<Type, Func<object, IEnumerable>> EnumerationConverters =
             new Dictionary<Type, Func<object, IEnumerable>>();
         internal IStubbleLoader TemplateLoader = new StringLoader();
         internal IStubbleLoader PartialTemplateLoader;
         internal int MaxRecursionDepth = 256;
 
-        public Stubble Build()
+        public StubbleRenderer Build()
         {
             var registry = new Registry(new RegistrySettings
             {
@@ -33,7 +33,7 @@ namespace Stubble.Core
                 MaxRecursionDepth = MaxRecursionDepth,
                 EnumerationConverters = EnumerationConverters
             });
-            return new Stubble(registry);
+            return new StubbleRenderer(registry);
         }
 
         public IStubbleBuilder AddValueGetter(KeyValuePair<Type, Func<object, string, object>> valueGetter)

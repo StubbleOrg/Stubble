@@ -19,7 +19,7 @@ namespace Stubble.Core.Tests.Spec
 
         public void It_Can_Pass_Spec_Tests(SpecTest data)
         {
-            var stubble = new Stubble();
+            var stubble = new StubbleRenderer();
             var output = data.Partials != null ? stubble.Render(data.Template, data.Data, data.Partials) : stubble.Render(data.Template, data.Data);
 
             OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.Expected, output);

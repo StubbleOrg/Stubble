@@ -17,6 +17,6 @@ namespace Stubble.Core.Interfaces
         IStubbleBuilder SetTemplateLoader(IStubbleLoader loader);
         IStubbleBuilder SetPartialTemplateLoader(IStubbleLoader loader);
         IStubbleBuilder SetMaxRecursionDepth(int maxRecursionDepth);
-        Stubble Build();
+        StubbleRenderer Build();
     }
 }
