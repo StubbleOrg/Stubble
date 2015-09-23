@@ -85,7 +85,7 @@
     <Compile Include="Scanner.cs" />
     <Compile Include="StubbleRenderer.cs" />
     <Compile Include="StubbleBuilder.cs" />
-    <Compile Include="StubbleStaticRenderer.cs" />
+    <Compile Include="StaticStubbleRenderer.cs" />
     <Compile Include="Writer.cs" />
   </ItemGroup>
   <ItemGroup>
