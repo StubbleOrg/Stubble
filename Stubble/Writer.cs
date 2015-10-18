@@ -75,12 +75,18 @@ namespace Stubble.Core
         {
             var tokens = Parse(template, tags);
             var renderResult = RenderTokens(tokens, context, partials, template);
+            ResetCurrentDepth();
             return renderResult;
         }
 
         public void ClearCache()
         {
             Cache.Clear();
+        }
+
+        public void ResetCurrentDepth()
+        {
+            currentDepth = 0;
         }
     }
 }

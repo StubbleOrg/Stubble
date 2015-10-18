@@ -283,5 +283,16 @@ namespace Stubble.Core.Tests
             }, new RenderSettings { SkipRecursiveLookup = true });
             Assert.Equal("Foo Bar", output);
         }
+
+        [Fact]
+        public void It_Should_Have_Fresh_Depth_On_Each_Render()
+        {
+            var stubble = new StubbleBuilder().SetMaxRecursionDepth(128).Build();
+
+            for (var i = 0; i < 256; i++)
+            {
+                Assert.NotNull(stubble.Render("{{Foo}}", new { Foo = 1 }));
+            }
+        }
     }
 }
