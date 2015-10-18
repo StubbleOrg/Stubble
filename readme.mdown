@@ -2,7 +2,7 @@
 ### Trimmed down {{mustache}} templates in .NET
 [![Build Status](https://img.shields.io/appveyor/ci/Romanx/stubble-ceybe.svg?style=flat-square)](https://ci.appveyor.com/project/Romanx/stubble-ceybe/)
 [![Mono Build Status](https://img.shields.io/travis/StubbleOrg/Stubble.svg?style=flat-square&label=mono%20build)](https://travis-ci.org/StubbleOrg/Stubble/)
-[![Coverage Status](https://img.shields.io/coveralls/StubbleOrg/Stubble.svg?style=flat-square)](https://coveralls.io/r/Romanx/StubbleOrg)
+[![Coverage Status](https://img.shields.io/coveralls/StubbleOrg/Stubble.svg?style=flat-square)](https://coveralls.io/github/StubbleOrg/Stubble)
 [![Prerelease Build Nuget](https://img.shields.io/nuget/vpre/Stubble.Core.svg?style=flat-square&label=nuget%20pre)](https://www.nuget.org/packages/Stubble.Core/)
 [![Stable Nuget](https://img.shields.io/nuget/v/Stubble.Core.svg?style=flat-square)](https://www.nuget.org/packages/Stubble.Core/)
 
