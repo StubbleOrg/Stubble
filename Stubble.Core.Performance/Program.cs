@@ -19,20 +19,20 @@ namespace Stubble.Core.Performance
         public static ProgramOptions Options;
         public static Stopwatch GlobalStopwatch;
 
-        readonly static PerformanceTest PerformanceTest = new PerformanceTest(new NothingWriter());
+        private static readonly ITestOutputHelper Writer = new NothingWriter();
 
         public static readonly List<OutputData> Outputs = new List<OutputData>
         {
-            new OutputData("Stubble (Without Cache)", PerformanceTest.Simple_Template_Test, ConsoleColor.Yellow),
-            new OutputData("Stubble (With Cache)", PerformanceTest.Simple_Template_Test_With_Cache, ConsoleColor.DarkYellow),
-            new OutputData("Nustache", PerformanceTest.Simple_Template_Test_Nustache, ConsoleColor.Cyan),
+            new OutputData("Stubble (Without Cache)", new Candidates.StubbleNoCache(Writer), ConsoleColor.Yellow),
+            new OutputData("Stubble (With Cache)", new Candidates.StubbleCache(Writer), ConsoleColor.DarkYellow),
+            new OutputData("Nustache", new Candidates.Nustache(Writer), ConsoleColor.Cyan)
         };
 
         public static void Main(string[] args)
         {
             Options = new ProgramOptions();
             if (!CommandLine.Parser.Default.ParseArguments(args, Options)) return;
-            
+
             GlobalStopwatch = Stopwatch.StartNew();
             if (!Options.ShowTitles && Options.ShouldLog)
             {
@@ -41,7 +41,7 @@ namespace Stubble.Core.Performance
                     ConsoleExtensions.WriteLineColor(output.OutputColor, output.Name);
                 }
             }
-            
+
             Iterations = Options.NumberOfIterations;
             for (var i = 1; i <= Iterations; i++)
             {
@@ -53,7 +53,7 @@ namespace Stubble.Core.Performance
                 }
             }
             GlobalStopwatch.Stop();
-            WriteOutputs(DateTime.UtcNow);
+            if (Options.ShouldOutput) WriteOutputs(DateTime.UtcNow);
             if (Options.ShouldHaltOnEnd) ConsoleExtensions.WriteLine("DONE");
             if (Options.ShouldHaltOnEnd) Console.ReadLine();
         }
@@ -63,7 +63,7 @@ namespace Stubble.Core.Performance
             foreach (var output in Outputs)
             {
                 if (Options.ShouldLog && Options.ShowTitles) ConsoleExtensions.WriteLineColor(output.OutputColor, "****** {0} ******", output.Name.ToUpper());
-                var timeElapsed = output.Test(increment);
+                var timeElapsed = output.Candidate.RunTest(increment);
                 output.AddIncrement(increment, timeElapsed);
                 if (Options.ShouldLog) ConsoleExtensions.WriteLineColor(output.OutputColor, "Iteration {0:N0}\t: {1} ({2})", increment, timeElapsed.Humanize(), timeElapsed);
             }
@@ -117,6 +117,9 @@ namespace Stubble.Core.Performance
     {
         [Option('s', "ShouldLog", DefaultValue = false, HelpText = "Should Log Output?")]
         public bool ShouldLog { get; set; }
+
+        [Option('o', "ShouldOutput", DefaultValue = false, HelpText = "Should Output results?")]
+        public bool ShouldOutput { get; set; }
 
         [Option('h', "ShouldHaltOnEnd", DefaultValue = false, HelpText = "Should Halt on End of Run?")]
         public bool ShouldHaltOnEnd { get; set; }
