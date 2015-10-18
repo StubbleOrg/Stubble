@@ -1,0 +1,12 @@
+# See http://docs.travis-ci.com/user/languages/csharp/ for details
+
+language: csharp
+install:
+  - nuget restore Stubble.sln
+
+script:
+  - xbuild /p:Configuration=Release Stubble.sln /p:TargetFrameworkVersion='v4.5'
+  - mono ./packages/xunit.runner.console.*/tools/xunit.console.exe Stubble.Core.Tests/bin/Release/Stubble.Core.Tests.dll -noshadow
+
+mono:
+  - nightly

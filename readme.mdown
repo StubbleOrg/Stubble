@@ -1,6 +1,7 @@
 # Stubble
 ### Trimmed down {{mustache}} templates in .NET
 [![Build Status](https://img.shields.io/appveyor/ci/Romanx/stubble-ceybe.svg?style=flat-square)](https://ci.appveyor.com/project/Romanx/stubble-ceybe/)
+[![Mono Build Status](https://img.shields.io/travis/StubbleOrg/Stubble.svg?style=flat-square&label=mono%20build)](https://travis-ci.org/StubbleOrg/Stubble/)
 [![Coverage Status](https://img.shields.io/coveralls/StubbleOrg/Stubble.svg?style=flat-square)](https://coveralls.io/r/Romanx/StubbleOrg)
 [![Prerelease Build Nuget](https://img.shields.io/nuget/vpre/Stubble.Core.svg?style=flat-square&label=nuget%20pre)](https://www.nuget.org/packages/Stubble.Core/)
 [![Stable Nuget](https://img.shields.io/nuget/v/Stubble.Core.svg?style=flat-square)](https://www.nuget.org/packages/Stubble.Core/)
@@ -46,13 +47,13 @@ The exact timings for these graphs is on Google Docs which will is available [he
 ### Extensibility
 Stubble exposes certain internal structures for Extensions to be added in a loosely coupled way. The access these endpoints you need to use the StubbleBuilder interface to build instance of Stubble, as this can be an expensive operation it should be performed once and the instance of Stubble should be stored and injected either statically or using Dependency Injection.
 
-This is currently under development and with incomplete documentation. 
+This is currently under development and with incomplete documentation.
 They will be better documented when these have been completed.
 
 However simple descriptions of the endpoints are:
 
 #### Defaults
-Each of these maps have default values which are defined in their respective sections. These can be overwritten by passing in overriding Getters with the same Keys. 
+Each of these maps have default values which are defined in their respective sections. These can be overwritten by passing in overriding Getters with the same Keys.
 
 **NOTE: This can break default functionality! and cause Stubble to fail catastrophically**
 
