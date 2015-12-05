@@ -3,7 +3,7 @@
     <metadata>
         <id>Stubble.Core</id>
         <version>$version$</version>
-        <title>Stubble</title>
+        <title>Stubble.Core</title>
         <authors>Alex McAuliffe</authors>
         <owners>Alex McAuliffe</owners>
         <description>Trimmed down {{mustache}} templates in .NET</description>
