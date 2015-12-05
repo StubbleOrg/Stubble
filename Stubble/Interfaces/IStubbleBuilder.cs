@@ -14,8 +14,10 @@ namespace Stubble.Core.Interfaces
         IStubbleBuilder AddEnumerationConversion(KeyValuePair<Type, Func<object, IEnumerable>> enumerationConversion);
         IStubbleBuilder AddEnumerationConversion(Type type, Func<object, IEnumerable> enumerationConversion);
         IStubbleBuilder AddTruthyCheck(Func<object, bool?> truthyCheck);
+        IStubbleBuilder AddToTemplateLoader(IStubbleLoader loader);
         IStubbleBuilder SetTemplateLoader(IStubbleLoader loader);
         IStubbleBuilder SetPartialTemplateLoader(IStubbleLoader loader);
+        IStubbleBuilder AddToPartialTemplateLoader(IStubbleLoader loader);
         IStubbleBuilder SetMaxRecursionDepth(int maxRecursionDepth);
         StubbleRenderer Build();
     }

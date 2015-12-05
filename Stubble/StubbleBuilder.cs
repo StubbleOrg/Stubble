@@ -75,6 +75,21 @@ namespace Stubble.Core
             return this;
         }
 
+        public IStubbleBuilder AddToTemplateLoader(IStubbleLoader loader)
+        {
+            if (TemplateLoader is CompositeLoader)
+            {
+                var composite = (CompositeLoader)TemplateLoader;
+                composite.AddLoader(loader);
+            }
+            else
+            {
+                var composite = new CompositeLoader(TemplateLoader, loader);
+                TemplateLoader = composite;
+            }
+            return this;
+        }
+
         public IStubbleBuilder SetTemplateLoader(IStubbleLoader loader)
         {
             TemplateLoader = loader;
@@ -84,6 +99,21 @@ namespace Stubble.Core
         public IStubbleBuilder SetPartialTemplateLoader(IStubbleLoader loader)
         {
             PartialTemplateLoader = loader;
+            return this;
+        }
+
+        public IStubbleBuilder AddToPartialTemplateLoader(IStubbleLoader loader)
+        {
+            if (PartialTemplateLoader is CompositeLoader)
+            {
+                var composite = (CompositeLoader)TemplateLoader;
+                composite.AddLoader(loader);
+            }
+            else
+            {
+                var composite = new CompositeLoader(TemplateLoader, loader);
+                PartialTemplateLoader = composite;
+            }
             return this;
         }
 
