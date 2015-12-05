@@ -31,12 +31,12 @@ namespace Stubble.Core.Performance.Data
         }
 
         [JsonIgnore]
-        public readonly Func<int, TimeSpan> Test;
+        public readonly ITestCandidate Candidate;
 
-        public OutputData(string name, Func<int, TimeSpan> test, ConsoleColor outputColor)
+        public OutputData(string name, ITestCandidate candidate, ConsoleColor outputColor)
         {
             Name = name;
-            Test = test;
+            Candidate = candidate;
             OutputColor = outputColor;
             IncrementResults = new Dictionary<int, List<TimeSpan>>();
             foreach (var increment in Program.Increments)

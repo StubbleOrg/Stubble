@@ -49,8 +49,12 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Nustache.Core, Version=1.15.2.10, Culture=neutral, PublicKeyToken=efd6f3d8f76ecd9f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nustache.1.15.2.10\lib\net20\Nustache.Core.dll</HintPath>
+    <Reference Include="Nustache.Compilation, Version=1.15.3.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nustache.Compilation.1.15.3.5\lib\net40\Nustache.Compilation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Nustache.Core, Version=1.15.3.5, Culture=neutral, PublicKeyToken=efd6f3d8f76ecd9f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nustache.1.15.3.5\lib\net20\Nustache.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -74,9 +78,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Candidates\BaseTestCandidate.cs" />
+    <Compile Include="Candidates\Nustache.cs" />
+    <Compile Include="Candidates\StubbleCache.cs" />
+    <Compile Include="Candidates\StubbleNoCache.cs" />
     <Compile Include="ConsoleExtensions.cs" />
+    <Compile Include="Data\ITestCandidate.cs" />
     <Compile Include="Data\OutputData.cs" />
-    <Compile Include="PerformanceTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
