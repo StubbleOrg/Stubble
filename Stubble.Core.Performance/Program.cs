@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CommandLine;
 using Humanizer;
 using Newtonsoft.Json;
@@ -34,6 +35,9 @@ namespace Stubble.Core.Performance
             if (!CommandLine.Parser.Default.ParseArguments(args, Options)) return;
 
             GlobalStopwatch = Stopwatch.StartNew();
+
+            DumpSettings(Options);
+
             if (!Options.ShowTitles && Options.ShouldLog)
             {
                 foreach (var output in Outputs)
@@ -56,6 +60,16 @@ namespace Stubble.Core.Performance
             if (Options.ShouldOutput) WriteOutputs(DateTime.UtcNow);
             if (Options.ShouldHaltOnEnd) ConsoleExtensions.WriteLine("DONE");
             if (Options.ShouldHaltOnEnd) Console.ReadLine();
+        }
+
+        public static void DumpSettings(ProgramOptions options)
+        {
+            ConsoleExtensions.WriteLineColor(ConsoleColor.Green, "****** {0} ******", "CONFIGURATIONS");
+            foreach (var prop in options.GetType().GetProperties())
+            {
+                ConsoleExtensions.WriteLine("{0} -> {1}", Regex.Replace(prop.Name, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1"), prop.GetValue(options, null));
+            }
+            ConsoleExtensions.WriteLineColor(ConsoleColor.Green, "****** {0} *****", new string('-', "CONFIGURATIONS".Length));
         }
 
         public static void RunIncrement(int increment)
@@ -118,7 +132,7 @@ namespace Stubble.Core.Performance
         [Option('s', "ShouldLog", DefaultValue = false, HelpText = "Should Log Output?")]
         public bool ShouldLog { get; set; }
 
-        [Option('o', "ShouldOutput", DefaultValue = false, HelpText = "Should Output results?")]
+        [Option('o', "ShouldOutput", DefaultValue = true, HelpText = "Should Output results?")]
         public bool ShouldOutput { get; set; }
 
         [Option('h', "ShouldHaltOnEnd", DefaultValue = false, HelpText = "Should Halt on End of Run?")]
