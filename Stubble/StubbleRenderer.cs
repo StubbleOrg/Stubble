@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Interfaces;
 
 namespace Stubble.Core
@@ -68,6 +69,7 @@ namespace Stubble.Core
         public string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
         {
             var loadedTemplate = Registry.TemplateLoader.Load(template);
+            if (loadedTemplate == null) throw new UnknownTemplateException("No template was found with the name '" + template + "'");
             return Writer.Render(loadedTemplate, view, partials, settings ?? Registry.RenderSettings);
         }
 
