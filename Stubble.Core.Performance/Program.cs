@@ -9,7 +9,6 @@ using CommandLine;
 using Humanizer;
 using Newtonsoft.Json;
 using Stubble.Core.Performance.Data;
-using Xunit.Abstractions;
 
 namespace Stubble.Core.Performance
 {
@@ -20,13 +19,11 @@ namespace Stubble.Core.Performance
         public static ProgramOptions Options;
         public static Stopwatch GlobalStopwatch;
 
-        private static readonly ITestOutputHelper Writer = new NothingWriter();
-
         public static readonly List<OutputData> Outputs = new List<OutputData>
         {
-            new OutputData("Stubble (Without Cache)", new Candidates.StubbleNoCache(Writer), ConsoleColor.Yellow),
-            new OutputData("Stubble (With Cache)", new Candidates.StubbleCache(Writer), ConsoleColor.DarkYellow),
-            new OutputData("Nustache", new Candidates.Nustache(Writer), ConsoleColor.Cyan)
+            new OutputData("Stubble (Without Cache)", new Candidates.StubbleNoCache(), ConsoleColor.Yellow),
+            new OutputData("Stubble (With Cache)", new Candidates.StubbleCache(), ConsoleColor.DarkYellow),
+            new OutputData("Nustache", new Candidates.Nustache(), ConsoleColor.Cyan)
         };
 
         public static void Main(string[] args)
@@ -143,16 +140,5 @@ namespace Stubble.Core.Performance
 
         [Option('i', "Iterations", DefaultValue = 10, HelpText = "Number of Iterations that should be run?")]
         public int NumberOfIterations { get; set; }
-    }
-
-    internal class NothingWriter : ITestOutputHelper
-    {
-        public void WriteLine(string format, params object[] args)
-        {
-        }
-
-        public void WriteLine(string message)
-        {
-        }
     }
 }

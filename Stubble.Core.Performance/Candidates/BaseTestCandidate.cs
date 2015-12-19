@@ -1,25 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using Stubble.Core.Performance.Data;
 using Stubble.Core.Tests;
-using Xunit.Abstractions;
 
 namespace Stubble.Core.Performance.Candidates
 {
     abstract class BaseTestCandidate : ITestCandidate
     {
-        protected BaseTestCandidate(ITestOutputHelper output)
+        protected BaseTestCandidate()
         {
-            OutputStream = output;
             StronglyTypedTestClass.StaticField = 1;
             StronglyTypedTestClass.StaticProperty = 1;
         }
 
-        public ITestOutputHelper OutputStream { get; set; }
         public abstract TimeSpan RunTest(int iterations);
         public virtual KeyValuePair<string, object> GetRenderTestCase(int index)
         {
