@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="Parser.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +11,7 @@ using System.Text.RegularExpressions;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Classes.Tokens;
+using Stubble.Core.Classes.Tokens.Interface;
 
 namespace Stubble.Core
 {

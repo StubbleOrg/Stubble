@@ -1,4 +1,9 @@
-﻿using System.Collections;
+﻿// <copyright file="Context.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Stubble.Core.Classes;
@@ -8,10 +13,10 @@ namespace Stubble.Core
 {
     public sealed class Context
     {
+        internal RenderSettings RenderSettings { get; }
+        internal Registry Registry { get; }
         private IDictionary<string, object> Cache { get; set; }
-        internal readonly Registry Registry;
         private readonly object _view;
-        internal readonly RenderSettings RenderSettings;
 
         public Context ParentContext { get; set; }
         public dynamic View { get; set; }
