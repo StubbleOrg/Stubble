@@ -13,31 +13,35 @@ namespace Stubble.Core
 {
     public sealed class Context
     {
-        internal RenderSettings RenderSettings { get; }
-        internal Registry Registry { get; }
-        private IDictionary<string, object> Cache { get; set; }
-        private readonly object _view;
-
-        public Context ParentContext { get; set; }
-        public dynamic View { get; set; }
-
         public Context(object view, Registry registry, RenderSettings settings)
-            : this(view, registry, null, settings)
+    : this(view, registry, null, settings)
         {
         }
 
         public Context(object view, Registry registry, Context parentContext, RenderSettings settings)
         {
-            _view = view;
-            View = _view;
+            this.view = view;
+            View = this.view;
             ParentContext = parentContext;
             Registry = registry;
             RenderSettings = settings;
             Cache = new Dictionary<string, object>()
             {
-                {".", TryEnumerationConversionIfRequired(_view)}
+                { ".", TryEnumerationConversionIfRequired(this.view) }
             };
         }
+
+        internal RenderSettings RenderSettings { get; }
+
+        internal Registry Registry { get; }
+
+        private IDictionary<string, object> Cache { get; set; }
+
+        private readonly object view;
+
+        public Context ParentContext { get; set; }
+
+        public dynamic View { get; set; }
 
         public object Lookup(string name)
         {
@@ -55,14 +59,16 @@ namespace Stubble.Core
                     if (name.IndexOf('.') > 0)
                     {
                         var names = name.Split('.');
-                        value = context._view;
+                        value = context.view;
                         for (var i = 0; i < names.Length; i++)
                         {
                             var tempValue = GetValueFromRegistry(value, names[i]);
                             if (tempValue != null)
                             {
                                 if (i == names.Length - 1)
+                                {
                                     lookupHit = true;
+                                }
 
                                 value = tempValue;
                             }
@@ -76,16 +82,19 @@ namespace Stubble.Core
                             }
                         }
                     }
-                    else if (context._view != null)
+                    else if (context.view != null)
                     {
-                        value = GetValueFromRegistry(context._view, name);
+                        value = GetValueFromRegistry(context.view, name);
                         if (value != null)
                         {
                             lookupHit = true;
                         }
                     }
 
-                    if (lookupHit || RenderSettings.SkipRecursiveLookup) break;
+                    if (lookupHit || RenderSettings.SkipRecursiveLookup)
+                    {
+                        break;
+                    }
 
                     context = context.ParentContext;
                 }
@@ -95,7 +104,10 @@ namespace Stubble.Core
                 Cache[name] = value;
             }
 
-            if (!RenderSettings.ThrowOnDataMiss || value != null) return value;
+            if (!RenderSettings.ThrowOnDataMiss || value != null)
+            {
+                return value;
+            }
 
             var ex = new StubbleDataMissException(string.Format("'{0}' is undefined.", name));
             ex.Data["Name"] = name;
@@ -113,15 +125,21 @@ namespace Stubble.Core
             foreach (var entry in Registry.ValueGetters.Where(x => x.Key.IsInstanceOfType(value)))
             {
                 var outputVal = entry.Value(value, key);
-                if (outputVal != null) return outputVal;
+                if (outputVal != null)
+                {
+                    return outputVal;
+                }
             }
+
             return null;
         }
 
         public object TryEnumerationConversionIfRequired(object value)
         {
             if (value != null && Registry.EnumerationConverters.ContainsKey(value.GetType()))
+            {
                 return Registry.EnumerationConverters[value.GetType()].Invoke(value);
+            }
 
             return value;
         }
@@ -136,7 +154,10 @@ namespace Stubble.Core
             foreach (var func in Registry.TruthyChecks)
             {
                 var funcResult = func(value);
-                if (funcResult.HasValue) return funcResult.Value;
+                if (funcResult.HasValue)
+                {
+                    return funcResult.Value;
+                }
             }
 
             bool boolValue;

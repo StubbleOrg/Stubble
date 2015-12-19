@@ -1,4 +1,4 @@
-﻿// <copyright file="TypeBySubclassAndAssignable.cs" company="Stubble Authors">
+﻿// <copyright file="TypeBySubclassAndAssignableImpl.cs" company="Stubble Authors">
 // Copyright (c) Stubble Authors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -17,15 +17,26 @@ namespace Stubble.Core.Classes
 
         public override int Compare(Type x, Type y)
         {
-            //Standard Comparision Checks
+            // Standard Comparision Checks
             if (x == null && y == null)
+            {
                 return 0;
+            }
+
             if (x == null)
+            {
                 return 1; // x is after y
+            }
+
             if (y == null)
+            {
                 return -1; // x is before y
+            }
+
             if (x == y)
+            {
                 return 0;
+            }
 
             var result = 0;
             if (x.IsSubclassOf(y))

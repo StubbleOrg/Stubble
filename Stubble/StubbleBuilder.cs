@@ -16,14 +16,20 @@ namespace Stubble.Core
     {
         internal readonly IDictionary<Type, Func<object, string, object>> ValueGetters =
             new Dictionary<Type, Func<object, string, object>>();
+
         internal readonly IDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters =
             new Dictionary<string, Func<string, Tags, ParserOutput>>();
+
         internal readonly List<Func<object, bool?>> TruthyChecks =
             new List<Func<object, bool?>>();
+
         internal readonly IDictionary<Type, Func<object, IEnumerable>> EnumerationConverters =
             new Dictionary<Type, Func<object, IEnumerable>>();
+
         internal IStubbleLoader TemplateLoader = new StringLoader();
+
         internal IStubbleLoader PartialTemplateLoader;
+
         internal int MaxRecursionDepth = 256;
 
         public StubbleRenderer Build()
@@ -92,6 +98,7 @@ namespace Stubble.Core
                 var composite = new CompositeLoader(TemplateLoader, loader);
                 TemplateLoader = composite;
             }
+
             return this;
         }
 
@@ -119,6 +126,7 @@ namespace Stubble.Core
                 var composite = new CompositeLoader(TemplateLoader, loader);
                 PartialTemplateLoader = composite;
             }
+
             return this;
         }
 

@@ -26,28 +26,36 @@ namespace Stubble.Core
         #endregion
 
         #region Static Tag Cache
-        internal static readonly ConcurrentDictionary<string, TagRegexes> TagRegexCache = new ConcurrentDictionary<string, TagRegexes>
-        (
+        internal static readonly ConcurrentDictionary<string, TagRegexes> TagRegexCache = new ConcurrentDictionary<string, TagRegexes>(
             new Dictionary<string, TagRegexes>
             {
-                { "{{ }}", new TagRegexes()
+                {
+                    "{{ }}", new TagRegexes()
                     {
                         OpenTag = new Regex(@"\{\{\s*"),
                         CloseTag = new Regex(@"\s*\}\}"),
                         ClosingTag = new Regex(@"\s*\}\}\}")
                     }
                 }
-            }
-        );
+            });
 
-        internal static int regexCacheSize = 4;
+        private static int regexCacheSize = 4;
+
         public static int RegexCacheSize
         {
-            get { return regexCacheSize; }
+            get
+            {
+                return regexCacheSize;
+            }
+
             set
             {
                 regexCacheSize = value;
-                if (TagRegexCache.Count <= regexCacheSize) return;
+                if (TagRegexCache.Count <= regexCacheSize)
+                {
+                    return;
+                }
+
                 while (TagRegexCache.Count > regexCacheSize)
                 {
                     TagRegexes outVal;
@@ -59,22 +67,29 @@ namespace Stubble.Core
         internal struct TagRegexes
         {
             internal Regex OpenTag { get; set; }
+
             internal Regex CloseTag { get; set; }
+
             internal Regex ClosingTag { get; set; }
         }
         #endregion
 
         public static readonly Tags DefaultTags = new Tags("{{", "}}");
+        private readonly Registry registry;
 
-        private Regex _openingTagRegex;
-        private Regex _closingTagRegex;
-        private Regex _closingCurlyRegex;
-        private Tags _currentTags;
-        private readonly Registry _registry;
+        private Regex openingTagRegex;
+        private Regex closingTagRegex;
+        private Regex closingCurlyRegex;
+        private Tags currentTags;
 
         public Parser(Registry registry)
         {
-            _registry = registry;
+            this.registry = registry;
+        }
+
+        public static string EscapeRegexExpression(string expression)
+        {
+            return EscapeRegex.Replace(expression, @"\$&");
         }
 
         public IList<ParserOutput> ParseTemplate(string template)
@@ -85,7 +100,9 @@ namespace Stubble.Core
         public IList<ParserOutput> ParseTemplate(string template, Tags tags)
         {
             if (string.IsNullOrEmpty(template))
+            {
                 return new List<ParserOutput>();
+            }
 
             CompileTags(tags ?? DefaultTags);
 
@@ -100,7 +117,7 @@ namespace Stubble.Core
             {
                 var start = scanner.Pos;
 
-                var value = scanner.ScanUntil(_openingTagRegex);
+                var value = scanner.ScanUntil(openingTagRegex);
 
                 if (!string.IsNullOrEmpty(value))
                 {
@@ -122,7 +139,11 @@ namespace Stubble.Core
                         tokens.Add(textToken);
                         start += 1;
 
-                        if (c != '\n') continue;
+                        if (c != '\n')
+                        {
+                            continue;
+                        }
+
                         if (hasTag && !nonSpace)
                         {
                             while (spaces.Count > 0)
@@ -140,12 +161,14 @@ namespace Stubble.Core
                     }
                 }
 
-                if (string.IsNullOrEmpty(scanner.Scan(_openingTagRegex)))
+                if (string.IsNullOrEmpty(scanner.Scan(openingTagRegex)))
+                {
                     break;
+                }
 
                 hasTag = true;
 
-                var type = scanner.Scan(_registry.TokenMatchRegex);
+                var type = scanner.Scan(registry.TokenMatchRegex);
                 type = string.IsNullOrEmpty(type) ? "name" : type;
                 scanner.Scan(WhitespaceRegex);
 
@@ -154,25 +177,25 @@ namespace Stubble.Core
                     case "=":
                         value = scanner.ScanUntil(EqualsRegex);
                         scanner.Scan(EqualsRegex);
-                        scanner.ScanUntil(_closingTagRegex);
+                        scanner.ScanUntil(closingTagRegex);
                         break;
                     case "{":
-                        value = scanner.ScanUntil(_closingCurlyRegex);
+                        value = scanner.ScanUntil(closingCurlyRegex);
                         scanner.Scan(CurlyRegex);
-                        scanner.ScanUntil(_closingTagRegex);
+                        scanner.ScanUntil(closingTagRegex);
                         type = "&";
                         break;
                     default:
-                        value = scanner.ScanUntil(_closingTagRegex);
+                        value = scanner.ScanUntil(closingTagRegex);
                         break;
                 }
 
-                if (string.IsNullOrEmpty(scanner.Scan(_closingTagRegex)))
+                if (string.IsNullOrEmpty(scanner.Scan(closingTagRegex)))
                 {
                     throw new Exception("Unclosed Tag at " + scanner.Pos);
                 }
 
-                var token = GetCorrectTypedToken(type, _currentTags);
+                var token = GetCorrectTypedToken(type, currentTags);
                 token.Value = value;
                 token.Start = start;
                 token.End = scanner.Pos;
@@ -182,27 +205,34 @@ namespace Stubble.Core
                 {
                     sections.Push(token);
                 }
-                else if(token is INonSpace)
+                else if (token is INonSpace)
                 {
                     nonSpace = true;
                 }
-                else switch (type)
+                else
                 {
-                    case "/":
-                        if (sections.Count == 0)
-                        {
-                            throw new StubbleException("Unopened Section '" + value + "' at " + start);
-                        }
-                        openSection = sections.Pop();
+                    switch (type)
+                    {
+                        case "/":
+                            if (sections.Count == 0)
+                            {
+                                throw new StubbleException("Unopened Section '" + value + "' at " + start);
+                            }
 
-                        if (openSection.Value != token.Value)
-                        {
-                            throw new StubbleException("Unclosed Section '" + openSection.Value + "' at " + start);
-                        }
-                        break;
-                    case "=":
-                        CompileTags(value);
-                        break;
+                            openSection = sections.Pop();
+
+                            if (openSection.Value != token.Value)
+                            {
+                                throw new StubbleException("Unclosed Section '" + openSection.Value + "' at " + start);
+                            }
+
+                            break;
+                        case "=":
+                            CompileTags(value);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
@@ -214,6 +244,17 @@ namespace Stubble.Core
             }
 
             return NestTokens(SquishTokens(tokens));
+        }
+
+        internal static void AddToRegexCache(string dictionaryKey, TagRegexes regex)
+        {
+            if (TagRegexCache.Count >= regexCacheSize)
+            {
+                TagRegexes outValue;
+                TagRegexCache.TryRemove(TagRegexCache.Last().Key, out outValue);
+            }
+
+            TagRegexCache.AddOrUpdate(dictionaryKey, regex, (key, existingVal) => regex);
         }
 
         private static IEnumerable<ParserOutput> SquishTokens(IEnumerable<ParserOutput> tokens)
@@ -230,6 +271,7 @@ namespace Stubble.Core
                         lastItem.End = item.End;
                         continue;
                     }
+
                     lastItem = item as RawValueToken;
                     yield return item;
                 }
@@ -272,7 +314,7 @@ namespace Stubble.Core
 
         private void CompileTags(Tags tags)
         {
-            _currentTags = tags;
+            currentTags = tags;
             TagRegexes tagRegexes;
             var tagString = tags.ToString();
             if (!TagRegexCache.TryGetValue(tagString, out tagRegexes))
@@ -286,32 +328,16 @@ namespace Stubble.Core
                 AddToRegexCache(tagString, tagRegexes);
             }
 
-            _openingTagRegex = tagRegexes.OpenTag;
-            _closingTagRegex = tagRegexes.CloseTag;
-            _closingCurlyRegex = tagRegexes.ClosingTag;
-        }
-
-        public static string EscapeRegexExpression(string expression)
-        {
-            return EscapeRegex.Replace(expression, @"\$&");
+            openingTagRegex = tagRegexes.OpenTag;
+            closingTagRegex = tagRegexes.CloseTag;
+            closingCurlyRegex = tagRegexes.ClosingTag;
         }
 
         private ParserOutput GetCorrectTypedToken(string tokenType, Tags currentTags)
         {
-            return _registry.TokenGetters.ContainsKey(tokenType) ?
-                _registry.TokenGetters[tokenType](tokenType, currentTags)
+            return registry.TokenGetters.ContainsKey(tokenType) ?
+                registry.TokenGetters[tokenType](tokenType, currentTags)
                 : new ParserOutput { TokenType = tokenType };
-        }
-
-        internal static void AddToRegexCache(string dictionaryKey, TagRegexes regex)
-        {
-            if (TagRegexCache.Count >= regexCacheSize)
-            {
-                TagRegexes outValue;
-                TagRegexCache.TryRemove(TagRegexCache.Last().Key, out outValue);
-            }
-
-            TagRegexCache.AddOrUpdate(dictionaryKey, regex, (key, existingVal) => regex);
         }
     }
 }

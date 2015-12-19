@@ -13,6 +13,7 @@ namespace Stubble.Core.Helpers
             {
                 end = source.Length + end;
             }
+
             var len = end - start;
             return source.Substring(start, len);
         }

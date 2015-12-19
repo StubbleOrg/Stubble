@@ -14,6 +14,7 @@ namespace Stubble.Core.Classes
     public struct TokenGetter
     {
         public string TokenType { get; set; }
+
         public Func<string, Tags, ParserOutput> Getter { get; set; }
     }
 }

@@ -9,11 +9,6 @@ namespace Stubble.Core
 {
     public sealed class Scanner
     {
-        public string Template { get; set; }
-        public string Tail { get; set; }
-        public int Pos { get; set; }
-        public bool EOS { get { return string.IsNullOrEmpty(Tail); } }
-
         public Scanner(string template)
         {
             Template = template;
@@ -21,13 +16,21 @@ namespace Stubble.Core
             Pos = 0;
         }
 
+        public string Template { get; set; }
+
+        public string Tail { get; set; }
+
+        public int Pos { get; set; }
+
+        public bool EOS => string.IsNullOrEmpty(Tail);
+
         public string Scan(Regex expression)
         {
             var matched = expression.Match(Tail);
 
             if (!matched.Success || matched.Index != 0)
             {
-                return "";
+                return string.Empty;
             }
 
             var result = matched.Value;
@@ -51,11 +54,11 @@ namespace Stubble.Core
             if (!regexMatch.Success)
             {
                 match = Tail;
-                Tail = "";
+                Tail = string.Empty;
             }
             else if (index == 0)
             {
-                match = "";
+                match = string.Empty;
             }
             else
             {

@@ -10,7 +10,7 @@ namespace Stubble.Core.Classes.Tokens
 {
     internal class RawValueToken : ParserOutput, IRenderableToken
     {
-        public readonly StringBuilder ValueBuilder = new StringBuilder();
+        public StringBuilder ValueBuilder { get; } = new StringBuilder();
 
         public override string Value
         {
@@ -18,7 +18,11 @@ namespace Stubble.Core.Classes.Tokens
             {
                 return ValueBuilder.ToString();
             }
-            set { ValueBuilder.Clear().Append(value); }
+
+            set
+            {
+                ValueBuilder.Clear().Append(value);
+            }
         }
 
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)

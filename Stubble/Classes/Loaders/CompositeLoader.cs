@@ -12,22 +12,22 @@ namespace Stubble.Core.Classes.Loaders
 {
     public sealed class CompositeLoader : IStubbleLoader
     {
-        private readonly List<IStubbleLoader> _loaders;
+        private readonly List<IStubbleLoader> loaders;
 
         public CompositeLoader(params IStubbleLoader[] loaders)
         {
-            _loaders = new List<IStubbleLoader>(loaders);
+            this.loaders = new List<IStubbleLoader>(loaders);
         }
 
         public CompositeLoader AddLoader(IStubbleLoader loader)
         {
-            _loaders.Add(loader);
+            loaders.Add(loader);
             return this;
         }
 
         public CompositeLoader AddLoaders(params IStubbleLoader[] loader)
         {
-            _loaders.AddRange(loader);
+            loaders.AddRange(loader);
             return this;
         }
 
@@ -36,14 +36,17 @@ namespace Stubble.Core.Classes.Loaders
         ///
         /// Returns null if the template is not found
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">The name of the template to load</param>
         /// <returns>A Mustache Template</returns>
         public string Load(string name)
         {
-            foreach (var loader in _loaders.AsEnumerable().Reverse())
+            foreach (var loader in loaders.AsEnumerable().Reverse())
             {
                 var loadedTemplate = loader.Load(name);
-                if (loadedTemplate != null) return loadedTemplate;
+                if (loadedTemplate != null)
+                {
+                    return loadedTemplate;
+                }
             }
 
             throw new UnknownTemplateException("No template was found with the name '" + name + "'");

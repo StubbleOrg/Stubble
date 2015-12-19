@@ -71,7 +71,7 @@
     <Compile Include="Classes\Tokens\RawValueToken.cs" />
     <Compile Include="Classes\Tokens\SectionToken.cs" />
     <Compile Include="Classes\Tokens\UnescapedValueToken.cs" />
-    <Compile Include="Classes\TypeBySubclassAndAssignable.cs" />
+    <Compile Include="Classes\TypeBySubclassAndAssignableImpl.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />

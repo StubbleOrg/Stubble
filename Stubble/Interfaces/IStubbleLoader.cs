@@ -12,7 +12,7 @@ namespace Stubble.Core.Interfaces
         ///
         /// Returns null if the template is not found
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">The name of the template to load</param>
         /// <returns>A Mustache Template</returns>
         string Load(string name);
     }

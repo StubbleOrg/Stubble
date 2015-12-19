@@ -15,7 +15,10 @@ namespace Stubble.Core.Classes.Tokens
             var functionValueDynamic = value as Func<dynamic, object>;
             var functionValue = value as Func<object>;
 
-            if(functionValueDynamic == null && functionValue == null) return value;
+            if (functionValueDynamic == null && functionValue == null)
+            {
+                return value;
+            }
 
             object functionResult = functionValueDynamic != null ? functionValueDynamic.Invoke(context.View) : functionValue.Invoke();
             var resultString = functionResult.ToString();

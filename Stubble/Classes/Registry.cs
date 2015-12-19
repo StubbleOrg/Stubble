@@ -20,24 +20,32 @@ namespace Stubble.Core.Classes
     public sealed class Registry
     {
         private static readonly string[] DefaultTokenTypes = { @"\/", "=", @"\{", "!" };
-        private static readonly string[] ReservedTokens = { "name", "text" }; //Name and text are used internally for tokens so must exist
+        private static readonly string[] ReservedTokens = { "name", "text" }; // Name and text are used internally for tokens so must exist
 
         public IReadOnlyDictionary<Type, Func<object, string, object>> ValueGetters { get; private set; }
+
         public IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters { get; private set; }
+
         public IReadOnlyList<Func<object, bool?>> TruthyChecks { get; private set; }
+
         public IReadOnlyDictionary<Type, Func<object, IEnumerable>> EnumerationConverters { get; private set; }
-        internal Regex TokenMatchRegex { get; private set; }
+
         public IStubbleLoader TemplateLoader { get; private set; }
+
         public IStubbleLoader PartialTemplateLoader { get; private set; }
+
         public int MaxRecursionDepth { get; private set; }
+
         public RenderSettings RenderSettings { get; private set; }
+
+        internal Regex TokenMatchRegex { get; private set; }
 
         #region Default Value Getters
         private static readonly IDictionary<Type, Func<object, string, object>> DefaultValueGetters = new Dictionary
             <Type, Func<object, string, object>>
         {
             {
-                typeof (IList),
+                typeof(IList),
                 (value, key) =>
                 {
                     var castValue = value as IList;
@@ -47,11 +55,12 @@ namespace Stubble.Core.Classes
                     {
                         return castValue != null && intVal < castValue.Count ? castValue[intVal] : null;
                     }
+
                     return null;
                 }
             },
             {
-                typeof (IDictionary<string, object>),
+                typeof(IDictionary<string, object>),
                 (value, key) =>
                 {
                     var castValue = value as IDictionary<string, object>;
@@ -59,7 +68,7 @@ namespace Stubble.Core.Classes
                 }
             },
             {
-                typeof (IDictionary),
+                typeof(IDictionary),
                 (value, key) =>
                 {
                     var castValue = value as IDictionary;
@@ -67,11 +76,14 @@ namespace Stubble.Core.Classes
                 }
             },
             {
-                typeof (object), (value, key) =>
+                typeof(object), (value, key) =>
                 {
                     var type = value.GetType();
                     var memberArr = type.GetMember(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-                    if (memberArr.Length != 1) return null;
+                    if (memberArr.Length != 1)
+                    {
+                        return null;
+                    }
 
                     var member = memberArr[0];
                     switch (member.MemberType)
@@ -81,7 +93,7 @@ namespace Stubble.Core.Classes
                         case MemberTypes.Property:
                             return ((PropertyInfo)member).GetValue(value, null);
                         case MemberTypes.Method:
-                            var methodMember = (MethodInfo) member;
+                            var methodMember = (MethodInfo)member;
                             return methodMember.GetParameters().Length == 0
                                 ? methodMember.Invoke(value, null)
                                 : null;
@@ -91,6 +103,7 @@ namespace Stubble.Core.Classes
                 }
             }
         };
+
         #endregion
         #region Default Token Getters
         private static readonly IDictionary<string, Func<string, Tags, ParserOutput>> DefaultTokenGetters = new Dictionary
@@ -110,7 +123,8 @@ namespace Stubble.Core.Classes
             <Type, Func<object, IEnumerable>>();
         #endregion
 
-        public Registry() : this(new RegistrySettings())
+        public Registry()
+            : this(default(RegistrySettings))
         {
         }
 

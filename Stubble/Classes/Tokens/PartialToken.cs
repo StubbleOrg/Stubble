@@ -13,7 +13,9 @@ namespace Stubble.Core.Classes.Tokens
         {
             var value = partials != null && partials.ContainsKey(Value) ? partials[Value] : null;
             if (value == null && context.Registry.PartialTemplateLoader != null)
+            {
                 value = context.Registry.PartialTemplateLoader.Load(Value);
+            }
 
             return value != null ? writer.RenderTokens(writer.Parse(value), context, partials, value) : null;
         }

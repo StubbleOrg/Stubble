@@ -15,11 +15,12 @@ namespace Stubble.Core.Classes.Tokens
 {
     internal class SectionToken : ParserOutput, IRenderableToken, ISection
     {
-        internal readonly static List<Type> EnumerableBlacklist = new List<Type>
+        internal static readonly List<Type> EnumerableBlacklist = new List<Type>
         {
             typeof(IDictionary),
             typeof(string)
         };
+
         public Tags Tags { get; set; }
 
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
@@ -27,7 +28,10 @@ namespace Stubble.Core.Classes.Tokens
             var buffer = new StringBuilder();
             var value = context.Lookup(Value);
 
-            if (!context.IsTruthyValue(value)) return null;
+            if (!context.IsTruthyValue(value))
+            {
+                return null;
+            }
 
             if (value is IEnumerable && !EnumerableBlacklist.Any(x => x.IsInstanceOfType(value)))
             {

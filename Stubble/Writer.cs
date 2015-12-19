@@ -15,15 +15,16 @@ namespace Stubble.Core
     public sealed class Writer
     {
         internal LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; set; }
+
         internal Parser Parser;
-        private readonly Registry Registry;
+        private readonly Registry registry;
         private int currentDepth = 0;
 
         public Writer(int cacheLimit, Registry registry)
         {
-            Registry = registry;
+            this.registry = registry;
             Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>(cacheLimit);
-            Parser = new Parser(Registry);
+            Parser = new Parser(this.registry);
         }
 
         public Writer(Registry registry)
@@ -32,7 +33,9 @@ namespace Stubble.Core
         }
 
         public Writer()
-            : this(15, new Registry()) { }
+            : this(15, new Registry())
+        {
+        }
 
         public IList<ParserOutput> Parse(string template)
         {
@@ -54,21 +57,25 @@ namespace Stubble.Core
         public string RenderTokens(IList<ParserOutput> tokens, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
             currentDepth++;
-            if(currentDepth >= Registry.MaxRecursionDepth)
-                throw new StubbleException(string.Format("You have reached the maximum recursion limit of {0}.", Registry.MaxRecursionDepth));
+
+            if (currentDepth >= registry.MaxRecursionDepth)
+            {
+                throw new StubbleException(string.Format("You have reached the maximum recursion limit of {0}.", registry.MaxRecursionDepth));
+            }
 
             var sb = new StringBuilder();
-            foreach (var token in tokens.OfType<IRenderableToken>( ))
+            foreach (var token in tokens.OfType<IRenderableToken>())
             {
                 var renderResult = token.Render(this, context, partials, originalTemplate);
                 sb.Append(renderResult);
             }
+
             return sb.ToString();
         }
 
         public string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
         {
-            return Render(template, new Context(view, Registry, settings), partials, null);
+            return Render(template, new Context(view, registry, settings), partials, null);
         }
 
         public string Render(string template, Context context, IDictionary<string, string> partials)

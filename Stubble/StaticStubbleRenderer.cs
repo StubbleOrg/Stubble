@@ -14,28 +14,28 @@ namespace Stubble.Core
         private static readonly Lazy<StubbleRenderer> Lazy = new Lazy<StubbleRenderer>(() => new StubbleRenderer());
 
         /// <summary>
-        /// Returns the wrapped Stubble Instance that is Lazily Instantiated
+        /// Gets the wrapped Stubble Instance that is Lazily Instantiated
         /// </summary>
-        public static StubbleRenderer Instance { get { return Lazy.Value; } }
+        public static StubbleRenderer Instance => Lazy.Value;
 
         /// <summary>
-        /// Helper method for calling the Render method on the enclosed instance.
+        /// Renders the template with the given view using the writer.
         /// </summary>
-        /// <param name="template"></param>
-        /// <param name="view"></param>
-        /// <returns>the template rendered with the given data</returns>
+        /// <param name="template">The mustache teplate to render</param>
+        /// <param name="view">The data to use for rendering</param>
+        /// <returns>A mustache rendered string</returns>
         public static string Render(string template, object view)
         {
             return Instance.Render(template, view);
         }
 
         /// <summary>
-        /// Helper method for calling the Render method on the enclosed instance with the
-        /// given render settings.
+        /// Renders the template with the given view using the writer
+        /// and the given render settings.
         /// </summary>
-        /// <param name="template"></param>
-        /// <param name="view"></param>
-        /// <param name="settings"></param>
+        /// <param name="template">The mustache teplate to render</param>
+        /// <param name="view">The data to use for rendering</param>
+        /// <param name="settings">Any settings you wish to override the defaults with</param>
         /// <returns>A mustache rendered string</returns>
         public static string Render(string template, object view, RenderSettings settings)
         {
@@ -43,94 +43,100 @@ namespace Stubble.Core
         }
 
         /// <summary>
-        /// Helper method for calling the Render method on the enclosed instance.
+        /// Renders the template with the given view and partials using
+        /// the writer.
         /// </summary>
-        /// <param name="template"></param>
-        /// <param name="view"></param>
-        /// <param name="partials"></param>
-        /// <returns>the template rendered with the given data</returns>
+        /// <param name="template">The mustache teplate to render</param>
+        /// <param name="view">The data to use for rendering</param>
+        /// <param name="partials">A hash of Partials</param>
+        /// <returns>A mustache rendered string</returns>
         public static string Render(string template, object view, IDictionary<string, string> partials)
         {
             return Instance.Render(template, view, partials);
         }
 
         /// <summary>
-        /// Helper method for calling the Render method on the enclosed instance with the
-        /// given render settings
+        /// Renders the template with the given view and partials using
+        /// the writer and the given Render Settings
         /// </summary>
-        /// <param name="template"></param>
-        /// <param name="view"></param>
-        /// <param name="partials"></param>
-        /// <param name="settings"></param>
-        /// <returns>the template rendered with the given data</returns>
-        public static string Render(string template, object view, IDictionary<string, string> partials,
-            RenderSettings settings)
+        /// <param name="template">The mustache teplate to render</param>
+        /// <param name="view">The data to use for rendering</param>
+        /// <param name="partials">A hash of Partials</param>
+        /// <param name="settings">Any settings you wish to override the defaults with</param>
+        /// <returns>A mustache rendered string</returns>
+        public static string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
         {
             return Instance.Render(template, view, partials, settings);
         }
 
         /// <summary>
-        /// Helper method for calling the Parse method on the enclosed Instance
+        /// Parses and caches the given template in the writer and returns the list
+        /// of tokens it contains. Doing this ahead of time avoids the need to parse
+        /// templates on the fly as they are rendered.
+        ///
+        /// If you don't need the result <see cref="CacheTemplate(string)"/>
         /// </summary>
-        /// <param name="template"></param>
-        /// <returns>A list of ParserOutput tokens parsed from the template</returns>
+        /// <param name="template">The mustache teplate to parse</param>
+        /// <returns>Returns a list of tokens</returns>
         public static IList<ParserOutput> Parse(string template)
         {
             return (List<ParserOutput>)Instance.Parse(template);
         }
 
         /// <summary>
-        /// Helper method for calling the Parse method on the enclosed Instance
+        /// Parses and caches the given template in the writer and returns the list
+        /// of tokens it contains. Doing this ahead of time avoids the need to parse
+        /// templates on the fly as they are rendered.
+        ///
+        /// If you don't need the result <see cref="CacheTemplate(string,Tags)"/>
         /// </summary>
-        /// <param name="template"></param>
-        /// <param name="tags"></param>
-        /// <returns>A list of ParserOutput tokens parsed from the template</returns>
+        /// <param name="template">The mustache teplate to parse</param>
+        /// <param name="tags">The set of tags to use for parsing</param>
+        /// <returns>Returns a list of tokens</returns>
         public static IList<ParserOutput> Parse(string template, Tags tags)
         {
             return (List<ParserOutput>)Instance.Parse(template, tags);
         }
 
         /// <summary>
-        /// Helper method for calling the Parse method on the enclosed Instance
+        /// Parses and caches the given template in the writer and returns the list
+        /// of tokens it contains. Doing this ahead of time avoids the need to parse
+        /// templates on the fly as they are rendered.
+        ///
+        /// If you don't need the result <see cref="CacheTemplate(string,string)"/>
         /// </summary>
-        /// <param name="template"></param>
-        /// <param name="tags"></param>
-        /// <returns>A list of ParserOutput tokens parsed from the template</returns>
+        /// <param name="template">The mustache teplate to parse</param>
+        /// <param name="tags">A tag string split by a space e.g. {{ }}</param>
+        /// <returns>Returns a list of tokens</returns>
         public static IList<ParserOutput> Parse(string template, string tags)
         {
             return (List<ParserOutput>)Instance.Parse(template, tags);
         }
 
         /// <summary>
-        /// Calls the Cache Template method on the enclosed Instance.
-        ///
-        /// This parses the template and adds it to the cache prior to use for speed.
+        /// Parses a template and adds the result to the writer cache.
         /// </summary>
-        /// <param name="template"></param>
+        /// <param name="template">The mustache teplate to parse</param>
         public static void CacheTemplate(string template)
         {
             Instance.CacheTemplate(template);
         }
 
         /// <summary>
-        /// Calls the Cache Template method on the enclosed Instance.
-        ///
-        /// This parses the template and adds it to the cache prior to use for speed.
+        /// Parses a template with given tags and adds the result to the writer cache.
         /// </summary>
-        /// <param name="template"></param>
-        /// <param name="tags"></param>
+        /// <param name="template">The mustache teplate to parse</param>
+        /// <param name="tags">The set of tags to use for parsing</param>
         public static void CacheTemplate(string template, Tags tags)
         {
             Instance.CacheTemplate(template, tags);
         }
 
         /// <summary>
-        /// Calls the Cache Template method on the enclosed Instance.
-        ///
-        /// This parses the template and adds it to the cache prior to use for speed.
+        /// Parses a template with given tags and adds the result to the writer cache.
         /// </summary>
-        /// <param name="template"></param>
-        /// <param name="tags"></param>
+        /// <param name="template">The mustache teplate to parse</param>
+        /// <param name="tags">A tag string split by a space e.g. {{ }}</param>
         public static void CacheTemplate(string template, string tags)
         {
             Instance.CacheTemplate(template, tags);
