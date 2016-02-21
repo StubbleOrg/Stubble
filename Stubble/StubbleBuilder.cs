@@ -14,16 +14,16 @@ namespace Stubble.Core
 {
     public sealed class StubbleBuilder : IStubbleBuilder
     {
-        internal readonly IDictionary<Type, Func<object, string, object>> ValueGetters =
+        internal IDictionary<Type, Func<object, string, object>> ValueGetters { get; } =
             new Dictionary<Type, Func<object, string, object>>();
 
-        internal readonly IDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters =
+        internal IDictionary<string, Func<string, Tags, ParserOutput>> TokenGetters { get; } =
             new Dictionary<string, Func<string, Tags, ParserOutput>>();
 
-        internal readonly List<Func<object, bool?>> TruthyChecks =
+        internal List<Func<object, bool?>> TruthyChecks { get; } =
             new List<Func<object, bool?>>();
 
-        internal readonly IDictionary<Type, Func<object, IEnumerable>> EnumerationConverters =
+        internal IDictionary<Type, Func<object, IEnumerable>> EnumerationConverters { get; } =
             new Dictionary<Type, Func<object, IEnumerable>>();
 
         internal IStubbleLoader TemplateLoader = new StringLoader();
