@@ -7,12 +7,13 @@ using Stubble.Core.Interfaces;
 
 namespace Stubble.Core.Classes.Loaders
 {
+    /// <summary>
+    /// A noop loader
+    /// </summary>
     public sealed class StringLoader : IStubbleLoader
     {
         /// <summary>
-        /// Loads a template with the given name.
-        ///
-        /// Returns null if the template is not found
+        /// Returns the passed string the parse as a template
         /// </summary>
         /// <param name="name">The name of the template to load</param>
         /// <returns>A Mustache Template</returns>
