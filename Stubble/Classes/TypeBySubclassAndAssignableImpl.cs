@@ -8,13 +8,27 @@ using System.Collections.Generic;
 
 namespace Stubble.Core.Classes
 {
+    /// <summary>
+    /// TypeBySubclassAndAssignable Comparer for Type
+    /// </summary>
     internal class TypeBySubclassAndAssignableImpl : Comparer<Type>
     {
+        /// <summary>
+        /// Returns an instance of TypeBySubclassAndAssignable Comparer for Type.
+        /// </summary>
+        /// <returns>an IComparer</returns>
         public static IComparer<Type> TypeBySubclassAndAssignable()
         {
             return new TypeBySubclassAndAssignableImpl();
         }
 
+        /// <summary>
+        /// Compares two types using standard comparisions,
+        /// subclass and assignable from
+        /// </summary>
+        /// <param name="x">The first type to compare</param>
+        /// <param name="y">The second type</param>
+        /// <returns>If an element is the same, before or after another</returns>
         public override int Compare(Type x, Type y)
         {
             // Standard Comparision Checks

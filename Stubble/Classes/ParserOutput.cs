@@ -3,71 +3,108 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Stubble.Core.Classes
 {
-    public class ParserOutput
+    /// <summary>
+    /// A base class representing output from the parser
+    /// </summary>
+    public class ParserOutput : IEquatable<ParserOutput>
     {
+        /// <summary>
+        /// Gets or sets the type of Token
+        /// </summary>
         public string TokenType { get; set; }
 
+        /// <summary>
+        /// Gets or sets the value of the Token
+        /// </summary>
         public virtual string Value { get; set; }
 
+        /// <summary>
+        /// Gets or sets the start position of the Token in the string
+        /// </summary>
         public int Start { get; set; }
 
+        /// <summary>
+        /// Gets or sets the end position of the Token in the string
+        /// </summary>
         public int End { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the child tokens for the Token
+        /// </summary>
         public List<ParserOutput> ChildTokens { get; set; }
 
+        /// <summary>
+        /// Gets or sets the position of the Token's parent end section
+        /// </summary>
         public int ParentSectionEnd { get; set; }
 
-        public override bool Equals(object obj)
+        /// <summary>
+        /// An <see cref="IEquatable{ParserOutput}"/> method for comparing ParserOutputs
+        /// </summary>
+        /// <param name="other">The <see cref="ParserOutput"/> instance to compare against</param>
+        /// <returns>If the two instances are equal</returns>
+        public bool Equals(ParserOutput other)
         {
-            var a = obj as ParserOutput;
-            if (a == null)
+            if (!TokenType.Equals(other.TokenType))
             {
                 return false;
             }
 
-            if (!TokenType.Equals(a.TokenType))
+            if (!Value.Equals(other.Value))
             {
                 return false;
             }
 
-            if (!Value.Equals(a.Value))
+            if (!Start.Equals(other.Start))
             {
                 return false;
             }
 
-            if (!Start.Equals(a.Start))
+            if (!End.Equals(other.End))
             {
                 return false;
             }
 
-            if (!End.Equals(a.End))
+            if (!ParentSectionEnd.Equals(other.ParentSectionEnd))
             {
                 return false;
             }
 
-            if (!ParentSectionEnd.Equals(a.ParentSectionEnd))
+            if (ChildTokens != null && other.ChildTokens != null)
             {
-                return false;
-            }
-
-            if (ChildTokens != null && a.ChildTokens != null)
-            {
-                if (ChildTokens.Count != a.ChildTokens.Count)
+                if (ChildTokens.Count != other.ChildTokens.Count)
                 {
                     return false;
                 }
 
-                return !ChildTokens.Where((token, i) => !token.Equals(a.ChildTokens[i])).Any();
+                return !ChildTokens.Where((token, i) => !token.Equals(other.ChildTokens[i])).Any();
             }
 
-            return !(ChildTokens == null & a.ChildTokens != null) && !(ChildTokens != null & a.ChildTokens == null);
+            return !(ChildTokens == null & other.ChildTokens != null) && !(ChildTokens != null & other.ChildTokens == null);
         }
 
+        /// <summary>
+        /// Checks if the object is <see cref="ParserOutput"/> and passes into standard
+        /// comparison if it is
+        /// </summary>
+        /// <param name="obj">The object to compare against</param>
+        /// <returns>If the two instances are equal</returns>
+        public override bool Equals(object obj)
+        {
+            var a = obj as ParserOutput;
+            return a != null && Equals(a);
+        }
+
+        /// <summary>
+        /// Returns a unique enough hashcode for storing hashes of ParserOutput
+        /// </summary>
+        /// <returns>The hashcode for the instance</returns>
         public override int GetHashCode()
         {
             unchecked
