@@ -35,7 +35,7 @@ namespace Stubble.Core.Classes
         public int End { get; set; }
 
         /// <summary>
-        /// Gets or Sets the child tokens for the Token
+        /// Gets or sets the child tokens for the Token
         /// </summary>
         public List<ParserOutput> ChildTokens { get; set; }
 

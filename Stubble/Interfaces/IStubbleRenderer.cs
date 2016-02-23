@@ -8,6 +8,9 @@ using Stubble.Core.Classes;
 
 namespace Stubble.Core.Interfaces
 {
+    /// <summary>
+    /// The interface for an StubbleRenderer
+    /// </summary>
     public interface IStubbleRenderer
     {
         /// <summary>

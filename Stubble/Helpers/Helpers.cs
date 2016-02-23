@@ -8,6 +8,9 @@ using System.Linq;
 
 namespace Stubble.Core.Helpers
 {
+    /// <summary>
+    /// A class of static extension methods
+    /// </summary>
     internal static class Helpers
     {
         /// <summary>

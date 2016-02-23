@@ -9,6 +9,9 @@ using Stubble.Core.Classes;
 
 namespace Stubble.Core
 {
+    /// <summary>
+    /// Represents a Static wrapper for a standard StubbleRenderer instance
+    /// </summary>
     public class StaticStubbleRenderer
     {
         private static readonly Lazy<StubbleRenderer> Lazy = new Lazy<StubbleRenderer>(() => new StubbleRenderer());

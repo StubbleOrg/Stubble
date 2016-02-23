@@ -5,6 +5,9 @@
 
 namespace Stubble.Core.Interfaces
 {
+    /// <summary>
+    /// Represents the interface for loading a template by name from a source
+    /// </summary>
     public interface IStubbleLoader
     {
         /// <summary>

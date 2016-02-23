@@ -14,7 +14,6 @@ namespace Stubble.Core.Classes.Tokens
     /// </summary>
     internal class EscapedValueToken : InterpolationToken, IRenderableToken, INonSpace
     {
-
         /// <summary>
         /// Renders a tokens representation (or interpolated lambda result) escaping the
         /// result

@@ -13,7 +13,6 @@ namespace Stubble.Core.Classes.Tokens
     /// </summary>
     public abstract class InterpolationToken : ParserOutput
     {
-
         /// <summary>
         /// Returns the value or if a lambda the result of the lambda (or interpolated value result)
         /// </summary>

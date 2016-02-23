@@ -36,7 +36,7 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Knows_When_There_Is_An_Unclosed_Tag()
         {
-            var ex = Assert.Throws<Exception>(delegate { Parser.ParseTemplate("My name is {{name"); });
+            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("My name is {{name"); });
             Assert.Equal("Unclosed Tag at 17", ex.Message);
         }
 
@@ -78,39 +78,39 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Only_Cache_Four_Regex_Tags()
         {
-            Parser.RegexCacheSize = 4;
-            Parser.TagRegexCache.Clear();
+            Parser.ParserStatic.RegexCacheSize = 4;
+            Parser.ParserStatic.TagRegexCache.Clear();
             Parser.ParseTemplate("Test 1 {{=<% %>=}}");
-            Assert.Equal(2, Parser.TagRegexCache.Count);
+            Assert.Equal(2, Parser.ParserStatic.TagRegexCache.Count);
             Parser.ParseTemplate("Test 2 {{={| |}=}}");
-            Assert.Equal(3, Parser.TagRegexCache.Count);
+            Assert.Equal(3, Parser.ParserStatic.TagRegexCache.Count);
             Parser.ParseTemplate("Test 3 {{=<: :>=}}");
-            Assert.Equal(4, Parser.TagRegexCache.Count);
+            Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
             Parser.ParseTemplate("Test 4 {{=|# #|=}}");
-            Assert.Equal(4, Parser.TagRegexCache.Count);
+            Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
         }
 
         [Fact]
         public void It_Can_Change_Cache_Size_At_Runtime()
         {
-            Parser.RegexCacheSize = 4;
-            Assert.Equal(4, Parser.RegexCacheSize);
-            Parser.TagRegexCache.Clear();
+            Parser.ParserStatic.RegexCacheSize = 4;
+            Assert.Equal(4, Parser.ParserStatic.RegexCacheSize);
+            Parser.ParserStatic.TagRegexCache.Clear();
             Parser.ParseTemplate("Test 1 {{=<% %>=}}");
-            Assert.Equal(2, Parser.TagRegexCache.Count);
+            Assert.Equal(2, Parser.ParserStatic.TagRegexCache.Count);
             Parser.ParseTemplate("Test 2 {{={| |}=}}");
-            Assert.Equal(3, Parser.TagRegexCache.Count);
+            Assert.Equal(3, Parser.ParserStatic.TagRegexCache.Count);
             Parser.ParseTemplate("Test 3 {{=<: :>=}}");
-            Assert.Equal(4, Parser.TagRegexCache.Count);
+            Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
             Parser.ParseTemplate("Test 4 {{=|# #|=}}");
-            Assert.Equal(4, Parser.TagRegexCache.Count);
+            Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
             Parser.ParseTemplate("Test 5 {{=|# #|=}}");
 
-            Assert.Equal(4, Parser.TagRegexCache.Count);
+            Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
 
-            Parser.RegexCacheSize = 2;
-            Assert.Equal(2, Parser.RegexCacheSize);
-            Assert.Equal(2, Parser.TagRegexCache.Count);
+            Parser.ParserStatic.RegexCacheSize = 2;
+            Assert.Equal(2, Parser.ParserStatic.RegexCacheSize);
+            Assert.Equal(2, Parser.ParserStatic.TagRegexCache.Count);
         }
 
         /// <summary>
@@ -122,28 +122,24 @@ namespace Stubble.Core.Tests
         {
             var tagsA = new Tags("<|", "|>");
             var tagsB = new Tags("<||", "||>");
-            var tagRegexA = new Parser.TagRegexes()
-            {
-                OpenTag = new Regex(Parser.EscapeRegexExpression(tagsA.StartTag) + @"\s*"),
-                CloseTag = new Regex(@"\s*" + Parser.EscapeRegexExpression(tagsA.EndTag)),
-                ClosingTag = new Regex(@"\s*" + Parser.EscapeRegexExpression("}" + tagsA.EndTag))
-            };
-            var tagRegexB = new Parser.TagRegexes()
-            {
-                OpenTag = new Regex(Parser.EscapeRegexExpression(tagsB.StartTag) + @"\s*"),
-                CloseTag = new Regex(@"\s*" + Parser.EscapeRegexExpression(tagsB.EndTag)),
-                ClosingTag = new Regex(@"\s*" + Parser.EscapeRegexExpression("}" + tagsB.EndTag))
-            };
+            var tagRegexA = new Parser.TagRegexes(
+                new Regex(Parser.EscapeRegexExpression(tagsA.StartTag) + @"\s*"),
+                new Regex(@"\s*" + Parser.EscapeRegexExpression(tagsA.EndTag)),
+                new Regex(@"\s*" + Parser.EscapeRegexExpression("}" + tagsA.EndTag)));
+            var tagRegexB = new Parser.TagRegexes(
+                new Regex(Parser.EscapeRegexExpression(tagsB.StartTag) + @"\s*"),
+                new Regex(@"\s*" + Parser.EscapeRegexExpression(tagsB.EndTag)),
+                new Regex(@"\s*" + Parser.EscapeRegexExpression("}" + tagsB.EndTag)));
 
-            Parser.AddToRegexCache("<| |>", tagRegexA);
-            Parser.AddToRegexCache("<| |>", tagRegexB);
+            Parser.ParserStatic.AddToRegexCache("<| |>", tagRegexA);
+            Parser.ParserStatic.AddToRegexCache("<| |>", tagRegexB);
 
-            Assert.Equal(tagRegexB, Parser.TagRegexCache["<| |>"]);
+            Assert.Equal(tagRegexB, Parser.ParserStatic.TagRegexCache["<| |>"]);
         }
 
         public static IEnumerable<object[]> TemplateParsingData()
         {
-            return new[] 
+            return new[]
             {
 	            new { index = 1, name="", arguments = new List<ParserOutput> {}},
 	            new { index = 2, name="{{hi}}", arguments = new List<ParserOutput> {

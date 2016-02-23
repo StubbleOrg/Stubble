@@ -11,13 +11,31 @@ using Stubble.Core.Classes.Exceptions;
 
 namespace Stubble.Core
 {
+    /// <summary>
+    /// Represents the context for a template
+    /// </summary>
     public sealed class Context
     {
+        private readonly object view;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Context"/> class.
+        /// </summary>
+        /// <param name="view">The data view to create the context with</param>
+        /// <param name="registry">A reference to the a registry instance</param>
+        /// <param name="settings">The render settings </param>
         public Context(object view, Registry registry, RenderSettings settings)
-    : this(view, registry, null, settings)
+            : this(view, registry, null, settings)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Context"/> class.
+        /// </summary>
+        /// <param name="view">The data view to create the context with</param>
+        /// <param name="registry">A reference to the a registry instance</param>
+        /// <param name="parentContext">The parent context for the new context</param>
+        /// <param name="settings">The render settings </param>
         public Context(object view, Registry registry, Context parentContext, RenderSettings settings)
         {
             this.view = view;
@@ -31,18 +49,37 @@ namespace Stubble.Core
             };
         }
 
+        /// <summary>
+        /// Gets the parent context of the current context
+        /// </summary>
+        public Context ParentContext { get; }
+
+        /// <summary>
+        /// Gets the data view of the context
+        /// </summary>
+        public dynamic View { get; }
+
+        /// <summary>
+        /// Gets the render settings for the context
+        /// </summary>
         internal RenderSettings RenderSettings { get; }
 
+        /// <summary>
+        /// Gets the registry for the context
+        /// </summary>
         internal Registry Registry { get; }
 
-        private IDictionary<string, object> Cache { get; set; }
+        /// <summary>
+        /// Gets the value cache to avoid multiple lookups
+        /// </summary>
+        private IDictionary<string, object> Cache { get; }
 
-        private readonly object view;
-
-        public Context ParentContext { get; set; }
-
-        public dynamic View { get; set; }
-
+        /// <summary>
+        /// Looks up a value by name from the context
+        /// </summary>
+        /// <param name="name">The name of the value to lookup</param>
+        /// <exception cref="StubbleDataMissException">If ThrowOnDataMiss set then thrown on value not found</exception>
+        /// <returns>The value if found or null if not</returns>
         public object Lookup(string name)
         {
             object value = null;
@@ -109,41 +146,17 @@ namespace Stubble.Core
                 return value;
             }
 
-            var ex = new StubbleDataMissException(string.Format("'{0}' is undefined.", name));
+            var ex = new StubbleDataMissException($"'{name}' is undefined.");
             ex.Data["Name"] = name;
             ex.Data["SkipRecursiveLookup"] = RenderSettings.SkipRecursiveLookup;
             throw ex;
         }
 
-        public Context Push(object view)
-        {
-            return new Context(view, Registry, this, RenderSettings);
-        }
-
-        public object GetValueFromRegistry(object value, string key)
-        {
-            foreach (var entry in Registry.ValueGetters.Where(x => x.Key.IsInstanceOfType(value)))
-            {
-                var outputVal = entry.Value(value, key);
-                if (outputVal != null)
-                {
-                    return outputVal;
-                }
-            }
-
-            return null;
-        }
-
-        public object TryEnumerationConversionIfRequired(object value)
-        {
-            if (value != null && Registry.EnumerationConverters.ContainsKey(value.GetType()))
-            {
-                return Registry.EnumerationConverters[value.GetType()].Invoke(value);
-            }
-
-            return value;
-        }
-
+        /// <summary>
+        /// Checks if the passed value is Truthy
+        /// </summary>
+        /// <param name="value">The value to check</param>
+        /// <returns>If the value is truthy</returns>
         public bool IsTruthyValue(object value)
         {
             if (value == null)
@@ -180,6 +193,52 @@ namespace Stubble.Core
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="Context"/> with the given view and it's
+        /// parent set as the current context
+        /// </summary>
+        /// <param name="newView">The data view to create the new context with</param>
+        /// <returns>A new child data context of the current context</returns>
+        public Context Push(object newView)
+        {
+            return new Context(newView, Registry, this, RenderSettings);
+        }
+
+        /// <summary>
+        /// Gets a value from the registry using the initalized value getters
+        /// </summary>
+        /// <param name="value">The value to lookup the value within</param>
+        /// <param name="key">The key to lookup in the value</param>
+        /// <returns>The value if found or null if not</returns>
+        private object GetValueFromRegistry(object value, string key)
+        {
+            foreach (var entry in Registry.ValueGetters.Where(x => x.Key.IsInstanceOfType(value)))
+            {
+                var outputVal = entry.Value(value, key);
+                if (outputVal != null)
+                {
+                    return outputVal;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Tries to convert an object into an Enumeration if possible
+        /// </summary>
+        /// <param name="value">The object to try convert</param>
+        /// <returns>The passed value or the value after conversion</returns>
+        private object TryEnumerationConversionIfRequired(object value)
+        {
+            if (value != null && Registry.EnumerationConverters.ContainsKey(value.GetType()))
+            {
+                return Registry.EnumerationConverters[value.GetType()].Invoke(value);
+            }
+
+            return value;
         }
     }
 }

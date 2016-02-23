@@ -10,21 +10,40 @@ using Stubble.Core.Interfaces;
 
 namespace Stubble.Core
 {
+    /// <summary>
+    /// Represents the core StubbleRenderer which renders Mustache templates
+    /// </summary>
     public sealed class StubbleRenderer : IStubbleRenderer
     {
-        internal readonly Registry Registry;
-        internal Writer Writer;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StubbleRenderer"/> class
+        /// with a default <see cref="Registry"/>
+        /// </summary>
         public StubbleRenderer()
             : this(new Registry())
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StubbleRenderer"/> class
+        /// with a passed Registry
+        /// </summary>
+        /// <param name="registry">A registry instance</param>
         internal StubbleRenderer(Registry registry)
         {
             Registry = registry;
             Writer = new Writer(Registry);
         }
+
+        /// <summary>
+        /// Gets the core Registry instance for the Renderer
+        /// </summary>
+        internal Registry Registry { get; }
+
+        /// <summary>
+        /// Gets the core Writer instance for the Renderer
+        /// </summary>
+        internal Writer Writer { get; }
 
         /// <summary>
         /// Renders the template with the given view using the writer.

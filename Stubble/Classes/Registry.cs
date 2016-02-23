@@ -167,7 +167,7 @@ namespace Stubble.Core.Classes
 
         private static class RegistryDefaults
         {
-            public static readonly IDictionary<Type, Func<object, string, object>> DefaultValueGetters = new Dictionary <Type, Func<object, string, object>>
+            public static readonly IDictionary<Type, Func<object, string, object>> DefaultValueGetters = new Dictionary<Type, Func<object, string, object>>
             {
                 {
                     typeof(IList),

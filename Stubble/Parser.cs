@@ -15,88 +15,59 @@ using Stubble.Core.Classes.Tokens.Interface;
 
 namespace Stubble.Core
 {
+    /// <summary>
+    /// Represents the Parser of Mustache Templates
+    /// </summary>
     public sealed class Parser
     {
-        #region Static Regex
-        private static readonly Regex WhitespaceRegex = new Regex(@"\s*", RegexOptions.Compiled);
-        private static readonly Regex SpaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
-        private static readonly Regex EqualsRegex = new Regex(@"\s*=", RegexOptions.Compiled);
-        private static readonly Regex CurlyRegex = new Regex(@"\s*\}", RegexOptions.Compiled);
-        private static readonly Regex EscapeRegex = new Regex(@"[\-\[\]{}()*+?.,\^$|#\s]", RegexOptions.Compiled);
-        #endregion
-
-        #region Static Tag Cache
-        internal static readonly ConcurrentDictionary<string, TagRegexes> TagRegexCache = new ConcurrentDictionary<string, TagRegexes>(
-            new Dictionary<string, TagRegexes>
-            {
-                {
-                    "{{ }}", new TagRegexes()
-                    {
-                        OpenTag = new Regex(@"\{\{\s*"),
-                        CloseTag = new Regex(@"\s*\}\}"),
-                        ClosingTag = new Regex(@"\s*\}\}\}")
-                    }
-                }
-            });
-
-        private static int regexCacheSize = 4;
-
-        public static int RegexCacheSize
-        {
-            get
-            {
-                return regexCacheSize;
-            }
-
-            set
-            {
-                regexCacheSize = value;
-                if (TagRegexCache.Count <= regexCacheSize)
-                {
-                    return;
-                }
-
-                while (TagRegexCache.Count > regexCacheSize)
-                {
-                    TagRegexes outVal;
-                    TagRegexCache.TryRemove(TagRegexCache.Last().Key, out outVal);
-                }
-            }
-        }
-
-        internal struct TagRegexes
-        {
-            internal Regex OpenTag { get; set; }
-
-            internal Regex CloseTag { get; set; }
-
-            internal Regex ClosingTag { get; set; }
-        }
-        #endregion
-
-        public static readonly Tags DefaultTags = new Tags("{{", "}}");
-        private readonly Registry registry;
-
         private Regex openingTagRegex;
         private Regex closingTagRegex;
         private Regex closingCurlyRegex;
         private Tags currentTags;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Parser"/> class.
+        /// </summary>
+        /// <param name="registry">The registry instance to use</param>
         public Parser(Registry registry)
         {
-            this.registry = registry;
+            Registry = registry;
         }
 
+        /// <summary>
+        /// Gets the default <see cref="Tags"/> instance
+        /// </summary>
+        public static Tags DefaultTags { get; } = new Tags("{{", "}}");
+
+        private Registry Registry { get; }
+
+        /// <summary>
+        /// Takes a given expression and escapes it
+        /// </summary>
+        /// <param name="expression">The expression to escape</param>
+        /// <returns>The escaped expression</returns>
         public static string EscapeRegexExpression(string expression)
         {
-            return EscapeRegex.Replace(expression, @"\$&");
+            return ParserStatic.EscapeRegex.Replace(expression, @"\$&");
         }
 
+        /// <summary>
+        /// Parses the template into a list of tokens
+        /// </summary>
+        /// <param name="template">The template to parse</param>
+        /// <returns>A list of tokens representing the template</returns>
         public IList<ParserOutput> ParseTemplate(string template)
         {
             return ParseTemplate(template, null);
         }
 
+        /// <summary>
+        /// Parses the template with the given tags
+        /// </summary>
+        /// <param name="template">The template to parse</param>
+        /// <param name="tags">The default tags to use during parsing</param>
+        /// <exception cref="StubbleException">Unclosed Tag/Unclosed Section/Unopened Section</exception>
+        /// <returns>A list of tokens representing the template</returns>
         public IList<ParserOutput> ParseTemplate(string template, Tags tags)
         {
             if (string.IsNullOrEmpty(template))
@@ -168,20 +139,20 @@ namespace Stubble.Core
 
                 hasTag = true;
 
-                var type = scanner.Scan(registry.TokenMatchRegex);
+                var type = scanner.Scan(Registry.TokenMatchRegex);
                 type = string.IsNullOrEmpty(type) ? "name" : type;
-                scanner.Scan(WhitespaceRegex);
+                scanner.Scan(ParserStatic.WhitespaceRegex);
 
                 switch (type)
                 {
                     case "=":
-                        value = scanner.ScanUntil(EqualsRegex);
-                        scanner.Scan(EqualsRegex);
+                        value = scanner.ScanUntil(ParserStatic.EqualsRegex);
+                        scanner.Scan(ParserStatic.EqualsRegex);
                         scanner.ScanUntil(closingTagRegex);
                         break;
                     case "{":
                         value = scanner.ScanUntil(closingCurlyRegex);
-                        scanner.Scan(CurlyRegex);
+                        scanner.Scan(ParserStatic.CurlyRegex);
                         scanner.ScanUntil(closingTagRegex);
                         type = "&";
                         break;
@@ -192,7 +163,7 @@ namespace Stubble.Core
 
                 if (string.IsNullOrEmpty(scanner.Scan(closingTagRegex)))
                 {
-                    throw new Exception("Unclosed Tag at " + scanner.Pos);
+                    throw new StubbleException($"Unclosed Tag at {scanner.Pos}");
                 }
 
                 var token = GetCorrectTypedToken(type, currentTags);
@@ -216,21 +187,19 @@ namespace Stubble.Core
                         case "/":
                             if (sections.Count == 0)
                             {
-                                throw new StubbleException("Unopened Section '" + value + "' at " + start);
+                                throw new StubbleException($"Unopened Section '{value}' at {start}");
                             }
 
                             openSection = sections.Pop();
 
                             if (openSection.Value != token.Value)
                             {
-                                throw new StubbleException("Unclosed Section '" + openSection.Value + "' at " + start);
+                                throw new StubbleException($"Unclosed Section '{openSection.Value}' at {start}");
                             }
 
                             break;
                         case "=":
                             CompileTags(value);
-                            break;
-                        default:
                             break;
                     }
                 }
@@ -240,21 +209,10 @@ namespace Stubble.Core
             if (sections.Count > 0)
             {
                 openSection = sections.Pop();
-                throw new StubbleException("Unclosed Section '" + openSection.Value + "' at " + scanner.Pos);
+                throw new StubbleException($"Unclosed Section '{openSection.Value}' at {scanner.Pos}");
             }
 
             return NestTokens(SquishTokens(tokens));
-        }
-
-        internal static void AddToRegexCache(string dictionaryKey, TagRegexes regex)
-        {
-            if (TagRegexCache.Count >= regexCacheSize)
-            {
-                TagRegexes outValue;
-                TagRegexCache.TryRemove(TagRegexCache.Last().Key, out outValue);
-            }
-
-            TagRegexCache.AddOrUpdate(dictionaryKey, regex, (key, existingVal) => regex);
         }
 
         private static IEnumerable<ParserOutput> SquishTokens(IEnumerable<ParserOutput> tokens)
@@ -309,7 +267,7 @@ namespace Stubble.Core
 
         private void CompileTags(string value)
         {
-            CompileTags(new Tags(SpaceRegex.Split(value)));
+            CompileTags(new Tags(ParserStatic.SpaceRegex.Split(value)));
         }
 
         private void CompileTags(Tags tags)
@@ -317,15 +275,13 @@ namespace Stubble.Core
             currentTags = tags;
             TagRegexes tagRegexes;
             var tagString = tags.ToString();
-            if (!TagRegexCache.TryGetValue(tagString, out tagRegexes))
+            if (!ParserStatic.TagRegexCache.TryGetValue(tagString, out tagRegexes))
             {
-                tagRegexes = new TagRegexes()
-                {
-                    OpenTag = new Regex(EscapeRegexExpression(tags.StartTag) + @"\s*"),
-                    CloseTag = new Regex(@"\s*" + EscapeRegexExpression(tags.EndTag)),
-                    ClosingTag = new Regex(@"\s*" + EscapeRegexExpression("}" + tags.EndTag))
-                };
-                AddToRegexCache(tagString, tagRegexes);
+                tagRegexes = new TagRegexes(
+                    new Regex(EscapeRegexExpression(tags.StartTag) + @"\s*"),
+                    new Regex(@"\s*" + EscapeRegexExpression(tags.EndTag)),
+                    new Regex(@"\s*" + EscapeRegexExpression("}" + tags.EndTag)));
+                ParserStatic.AddToRegexCache(tagString, tagRegexes);
             }
 
             openingTagRegex = tagRegexes.OpenTag;
@@ -333,11 +289,178 @@ namespace Stubble.Core
             closingCurlyRegex = tagRegexes.ClosingTag;
         }
 
-        private ParserOutput GetCorrectTypedToken(string tokenType, Tags currentTags)
+        private ParserOutput GetCorrectTypedToken(string tokenType, Tags tags)
         {
-            return registry.TokenGetters.ContainsKey(tokenType) ?
-                registry.TokenGetters[tokenType](tokenType, currentTags)
+            return Registry.TokenGetters.ContainsKey(tokenType) ?
+                Registry.TokenGetters[tokenType](tokenType, tags)
                 : new ParserOutput { TokenType = tokenType };
+        }
+
+        /// <summary>
+        /// Represents a structure to store the regexes to find Tags Open,
+        /// Close and Closing tokens
+        /// </summary>
+        internal struct TagRegexes : IEquatable<TagRegexes>
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="TagRegexes"/> struct.
+            /// </summary>
+            /// <param name="openTag">The open tag Regex</param>
+            /// <param name="closeTag">The close tag Regex</param>
+            /// <param name="closingTag">The closing tag Regex</param>
+            public TagRegexes(Regex openTag, Regex closeTag, Regex closingTag)
+            {
+                OpenTag = openTag;
+                CloseTag = closeTag;
+                ClosingTag = closingTag;
+            }
+
+            /// <summary>
+            /// Gets the OpenTag Regex
+            /// </summary>
+            internal Regex OpenTag { get; }
+
+            /// <summary>
+            /// Gets the CloseTag Regex
+            /// </summary>
+            internal Regex CloseTag { get; }
+
+            /// <summary>
+            /// Gets the ClosingTag Regex
+            /// </summary>
+            internal Regex ClosingTag { get; }
+
+            /// <summary>
+            /// Determines whether the specified TagRegexes's are considered equal
+            /// </summary>
+            /// <param name="other">The TagRegexes to compare with the current instance</param>
+            /// <returns>true if both instances are the same; or false if not</returns>
+            public bool Equals(TagRegexes other)
+            {
+                return Equals(OpenTag, other.OpenTag) && Equals(CloseTag, other.CloseTag) && Equals(ClosingTag, other.ClosingTag);
+            }
+
+            /// <summary>
+            /// Determines whether the specified object is considered equal to the
+            /// current TagRegexes instance
+            /// </summary>
+            /// <param name="obj">The object to compare with the current instance</param>
+            /// <returns>true if object is a tag regex and equal to instance; false if not</returns>
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj))
+                {
+                    return false;
+                }
+
+                return obj is TagRegexes && Equals((TagRegexes)obj);
+            }
+
+            /// <summary>
+            /// A hash function for the structure
+            /// </summary>
+            /// <returns>The hashcode for the object</returns>
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    var hashCode = OpenTag?.GetHashCode() ?? 0;
+                    hashCode = (hashCode * 397) ^ (CloseTag?.GetHashCode() ?? 0);
+                    hashCode = (hashCode * 397) ^ (ClosingTag?.GetHashCode() ?? 0);
+                    return hashCode;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Represents a collection of static parser fields and functions
+        /// </summary>
+        internal static class ParserStatic
+        {
+            private static int regexCacheSize = 4;
+
+            /// <summary>
+            /// Gets the Whitespace Regex
+            /// </summary>
+            public static Regex WhitespaceRegex { get; } = new Regex(@"\s*", RegexOptions.Compiled);
+
+            /// <summary>
+            /// Gets the Space Regex
+            /// </summary>
+            public static Regex SpaceRegex { get; } = new Regex(@"\s+", RegexOptions.Compiled);
+
+            /// <summary>
+            /// Gets the Equals Regex
+            /// </summary>
+            public static Regex EqualsRegex { get; } = new Regex(@"\s*=", RegexOptions.Compiled);
+
+            /// <summary>
+            /// Gets the Curly Brace Regex
+            /// </summary>
+            public static Regex CurlyRegex { get; } = new Regex(@"\s*\}", RegexOptions.Compiled);
+
+            /// <summary>
+            /// Gets the Escape Regex
+            /// </summary>
+            public static Regex EscapeRegex { get; } = new Regex(@"[\-\[\]{}()*+?.,\^$|#\s]", RegexOptions.Compiled);
+
+            /// <summary>
+            /// Gets the Tag Regex Cache for parsing Tokens
+            /// </summary>
+            public static ConcurrentDictionary<string, TagRegexes> TagRegexCache { get; } = new ConcurrentDictionary<string, TagRegexes>(
+                new Dictionary<string, TagRegexes>
+                {
+                    {
+                        "{{ }}", new TagRegexes(
+                            new Regex(@"\{\{\s*", RegexOptions.Compiled),
+                            new Regex(@"\s*\}\}", RegexOptions.Compiled),
+                            new Regex(@"\s*\}\}\}", RegexOptions.Compiled))
+                    }
+                });
+
+            /// <summary>
+            /// Gets or sets the regex cache size, if value is set to less than
+            /// <see cref="TagRegexCache"/> size then TagRegexes are removed from
+            /// last forwards
+            /// </summary>
+            public static int RegexCacheSize
+            {
+                get
+                {
+                    return regexCacheSize;
+                }
+
+                set
+                {
+                    regexCacheSize = value;
+                    if (TagRegexCache.Count <= regexCacheSize)
+                    {
+                        return;
+                    }
+
+                    while (TagRegexCache.Count > regexCacheSize)
+                    {
+                        TagRegexes outVal;
+                        TagRegexCache.TryRemove(TagRegexCache.Last().Key, out outVal);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Add a TagRegex to the TagRegexCache
+            /// </summary>
+            /// <param name="dictionaryKey">the key for the TagRegexes</param>
+            /// <param name="regex">The Tag Regexes to cache</param>
+            public static void AddToRegexCache(string dictionaryKey, TagRegexes regex)
+            {
+                if (TagRegexCache.Count >= regexCacheSize)
+                {
+                    TagRegexes outValue;
+                    TagRegexCache.TryRemove(TagRegexCache.Last().Key, out outValue);
+                }
+
+                TagRegexCache.AddOrUpdate(dictionaryKey, regex, (key, existingVal) => regex);
+            }
         }
     }
 }

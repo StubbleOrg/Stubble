@@ -14,6 +14,9 @@
         "licenseFile": "LICENSE",
         "licenseName": "MIT"
       }
+    },
+    "orderingRules": {
+      "usingDirectivesPlacement": "outsideNamespace"
     }
   }
 }

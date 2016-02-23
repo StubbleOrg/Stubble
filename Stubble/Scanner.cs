@@ -7,8 +7,16 @@ using System.Text.RegularExpressions;
 
 namespace Stubble.Core
 {
+    /// <summary>
+    /// Represents the Scanner which takes a template and split it using Regex into strings
+    /// which can be parsed into Tokens
+    /// </summary>
     public sealed class Scanner
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Scanner"/> class.
+        /// </summary>
+        /// <param name="template">The template to scan</param>
         public Scanner(string template)
         {
             Template = template;
@@ -16,14 +24,32 @@ namespace Stubble.Core
             Pos = 0;
         }
 
-        public string Template { get; set; }
+        /// <summary>
+        /// Gets the template
+        /// </summary>
+        public string Template { get; }
 
-        public string Tail { get; set; }
+        /// <summary>
+        /// Gets the tail of the template
+        /// </summary>
+        public string Tail { get; private set; }
 
-        public int Pos { get; set; }
+        /// <summary>
+        /// Gets the index position where the scanner currently is in the template
+        /// </summary>
+        public int Pos { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether the scanner has reached the end of the template
+        /// </summary>
         public bool EOS => string.IsNullOrEmpty(Tail);
 
+        /// <summary>
+        /// Uses the expression to scan the tail of the template
+        /// returning the match
+        /// </summary>
+        /// <param name="expression">The Regex expression to use on the tail</param>
+        /// <returns>The matched string or <see cref="string.Empty"/> if none matched</returns>
         public string Scan(Regex expression)
         {
             var matched = expression.Match(Tail);
@@ -40,11 +66,23 @@ namespace Stubble.Core
             return result;
         }
 
+        /// <summary>
+        /// Parses the expression into a Regex and uses it to scan the tail
+        /// of the template
+        /// </summary>
+        /// <param name="expression">The Regex expression to use on the tail</param>
+        /// <returns>The matched string or <see cref="string.Empty"/> if none matched</returns>
         public string Scan(string expression)
         {
             return Scan(new Regex(expression));
         }
 
+        /// <summary>
+        /// Scans the template until the Regex match and returns the string
+        /// until the match
+        /// </summary>
+        /// <param name="expression">The Regex to use for scanning until matched</param>
+        /// <returns>The template up until the matched string or <see cref="string.Empty"/> if none matched</returns>
         public string ScanUntil(Regex expression)
         {
             var regexMatch = expression.Match(Tail);
@@ -70,6 +108,12 @@ namespace Stubble.Core
             return match;
         }
 
+        /// <summary>
+        /// Turns the expression into a Regex and scans the template until the Regex match and returns the string
+        /// until the match
+        /// </summary>
+        /// <param name="expression">The expression to turn into a Regex to use for scanning until matched</param>
+        /// <returns>The template up until the matched string or <see cref="string.Empty"/> if none matched</returns>
         public string ScanUntil(string expression)
         {
             return ScanUntil(new Regex(expression));
