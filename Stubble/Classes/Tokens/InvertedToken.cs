@@ -5,12 +5,23 @@
 
 using System.Collections.Generic;
 using Stubble.Core.Classes.Tokens.Interface;
-using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes.Tokens
 {
+    /// <summary>
+    /// Represents an inverted section which is only rendered if the value is not truthy
+    /// </summary>
     internal class InvertedToken : InterpolationToken, IRenderableToken, ISection
     {
+        /// <summary>
+        /// Renders a tokens representation if the value (or interpolated value result)
+        /// is truthy
+        /// </summary>
+        /// <param name="writer">The writer to write the token to</param>
+        /// <param name="context">The context to discover values from</param>
+        /// <param name="partials">The partial templates available to the token</param>
+        /// <param name="originalTemplate">The original template</param>
+        /// <returns>The rendered result of the token if the resolved value is not truthy</returns>
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
             var value = context.Lookup(Value);

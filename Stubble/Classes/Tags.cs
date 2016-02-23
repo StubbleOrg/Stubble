@@ -3,21 +3,35 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Collections.Generic;
 using Stubble.Core.Classes.Exceptions;
 
 namespace Stubble.Core.Classes
 {
+    /// <summary>
+    /// Represents a set of tags used to identify tokens
+    /// </summary>
     public class Tags
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tags"/> class.
+        /// </summary>
+        /// <param name="startTag">Start tag</param>
+        /// <param name="endTag">End tag</param>
         public Tags(string startTag, string endTag)
         {
+            // TODO: Check tags do not have spaces
             StartTag = startTag;
             EndTag = endTag;
         }
 
-        public Tags(string[] tags)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tags"/> class.
+        /// </summary>
+        /// <param name="tags">Tag array</param>
+        public Tags(IReadOnlyList<string> tags)
         {
-            if (tags.Length != 2)
+            if (tags.Count != 2)
             {
                 throw new StubbleException("Invalid Tags");
             }
@@ -26,10 +40,20 @@ namespace Stubble.Core.Classes
             EndTag = tags[1];
         }
 
-        public string StartTag { get; private set; }
+        /// <summary>
+        /// Gets the start tag value
+        /// </summary>
+        public string StartTag { get; }
 
-        public string EndTag { get; private set; }
+        /// <summary>
+        /// Gets the end tag value
+        /// </summary>
+        public string EndTag { get; }
 
+        /// <summary>
+        /// Returns a visual representation of the tags
+        /// </summary>
+        /// <returns>The start tag and end tag</returns>
         public override string ToString()
         {
             return StartTag + " " + EndTag;

@@ -197,7 +197,7 @@ namespace Stubble.Core.Classes
                     (value, key) =>
                     {
                         var castValue = value as IDictionary;
-                        return castValue != null ? castValue[key] : null;
+                        return castValue?[key];
                     }
                 },
                 {
@@ -232,12 +232,12 @@ namespace Stubble.Core.Classes
             public static readonly IDictionary<string, Func<string, Tags, ParserOutput>> DefaultTokenGetters = new Dictionary
                 <string, Func<string, Tags, ParserOutput>>
             {
-                { "#", (s, tags) => new SectionToken() { TokenType = s, Tags = tags } },
-                { "^", (s, tags) => new InvertedToken() { TokenType = s } },
-                { ">", (s, tags) => new PartialToken() { TokenType = s } },
-                { "&", (s, tags) => new UnescapedValueToken() { TokenType = s } },
-                { "name", (s, tags) => new EscapedValueToken() { TokenType = s } },
-                { "text", (s, tags) => new RawValueToken() { TokenType = s } }
+                { "#", (s, tags) => new SectionToken(tags) { TokenType = s } },
+                { "^", (s, tags) => new InvertedToken { TokenType = s } },
+                { ">", (s, tags) => new PartialToken { TokenType = s } },
+                { "&", (s, tags) => new UnescapedValueToken { TokenType = s } },
+                { "name", (s, tags) => new EscapedValueToken { TokenType = s } },
+                { "text", (s, tags) => new RawValueToken { TokenType = s } }
             };
 
             public static readonly IDictionary<Type, Func<object, IEnumerable>> DefaultEnumerationConverters = new Dictionary

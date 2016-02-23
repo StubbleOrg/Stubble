@@ -5,7 +5,10 @@
 
 namespace Stubble.Core.Classes.Tokens.Interface
 {
-    internal interface ISection
+    /// <summary>
+    /// Represents a Token that is a Section
+    /// </summary>
+    public interface ISection
     {
     }
 }

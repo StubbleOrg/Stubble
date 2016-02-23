@@ -13,16 +13,41 @@ using Stubble.Core.Helpers;
 
 namespace Stubble.Core.Classes.Tokens
 {
+    /// <summary>
+    /// Represents a block section in a template
+    /// </summary>
     internal class SectionToken : ParserOutput, IRenderableToken, ISection
     {
-        internal static readonly List<Type> EnumerableBlacklist = new List<Type>
+        private static readonly List<Type> EnumerableBlacklist = new List<Type>
         {
             typeof(IDictionary),
             typeof(string)
         };
 
-        public Tags Tags { get; set; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SectionToken"/> class
+        /// with the given <see cref="Tags"/>
+        /// </summary>
+        /// <param name="tags">The tags to use for block lambda interpolation</param>
+        public SectionToken(Tags tags)
+        {
+            Tags = tags;
+        }
 
+        /// <summary>
+        /// Gets the tags to use for in rendering block lambdas
+        /// </summary>
+        public Tags Tags { get; }
+
+        /// <summary>
+        /// Returns the rendered result of all the child tokens of the section
+        /// if the token value is truthy
+        /// </summary>
+        /// <param name="writer">The writer to write the token to</param>
+        /// <param name="context">The context to discover values from</param>
+        /// <param name="partials">The partial templates available to the token</param>
+        /// <param name="originalTemplate">The original template</param>
+        /// <returns>The rendered result of all the sections children</returns>
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
             var buffer = new StringBuilder();

@@ -5,7 +5,10 @@
 
 namespace Stubble.Core.Classes.Tokens.Interface
 {
-    internal interface INonSpace
+    /// <summary>
+    /// Represents a Token that is a NonSpace token
+    /// </summary>
+    public interface INonSpace
     {
     }
 }

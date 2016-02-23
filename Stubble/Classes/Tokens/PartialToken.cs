@@ -7,8 +7,19 @@ using System.Collections.Generic;
 
 namespace Stubble.Core.Classes.Tokens
 {
+    /// <summary>
+    /// Represents a Partial Token which will load and render a child template
+    /// </summary>
     internal class PartialToken : ParserOutput, IRenderableToken
     {
+        /// <summary>
+        /// Renders a named partial template if one exists with the given context
+        /// </summary>
+        /// <param name="writer">The writer to write the token to</param>
+        /// <param name="context">The context to discover values from</param>
+        /// <param name="partials">The partial templates available to the token</param>
+        /// <param name="originalTemplate">The original template</param>
+        /// <returns>The rendered partial template</returns>
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
             var value = partials != null && partials.ContainsKey(Value) ? partials[Value] : null;

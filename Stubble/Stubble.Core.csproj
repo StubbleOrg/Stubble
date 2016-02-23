@@ -64,7 +64,6 @@
     <Compile Include="Classes\Loaders\StringLoader.cs" />
     <Compile Include="Classes\RenderSettings.cs" />
     <Compile Include="Classes\Tags.cs" />
-    <Compile Include="Classes\TokenGetter.cs" />
     <Compile Include="Classes\Tokens\EscapedValueToken.cs" />
     <Compile Include="Classes\Tokens\InterpolationToken.cs" />
     <Compile Include="Classes\Tokens\InvertedToken.cs" />
@@ -74,6 +73,7 @@
     <Compile Include="Classes\Tokens\UnescapedValueToken.cs" />
     <Compile Include="Classes\TypeBySubclassAndAssignableImpl.cs" />
     <Compile Include="Context.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Classes\Tokens\Interface\INonSpace.cs" />
@@ -97,9 +97,9 @@
     <None Include="version.json" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0-rc2\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0-rc2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0-rc2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
