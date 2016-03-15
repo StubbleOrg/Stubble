@@ -55,5 +55,10 @@ namespace Stubble.Core.Classes
         /// Gets or sets a map of Types to Enumeration convert functions
         /// </summary>
         public IDictionary<Type, Func<object, IEnumerable>> EnumerationConverters { get; set; }
+
+        /// <summary>
+        /// Gets or sets if keys should be looked up with case sensitivity
+        /// </summary>
+        public bool IgnoreCaseOnKeyLookup { get; set; }
     }
 }

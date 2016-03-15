@@ -328,6 +328,45 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
+        public void It_Should_Lookup_In_Dictionaries_Case_Insenstively()
+        {
+            var input = new
+            {
+                List = new Dictionary<string, object> { { "Foo", "Bar" } }
+            };
+
+            var context = new Context(input, new Registry(new RegistrySettings { IgnoreCaseOnKeyLookup = true }), RenderSettings.GetDefaultRenderSettings());
+            var output = context.Lookup("List.foo");
+            Assert.Equal("Bar", output);
+        }
+
+        [Fact]
+        public void It_Should_Lookup_In_Classes_Case_Insenstively()
+        {
+            var input = new
+            {
+                List = "Bar"
+            };
+
+            var context = new Context(input, new Registry(new RegistrySettings { IgnoreCaseOnKeyLookup = true }), RenderSettings.GetDefaultRenderSettings());
+            var output = context.Lookup("list");
+            Assert.Equal("Bar", output);
+        }
+
+        [Fact]
+        public void It_Should_Lookup_In_Dynamic_Case_Insenstively()
+        {
+            dynamic input = new ExpandoObject();
+            input.Foo = "Bar";
+            input.Number = 1;
+            input.Blah = new { String = "Test" };
+
+            var context = new Context(input, new Registry(new RegistrySettings { IgnoreCaseOnKeyLookup = true }), RenderSettings.GetDefaultRenderSettings());
+            var output = context.Lookup("foo");
+            Assert.Equal("Bar", output);
+        }
+
+        [Fact]
         public void It_Should_Throw_On_Data_Miss_Based_On_RenderSettings()
         {
             var context = new Context(new
