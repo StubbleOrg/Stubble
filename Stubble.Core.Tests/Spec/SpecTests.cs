@@ -24,8 +24,6 @@ namespace Stubble.Core.Tests.Spec
 
             OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.Expected, output);
             var dic = stubble.Writer.Cache as IDictionary;
-            OutputStream.WriteLine("Input Data: {0}", JsonConvert.SerializeObject(data));
-            OutputStream.WriteLine("Cache Data: {0}", JsonConvert.SerializeObject(dic));
             Assert.Equal(data.Expected, output);
         }
     }
