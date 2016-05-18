@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using static Stubble.Core.TypeHelper;
 
 namespace Stubble.Core.Classes
 {

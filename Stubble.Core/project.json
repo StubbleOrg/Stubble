@@ -1,1 +1,40 @@
-{}
+{
+    "version": "1.0.0-*",
+    "description": "Trimmed down {{mustache}} templates in .NET",
+    "packOptions": {
+        "repository": {
+            "type": "git",
+            "url": "https://github.com/stubbleorg/stubble"
+        },
+        "tags": [
+            "template",
+            "mustache",
+            "text",
+            "generation",
+            "fast"
+        ]
+    },
+    "buildOptions": {
+        "warningsAsErrors": false,
+        "allowUnsafe": false,
+        "keyFile": "Stubble.Core.snk",
+        "xmlDoc": true
+    },
+    "frameworks": {
+        "netstandard1.5": { }
+    },
+    "dependencies": {
+        "System.Collections": "4.0.11-rc2-24027",
+        "System.Collections.Concurrent": "4.0.12-rc2-24027",
+        "System.Diagnostics.Tools": "4.0.1-rc2-24027",
+        "System.Linq": "4.1.0-rc2-24027",
+        "System.Reflection.TypeExtensions": "4.1.0-rc2-24027",
+        "System.Runtime": "4.1.0-rc2-24027",
+        "System.Runtime.Extensions": "4.1.0-rc2-24027",
+        "System.Runtime.InteropServices": "4.1.0-rc2-24027",
+        "System.Text.RegularExpressions": "4.0.12-rc2-24027",
+        "System.Dynamic.Runtime": "4.0.11-rc2-24027",
+        "Microsoft.CSharp": "4.0.1-rc2-24027",
+        "System.Reflection": "4.1.0-rc2-24027"
+    }
+}
