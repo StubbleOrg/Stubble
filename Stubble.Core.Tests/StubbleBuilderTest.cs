@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Data;
+//using System.Data;
 using Stubble.Core.Classes.Loaders;
 using Xunit;
 
@@ -27,15 +27,15 @@ namespace Stubble.Core.Tests
             Assert.Null(builder.TokenGetters["MyToken"](null, null));
         }
 
-        [Fact]
-        public void It_Can_Add_Enumeration_Converters()
-        {
-            var builder = (StubbleBuilder) new StubbleBuilder()
-                            .AddEnumerationConversion(typeof(DataTable), (obj) => null);
+        //[Fact]
+        //public void It_Can_Add_Enumeration_Converters()
+        //{
+        //    var builder = (StubbleBuilder) new StubbleBuilder()
+        //                    .AddEnumerationConversion(typeof(DataTable), (obj) => null);
 
-            Assert.Contains(typeof(DataTable), builder.EnumerationConverters.Keys);
-            Assert.Null(builder.EnumerationConverters[typeof(DataTable)](null));
-        }
+        //    Assert.Contains(typeof(DataTable), builder.EnumerationConverters.Keys);
+        //    Assert.Null(builder.EnumerationConverters[typeof(DataTable)](null));
+        //}
 
         [Fact]
         public void It_Can_Add_Truthy_Checks()
