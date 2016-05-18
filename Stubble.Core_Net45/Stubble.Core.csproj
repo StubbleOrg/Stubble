@@ -37,7 +37,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Stubble.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Stubble.Core\Stubble.Core.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <DelaySign>false</DelaySign>
@@ -52,49 +52,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Exceptions\StubbleDataMissException.cs" />
-    <Compile Include="Classes\Exceptions\StubbleException.cs" />
-    <Compile Include="Classes\Exceptions\UnknownTemplateException.cs" />
-    <Compile Include="Classes\IRenderableToken.cs" />
-    <Compile Include="Classes\LimitedSizeConcurrentDictionary.cs" />
-    <Compile Include="Classes\Loaders\CompositeLoader.cs" />
-    <Compile Include="Classes\ParserOutput.cs" />
-    <Compile Include="Classes\Registry.cs" />
-    <Compile Include="Classes\RegistrySettings.cs" />
-    <Compile Include="Classes\Loaders\StringLoader.cs" />
-    <Compile Include="Classes\RenderSettings.cs" />
-    <Compile Include="Classes\Tags.cs" />
-    <Compile Include="Classes\Tokens\EscapedValueToken.cs" />
-    <Compile Include="Classes\Tokens\InterpolationToken.cs" />
-    <Compile Include="Classes\Tokens\InvertedToken.cs" />
-    <Compile Include="Classes\Tokens\PartialToken.cs" />
-    <Compile Include="Classes\Tokens\RawValueToken.cs" />
-    <Compile Include="Classes\Tokens\SectionToken.cs" />
-    <Compile Include="Classes\Tokens\UnescapedValueToken.cs" />
-    <Compile Include="Classes\TypeBySubclassAndAssignableImpl.cs" />
-    <Compile Include="Context.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Helpers\Helpers.cs" />
-    <Compile Include="Helpers\StringExtensions.cs" />
-    <Compile Include="Classes\Tokens\Interface\INonSpace.cs" />
-    <Compile Include="Classes\Tokens\Interface\ISection.cs" />
-    <Compile Include="Interfaces\IStubbleBuilder.cs" />
-    <Compile Include="Interfaces\IStubbleRenderer.cs" />
-    <Compile Include="Interfaces\IStubbleLoader.cs" />
-    <Compile Include="Parser.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scanner.cs" />
-    <Compile Include="StubbleRenderer.cs" />
-    <Compile Include="StubbleBuilder.cs" />
-    <Compile Include="StaticStubbleRenderer.cs" />
-    <Compile Include="Writer.cs" />
+    <Compile Include="..\Stubble.Core\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Stubble.Core.nuspec" />
-    <None Include="Stubble.snk" />
-    <AdditionalFiles Include="stylecop.json" />
-    <None Include="version.json" />
+    <None Include="..\Stubble.Core\Stubble.Core.nuspec" />
+    <None Include="..\Stubble.Core\Stubble.Core.snk" />
+    <AdditionalFiles Include="..\Stubble.Core\stylecop.json" />
+    <None Include="..\Stubble.Core\version.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />

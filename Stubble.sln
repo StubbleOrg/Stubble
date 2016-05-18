@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubble.Core", "Stubble\Stubble.Core.csproj", "{A2584D21-8BCD-4049-BC57-0634D054E1B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubble.Core", "Stubble.Core_Net45\Stubble.Core.csproj", "{A2584D21-8BCD-4049-BC57-0634D054E1B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubble.Core.Tests", "Stubble.Core.Tests\Stubble.Core.Tests.csproj", "{4BDC175A-16A7-462A-8A6B-E07EB75E212A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubble.Core.Tests", "Stubble.Core.Tests_Net45\Stubble.Core.Tests.csproj", "{4BDC175A-16A7-462A-8A6B-E07EB75E212A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DA4E3007-D8B3-4CE4-AB2A-97620EBD66A7}"
 	ProjectSection(SolutionItems) = preProject
