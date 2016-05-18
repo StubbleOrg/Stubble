@@ -25,7 +25,7 @@ namespace Stubble.Core.Tests.Spec
 
         public static IEnumerable<SpecTest> GetTests(string filename)
         {
-            using (var reader = File.OpenText(string.Format("../../../spec/specs/{0}.json", filename)))
+            using (var reader = File.OpenText(string.Format("../spec/specs/{0}.json", filename)))
             {
                 var data = JsonConvert.DeserializeObject<SpecTestDefinition>(reader.ReadToEnd());
                 foreach (var test in data.Tests)
