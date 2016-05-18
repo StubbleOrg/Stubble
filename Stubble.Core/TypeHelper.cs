@@ -34,5 +34,14 @@ namespace Stubble.Core
             return a.IsSubclassOf(b);
 #endif
         }
+
+        public static MemberInfo[] GetMember(this Type type, string name, BindingFlags bindingAttr)
+        {
+#if NETSTANDARD1_5
+            return type.GetTypeInfo().GetMember(name, bindingAttr);
+#else
+            return type.GetMember(name, bindingAttr);
+#endif
+        }
     }
 }
