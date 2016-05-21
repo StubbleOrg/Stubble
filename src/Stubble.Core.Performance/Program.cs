@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using CommandLine;
 using Humanizer;
@@ -28,9 +29,19 @@ namespace Stubble.Core.Performance
 
         public static void Main(string[] args)
         {
-            Options = new ProgramOptions();
-            if (!CommandLine.Parser.Default.ParseArguments(args, Options)) return;
+            var parsed = CommandLine.Parser.Default.ParseArguments<ProgramOptions>(args);
+            var errCode = parsed.MapResult(options =>
+            {
+                DoStuff(options);
+                return 0;
+            }, errs => 1);
 
+            //return errCode;
+        }
+
+        public static void DoStuff(ProgramOptions options)
+        {
+            Options = options;
             GlobalStopwatch = Stopwatch.StartNew();
 
             DumpSettings(Options);
@@ -46,7 +57,7 @@ namespace Stubble.Core.Performance
             Iterations = Options.NumberOfIterations;
             for (var i = 1; i <= Iterations; i++)
             {
-                ConsoleExtensions.WriteLine(string.Format("Iteration {0}", i).ToUpper());
+                ConsoleExtensions.WriteLine($"Iteration {i}".ToUpper());
 
                 foreach (var increment in Increments)
                 {
@@ -82,7 +93,7 @@ namespace Stubble.Core.Performance
 
         public static void WriteOutputs(DateTime now)
         {
-            var outputDir = string.Format("./Perf/{0:dd-MM-yyyy}", now);
+            var outputDir = $"./Perf/{now:dd-MM-yyyy}";
             CreateDirectoryIfNotExists(outputDir);
             WriteJson(outputDir, now);
             WriteOutputCsv(outputDir, now);
@@ -91,7 +102,7 @@ namespace Stubble.Core.Performance
         public static void WriteJson(string dir, DateTime now)
         {
             var serializer = new JsonSerializer {Formatting = Formatting.Indented};
-            using (var sw = new StreamWriter(string.Format("{0}/results-{1:H-mm-ss}.json", dir, now)))
+            using (var sw = new StreamWriter($"{dir}/results-{now:H-mm-ss}.json"))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, Outputs);
@@ -100,7 +111,7 @@ namespace Stubble.Core.Performance
 
         public static void WriteOutputCsv(string dir, DateTime now)
         {
-            using (var writer = new StreamWriter(string.Format("{0}/results-{1:H-mm-ss}.csv", dir, now)))
+            using (var writer = new StreamWriter($"{dir}/results-{now:H-mm-ss}.csv"))
             {
                 writer.WriteLine(string.Join(",", "Increment", string.Join(",", Outputs.Select(x => x.Name))));
                 foreach (var increment in Increments)
@@ -126,19 +137,19 @@ namespace Stubble.Core.Performance
 
     public class ProgramOptions
     {
-        [Option('s', "ShouldLog", DefaultValue = false, HelpText = "Should Log Output?")]
+        [Option('s', "ShouldLog", Default = false, HelpText = "Should Log Output?")]
         public bool ShouldLog { get; set; }
 
-        [Option('o', "ShouldOutput", DefaultValue = true, HelpText = "Should Output results?")]
+        [Option('o', "ShouldOutput", Default = true, HelpText = "Should Output results?")]
         public bool ShouldOutput { get; set; }
 
-        [Option('h', "ShouldHaltOnEnd", DefaultValue = false, HelpText = "Should Halt on End of Run?")]
+        [Option('h', "ShouldHaltOnEnd", Default = false, HelpText = "Should Halt on End of Run?")]
         public bool ShouldHaltOnEnd { get; set; }
 
-        [Option('t', "ShowTitles", DefaultValue = false, HelpText = "Should show titles?")]
+        [Option('t', "ShowTitles", Default = false, HelpText = "Should show titles?")]
         public bool ShowTitles { get; set; }
 
-        [Option('i', "Iterations", DefaultValue = 10, HelpText = "Number of Iterations that should be run?")]
+        [Option('i', "Iterations", Default = 10, HelpText = "Number of Iterations that should be run?")]
         public int NumberOfIterations { get; set; }
     }
 }
