@@ -8,14 +8,29 @@ environment:
 install:
 - cmd: git submodule update --init --recursive
 - ps: >-
+    $project = Get-Content ./src/Stubble.Core/project.json -Raw | ConvertFrom-Json;
+    $version = Get-Content ./src/Stubble.Core/version.json -Raw | ConvertFrom-Json;
+
+    $ci_version = $project.version.Split('-')[0] + $env:APPVEYOR_BUILD_NUMBER;
+    Update-AppveyorBuild -Version $ci_version;
+
+    if($version.packagePostfix) {
+        $env:verion_suffix=$version.packagePostfix;
+    }
+
     dotnet --info
 before_build:
 - ps: >-
     dotnet restore
 build_script:
-- ps: dotnet --verbose build .\src\Stubble.Core\
+- ps: dotnet --verbose build .\src\Stubble.Core\ -c Release
 after_test:
-- ps: dotnet --verbose pack .\src\Stubble.Core\ -o .\out
+- ps: >-
+    if($env:verion_suffix) {
+        dotnet --verbose pack .\src\Stubble.Core\ -o .\out --version-suffix $env:verion_suffix
+    } else {
+        dotnet --verbose pack .\src\Stubble.Core\ -o .\out
+    }
 artifacts:
 - path: .\out\*.nupkg
 test_script:
