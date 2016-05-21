@@ -6,11 +6,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+#if NETSTANDARD1_3
+using System.Reflection;
+#endif
 using System.Linq;
+using System.Text;
 using Stubble.Core.Classes.Tokens.Interface;
 using Stubble.Core.Helpers;
-using System.Reflection;
 
 namespace Stubble.Core.Classes.Tokens
 {

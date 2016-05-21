@@ -205,29 +205,6 @@ namespace Stubble.Core.Classes
                 }
             };
 
-            private static object GetValueFromObjectByName(object value, string key)
-            {
-                var type = value.GetType();
-                var memberArr = type.GetMember(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-                if (memberArr.Length != 1)
-                {
-                    return null;
-                }
-
-                var member = memberArr[0];
-                if (member is FieldInfo) return ((FieldInfo)member).GetValue(value);
-                if (member is PropertyInfo) return ((PropertyInfo)member).GetValue(value, null);
-                if (member is MethodInfo)
-                {
-                    var methodMember = (MethodInfo)member;
-                    return methodMember.GetParameters().Length == 0
-                            ? methodMember.Invoke(value, null)
-                            : null;
-                }
-
-                return null;
-            }
-
             public static readonly IDictionary<string, Func<string, Tags, ParserOutput>> DefaultTokenGetters = new Dictionary
                 <string, Func<string, Tags, ParserOutput>>
             {
@@ -241,6 +218,37 @@ namespace Stubble.Core.Classes
 
             public static readonly IDictionary<Type, Func<object, IEnumerable>> DefaultEnumerationConverters = new Dictionary
                 <Type, Func<object, IEnumerable>>();
+
+            private static object GetValueFromObjectByName(object value, string key)
+            {
+                var type = value.GetType();
+                var memberArr = type.GetMember(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+                if (memberArr.Length != 1)
+                {
+                    return null;
+                }
+
+                var member = memberArr[0];
+                if (member is FieldInfo)
+                {
+                    return ((FieldInfo)member).GetValue(value);
+                }
+
+                if (member is PropertyInfo)
+                {
+                    return ((PropertyInfo)member).GetValue(value, null);
+                }
+
+                if (member is MethodInfo)
+                {
+                    var methodMember = (MethodInfo)member;
+                    return methodMember.GetParameters().Length == 0
+                            ? methodMember.Invoke(value, null)
+                            : null;
+                }
+
+                return null;
+            }
         }
     }
 }
