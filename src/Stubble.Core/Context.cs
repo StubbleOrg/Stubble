@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
-using static Stubble.Core.TypeHelper;
+using System.Reflection;
 
 namespace Stubble.Core
 {

@@ -201,33 +201,32 @@ namespace Stubble.Core.Classes
                     }
                 },
                 {
-                    typeof(object), (value, key) =>
-                    {
-                        var type = value.GetType();
-                        var memberArr = type.GetMember(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-                        if (memberArr.Length != 1)
-                        {
-                            return null;
-                        }
-
-                        var member = memberArr[0];
-                        switch (member.MemberType)
-                        {
-                            case MemberTypes.Field:
-                                return ((FieldInfo)member).GetValue(value);
-                            case MemberTypes.Property:
-                                return ((PropertyInfo)member).GetValue(value, null);
-                            case MemberTypes.Method:
-                                var methodMember = (MethodInfo)member;
-                                return methodMember.GetParameters().Length == 0
-                                    ? methodMember.Invoke(value, null)
-                                    : null;
-                            default:
-                                return null;
-                        }
-                    }
+                    typeof(object), GetValueFromObjectByName
                 }
             };
+
+            private static object GetValueFromObjectByName(object value, string key)
+            {
+                var type = value.GetType();
+                var memberArr = type.GetMember(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+                if (memberArr.Length != 1)
+                {
+                    return null;
+                }
+
+                var member = memberArr[0];
+                if (member is FieldInfo) return ((FieldInfo)member).GetValue(value);
+                if (member is PropertyInfo) return ((PropertyInfo)member).GetValue(value, null);
+                if (member is MethodInfo)
+                {
+                    var methodMember = (MethodInfo)member;
+                    return methodMember.GetParameters().Length == 0
+                            ? methodMember.Invoke(value, null)
+                            : null;
+                }
+
+                return null;
+            }
 
             public static readonly IDictionary<string, Func<string, Tags, ParserOutput>> DefaultTokenGetters = new Dictionary
                 <string, Func<string, Tags, ParserOutput>>

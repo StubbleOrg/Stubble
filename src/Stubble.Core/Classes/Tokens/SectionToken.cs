@@ -10,6 +10,7 @@ using System.Text;
 using System.Linq;
 using Stubble.Core.Classes.Tokens.Interface;
 using Stubble.Core.Helpers;
+using System.Reflection;
 
 namespace Stubble.Core.Classes.Tokens
 {
