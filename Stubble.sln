@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubble.Core", "Stubble.Core_Net45\Stubble.Core.csproj", "{A2584D21-8BCD-4049-BC57-0634D054E1B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubble.Core", "src/Stubble.Core_Net45\Stubble.Core.csproj", "{A2584D21-8BCD-4049-BC57-0634D054E1B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubble.Core.Tests", "Stubble.Core.Tests_Net45\Stubble.Core.Tests.csproj", "{4BDC175A-16A7-462A-8A6B-E07EB75E212A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubble.Core.Tests", "test/Stubble.Core.Tests_Net45\Stubble.Core.Tests.csproj", "{4BDC175A-16A7-462A-8A6B-E07EB75E212A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DA4E3007-D8B3-4CE4-AB2A-97620EBD66A7}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		readme.mdown = readme.mdown
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubble.Core.Performance", "Stubble.Core.Performance\Stubble.Core.Performance.csproj", "{237CAC53-6C80-4E9E-B80A-C68C424F9A9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubble.Core.Performance", "src/Stubble.Core.Performance\Stubble.Core.Performance.csproj", "{237CAC53-6C80-4E9E-B80A-C68C424F9A9A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1F36B681-A281-4547-BF90-5E480CF59924}"
 	ProjectSection(SolutionItems) = preProject

@@ -81,7 +81,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Stubble.Core.Tests_Net45\Stubble.Core.Tests.csproj">
+    <ProjectReference Include="..\..\test\Stubble.Core.Tests_Net45\Stubble.Core.Tests.csproj">
       <Project>{4bdc175a-16a7-462a-8a6b-e07eb75e212a}</Project>
       <Name>Stubble.Core.Tests</Name>
     </ProjectReference>

@@ -82,7 +82,7 @@
     <None Include="..\Stubble.Core.Tests\Stubble.Tests.snk" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Stubble.Core_Net45\Stubble.Core.csproj">
+    <ProjectReference Include="..\..\src\Stubble.Core_Net45\Stubble.Core.csproj">
       <Project>{a2584d21-8bcd-4049-bc57-0634d054e1b0}</Project>
       <Name>Stubble.Core</Name>
     </ProjectReference>
