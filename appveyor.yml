@@ -11,7 +11,7 @@ install:
     $project = Get-Content ./src/Stubble.Core/project.json -Raw | ConvertFrom-Json;
     $version = Get-Content ./src/Stubble.Core/version.json -Raw | ConvertFrom-Json;
 
-    $ci_version = $project.version.Split('-')[0] + $env:APPVEYOR_BUILD_NUMBER;
+    $ci_version = $project.version.Split('-')[0] + "." + $env:APPVEYOR_BUILD_NUMBER;
     Update-AppveyorBuild -Version $ci_version;
 
     if($version.packagePostfix) {
