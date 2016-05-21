@@ -13,7 +13,9 @@ before_build:
 - ps: >-
     dotnet restore
 build_script:
-  - ps: dotnet --verbose build .\src\Stubble.Core\
+- ps: >-
+    gci env: | sort name
+- ps: dotnet --verbose build .\src\Stubble.Core\
 test_script:
 - ps: >-
     $Package_Locations = ".\packages";
