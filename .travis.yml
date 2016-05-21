@@ -21,6 +21,7 @@ install:
     - export PATH="$DOTNET_INSTALL_DIR:$PATH"
 
 script:
-  - dotnet restore
+  - dotnet restore ./src/Stubble.Core/
+  - dotnet restore ./test/Stubble.Core.Tests/
   - dotnet --verbose build ./src/Stubble.Core/ --framework netstandard13 -c Release
-  - dotnet --verbose test ./test/Stubble.Core.Tests/
+  - dotnet --verbose test ./test/Stubble.Core.Tests/ --framework netcoreapp1.0

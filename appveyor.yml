@@ -20,8 +20,8 @@ install:
 
     dotnet --info
 before_build:
-- ps: >-
-    dotnet restore
+- ps: dotnet restore .\src\Stubble.Core\
+- ps: dotnet restore .\test\Stubble.Core.Tests\
 build_script:
 - ps: dotnet --verbose build .\src\Stubble.Core\ -c Release
 after_test:
@@ -39,7 +39,7 @@ test_script:
     $OpenCover_Location = Get-ChildItem ($Package_Locations + "\OpenCover*\*\tools") | Select-Object -First 1 -ExpandProperty FullName;
     $CoverallsNet_Location = Get-ChildItem ($Package_Locations + "\coveralls.net\*\tools") | Select-Object -First 1 -ExpandProperty FullName;
 
-    $openCoverExe = "$OpenCover_Location\OpenCover.Console.exe -register:user -target:""dotnet.exe"" ""-targetargs:test .\test\Stubble.Core.Tests -appveyor"" -filter:""+[Stubble.*]*"" -skipautoprops -output:coverage.xml";
+    $openCoverExe = "$OpenCover_Location\OpenCover.Console.exe -register:user -target:""dotnet.exe"" ""-targetargs:test .\test\Stubble.Core.Tests --framework netcoreapp1.0 -appveyor"" -filter:""+[Stubble.*]*"" -skipautoprops -output:coverage.xml";
     $coverallsExe = "$CoverallsNet_Location\csmacnz.Coveralls.exe --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage ""$env:APPVEYOR_REPO_COMMIT_MESSAGE"" --jobId $env:APPVEYOR_JOB_ID";
 
     iex $openCoverExe;
