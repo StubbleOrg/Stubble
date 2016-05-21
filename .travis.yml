@@ -23,7 +23,4 @@ install:
 script:
   - dotnet restore
   - dotnet --verbose build ./src/Stubble.Core/ --framework netstandard13 -c Release
-  - dotnet --verbose build  ./test/Stubble.Core.Tests/ -c Release
-  - cd ./test/Stubble.Core.Tests/bin/
-  - ls
   - dotnet --verbose test ./test/Stubble.Core.Tests/
