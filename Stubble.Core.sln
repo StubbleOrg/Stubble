@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{129DB9C9-21F8-4218-AD2C-2A8970876FDB}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
+		global.json = global.json
+		licence.md = licence.md
+		.nuget\packages.config = .nuget\packages.config
+		readme.mdown = readme.mdown
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Stubble.Core", "src\Stubble.Core\Stubble.Core.xproj", "{6A2A280D-0E0C-4B1C-AF10-3291E9E41E02}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Stubble.Core.Tests", "test\Stubble.Core.Tests\Stubble.Core.Tests.xproj", "{032FDC3C-A86B-4F55-B4AD-24E4E9E05B40}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{954BAA8A-FA49-4952-A841-4C57B0A10869}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A02DCD25-5393-49B8-BFD2-1C49845CFEE1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A2A280D-0E0C-4B1C-AF10-3291E9E41E02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A2A280D-0E0C-4B1C-AF10-3291E9E41E02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A2A280D-0E0C-4B1C-AF10-3291E9E41E02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A2A280D-0E0C-4B1C-AF10-3291E9E41E02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{032FDC3C-A86B-4F55-B4AD-24E4E9E05B40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{032FDC3C-A86B-4F55-B4AD-24E4E9E05B40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{032FDC3C-A86B-4F55-B4AD-24E4E9E05B40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{032FDC3C-A86B-4F55-B4AD-24E4E9E05B40}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6A2A280D-0E0C-4B1C-AF10-3291E9E41E02} = {954BAA8A-FA49-4952-A841-4C57B0A10869}
+		{032FDC3C-A86B-4F55-B4AD-24E4E9E05B40} = {A02DCD25-5393-49B8-BFD2-1C49845CFEE1}
+	EndGlobalSection
+EndGlobal
