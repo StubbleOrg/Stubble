@@ -5,12 +5,6 @@ platform: Any CPU
 environment:
   COVERALLS_REPO_TOKEN:
     secure: VyyiHIJv/p8KuVZ+2RWsU/NqCHxNM7hcLupLOzhtKf0gRygNzr7ZInC28MQjs/fA
-assembly_info:
-  patch: true
-  file: '**\AssemblyInfo.*'
-  assembly_version: $(assembly_version)
-  assembly_file_version: $(assembly_version)
-  assembly_informational_version: $(assembly_informational_version)
 install:
 - cmd: git submodule update --init --recursive
 - ps: >-
