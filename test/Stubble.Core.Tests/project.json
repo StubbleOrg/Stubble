@@ -1,0 +1,29 @@
+{
+    "version": "1.0.0-*",
+    "buildOptions": {
+        "warningsAsErrors": false,
+        "allowUnsafe": false,
+        "keyFile": "Stubble.Tests.snk",
+        "xmlDoc": false
+    },
+    "dependencies": {
+        "xunit": "2.1.0",
+        "dotnet-test-xunit": "1.0.0-rc2-build10015",
+        "Stubble.Core": { "target": "project" }
+    },
+    "testRunner": "xunit",
+    "frameworks": {
+        "netcoreapp1.0": {
+            "dependencies": {
+                "Microsoft.NETCore.App": {
+                    "type": "platform",
+                    "version": "1.0.0-rc2-3002702"
+                }
+            },
+            "imports": [
+                "dnxcore50",
+                "portable-net45+win8"
+            ]
+        }
+    }
+}
