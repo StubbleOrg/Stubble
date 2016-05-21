@@ -12,11 +12,8 @@ install:
 before_build:
 - ps: >-
     dotnet restore
-build:
-  project: Stubble.sln
-  publish_nuget: true
-  publish_nuget_symbols: true
-  verbosity: minimal
+build_script:
+  - ps: dotnet --verbose build .\src\Stubble.Core\
 test_script:
 - ps: >-
     $Package_Locations = ".\packages";
