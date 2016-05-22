@@ -1,12 +1,27 @@
 # See http://docs.travis-ci.com/user/languages/csharp/ for details
 
 language: csharp
+sudo: required
+dist: trusty
+env:
+  - CLI_VERSION=latest
+
+addons:
+  apt:
+    packages:
+    - gettext
+    - libcurl4-openssl-dev
+    - libicu-dev
+    - libssl-dev
+    - libunwind8
+
 install:
-  - nuget restore Stubble.sln
+    - export DOTNET_INSTALL_DIR="$PWD/.dotnetcli"
+    - curl -sSL https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.sh | bash /dev/stdin --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR"
+    - export PATH="$DOTNET_INSTALL_DIR:$PATH"
 
 script:
-  - xbuild /p:Configuration=Release Stubble.sln /p:TargetFrameworkVersion='v4.5'
-  - mono ./packages/xunit.runner.console.*/tools/xunit.console.exe Stubble.Core.Tests/bin/Release/Stubble.Core.Tests.dll -noshadow
-
-mono:
-  - nightly
+  - dotnet restore ./src/Stubble.Core/
+  - dotnet restore ./test/Stubble.Core.Tests/
+  - dotnet --verbose build ./src/Stubble.Core/ --framework netstandard13 -c Release
+  - dotnet --verbose test ./test/Stubble.Core.Tests/ --framework netcoreapp1.0

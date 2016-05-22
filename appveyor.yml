@@ -5,49 +5,47 @@ platform: Any CPU
 environment:
   COVERALLS_REPO_TOKEN:
     secure: VyyiHIJv/p8KuVZ+2RWsU/NqCHxNM7hcLupLOzhtKf0gRygNzr7ZInC28MQjs/fA
-assembly_info:
-  patch: true
-  file: '**\AssemblyInfo.*'
-  assembly_version: $(assembly_version)
-  assembly_file_version: $(assembly_version)
-  assembly_informational_version: $(assembly_informational_version)
 install:
 - cmd: git submodule update --init --recursive
 - ps: >-
-    $version = Get-Content ./Stubble/version.json -Raw | ConvertFrom-Json;
+    $project = Get-Content ./src/Stubble.Core/project.json -Raw | ConvertFrom-Json;
+    $version = Get-Content ./src/Stubble.Core/version.json -Raw | ConvertFrom-Json;
 
-    $assembly_version = "$($version.major).$($version.minor).$($version.patch).$($env:APPVEYOR_BUILD_NUMBER)";
-
-    $env:assembly_version=$assembly_version;
-    $env:assembly_informational_version=$assembly_version;
-
-    Update-AppveyorBuild -Version $assembly_version;
+    $ci_version = $project.version.Split('-')[0] + "." + $env:APPVEYOR_BUILD_NUMBER;
+    Update-AppveyorBuild -Version $ci_version;
 
     if($version.packagePostfix) {
-        $assembly_informational_version = $assembly_version + "-" + $version.packagePostfix;
-        $env:assembly_informational_version=$assembly_informational_version;
+        $env:verion_suffix=$version.packagePostfix;
     }
+
+    dotnet --info
 before_build:
-- nuget restore
-build:
-  project: Stubble.sln
-  publish_nuget: true
-  publish_nuget_symbols: true
-  verbosity: minimal
+- ps: dotnet restore .\src\Stubble.Core\
+- ps: dotnet restore .\test\Stubble.Core.Tests\
+build_script:
+- ps: dotnet --verbose build .\src\Stubble.Core\ -c Release
+after_test:
+- ps: >-
+    if($env:verion_suffix) {
+        dotnet --verbose pack .\src\Stubble.Core\ -o .\out --version-suffix $env:verion_suffix
+    } else {
+        dotnet --verbose pack .\src\Stubble.Core\ -o .\out
+    }
+artifacts:
+- path: .\out\*.nupkg
 test_script:
 - ps: >-
-    $Package_Locations = ".\packages";
-    $OpenCover_Location = Get-ChildItem ($Package_Locations + "\OpenCover*\tools") | Select-Object -First 1 -ExpandProperty FullName;
-    $Xunit_Location = Get-ChildItem ($Package_Locations + "\xunit.runner.console*\tools") | Select-Object -First 1 -ExpandProperty FullName;
-    $CoverallsNet_Location = Get-ChildItem ($Package_Locations + "\coveralls.net*") | Select-Object -First 1 -ExpandProperty FullName;
+    $Package_Locations = $env:USERPROFILE + "\.nuget\packages";
+    $OpenCover_Location = Get-ChildItem ($Package_Locations + "\OpenCover*\*\tools") | Select-Object -First 1 -ExpandProperty FullName;
+    $CoverallsNet_Location = Get-ChildItem ($Package_Locations + "\coveralls.net\*\tools") | Select-Object -First 1 -ExpandProperty FullName;
 
-    $openCoverExe = "$OpenCover_Location\OpenCover.Console.exe -register:user -target:""$Xunit_Location\xunit.console.exe"" ""-targetargs:"""".\Stubble.Core.Tests\bin\$env:CONFIGURATION\Stubble.Core.Tests.dll"""" -noshadow -appveyor"" -filter:""+[Stubble.*]*"" -skipautoprops -output:coverage.xml";
-    $coverallsExe = "$CoverallsNet_Location\csmacnz.Coveralls.exe --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage ""$env:APPVEYOR_REPO_COMMIT_MESSAGE"" --jobId $env:APPVEYOR_JOB_ID"
+    $openCoverExe = "$OpenCover_Location\OpenCover.Console.exe -register:user -target:""dotnet.exe"" ""-targetargs:test .\test\Stubble.Core.Tests --framework netcoreapp1.0 -appveyor"" -filter:""+[Stubble.*]*"" -skipautoprops -output:coverage.xml";
+    $coverallsExe = "$CoverallsNet_Location\csmacnz.Coveralls.exe --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage ""$env:APPVEYOR_REPO_COMMIT_MESSAGE"" --jobId $env:APPVEYOR_JOB_ID";
 
     iex $openCoverExe;
+
+    Write-Host "Running Coveralls";
     iex $coverallsExe;
-artifacts:
-- path: Stubble\bin\$(Configuration)\Stubble.Core.dll
 deploy:
 - provider: NuGet
   api_key:

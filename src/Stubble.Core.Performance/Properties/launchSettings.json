@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Stubble.Core.Performance": {
+      "commandName": "Project",
+      "commandLineArgs": "-s -t"
+    }
+  }
+}
