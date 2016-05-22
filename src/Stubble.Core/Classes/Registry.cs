@@ -41,6 +41,7 @@ namespace Stubble.Core.Classes
         /// <param name="settings">The registry settings to initalise the Registry with</param>
         public Registry(RegistrySettings settings)
         {
+            IgnoreCaseOnKeyLookup = settings.IgnoreCaseOnKeyLookup;
             SetValueGetters(settings.ValueGetters);
             SetTokenGetters(settings.TokenGetters);
             SetTruthyChecks(settings.TruthyChecks);
@@ -93,6 +94,11 @@ namespace Stubble.Core.Classes
         public RenderSettings RenderSettings { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating whether key lookups should ignore case
+        /// </summary>
+        public bool IgnoreCaseOnKeyLookup { get; private set; }
+
+        /// <summary>
         /// Gets the generated Token match regex
         /// </summary>
         internal Regex TokenMatchRegex { get; private set; }
@@ -101,7 +107,7 @@ namespace Stubble.Core.Classes
         {
             if (valueGetters != null)
             {
-                var mergedGetters = RegistryDefaults.DefaultValueGetters.MergeLeft(valueGetters);
+                var mergedGetters = RegistryDefaults.GetDefaultValueGetters(IgnoreCaseOnKeyLookup).MergeLeft(valueGetters);
 
                 mergedGetters = mergedGetters
                     .OrderBy(x => x.Key, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable())
@@ -111,7 +117,7 @@ namespace Stubble.Core.Classes
             }
             else
             {
-                ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(RegistryDefaults.DefaultValueGetters);
+                ValueGetters = new ReadOnlyDictionary<Type, Func<object, string, object>>(RegistryDefaults.GetDefaultValueGetters(IgnoreCaseOnKeyLookup));
             }
         }
 
@@ -167,44 +173,6 @@ namespace Stubble.Core.Classes
 
         private static class RegistryDefaults
         {
-            public static readonly IDictionary<Type, Func<object, string, object>> DefaultValueGetters = new Dictionary<Type, Func<object, string, object>>
-            {
-                {
-                    typeof(IList),
-                    (value, key) =>
-                    {
-                        var castValue = value as IList;
-
-                        int intVal;
-                        if (int.TryParse(key, out intVal))
-                        {
-                            return castValue != null && intVal < castValue.Count ? castValue[intVal] : null;
-                        }
-
-                        return null;
-                    }
-                },
-                {
-                    typeof(IDictionary<string, object>),
-                    (value, key) =>
-                    {
-                        var castValue = value as IDictionary<string, object>;
-                        return castValue != null && castValue.ContainsKey(key) ? castValue[key] : null;
-                    }
-                },
-                {
-                    typeof(IDictionary),
-                    (value, key) =>
-                    {
-                        var castValue = value as IDictionary;
-                        return castValue?[key];
-                    }
-                },
-                {
-                    typeof(object), GetValueFromObjectByName
-                }
-            };
-
             public static readonly IDictionary<string, Func<string, Tags, ParserOutput>> DefaultTokenGetters = new Dictionary
                 <string, Func<string, Tags, ParserOutput>>
             {
@@ -219,10 +187,69 @@ namespace Stubble.Core.Classes
             public static readonly IDictionary<Type, Func<object, IEnumerable>> DefaultEnumerationConverters = new Dictionary
                 <Type, Func<object, IEnumerable>>();
 
-            private static object GetValueFromObjectByName(object value, string key)
+            public static IDictionary<Type, Func<object, string, object>> GetDefaultValueGetters(
+                bool ignoreCase)
+            {
+                return new Dictionary<Type, Func<object, string, object>>()
+                {
+                    {
+                        typeof(IList),
+                        (value, key) =>
+                        {
+                            var castValue = value as IList;
+
+                            int intVal;
+                            if (int.TryParse(key, out intVal))
+                            {
+                                return castValue != null && intVal < castValue.Count ? castValue[intVal] : null;
+                            }
+
+                            return null;
+                        }
+                    },
+                    {
+                        typeof(IDictionary<string, object>),
+                        (value, key) =>
+                        {
+                            var castValue = ignoreCase
+                                ? new Dictionary<string, object>(
+                                    (IDictionary<string, object>)value,
+                                    StringComparer.OrdinalIgnoreCase)
+                                : value as IDictionary<string, object>;
+
+                            return castValue != null && castValue.ContainsKey(key) ? castValue[key] : null;
+                        }
+                    },
+                    {
+                        typeof(IDictionary),
+                        (value, key) =>
+                        {
+                            var castValue = ignoreCase
+                                ? new Dictionary<string, object>(
+                                    (IDictionary<string, object>)value,
+                                    StringComparer.OrdinalIgnoreCase)
+                                : value as IDictionary;
+
+                            return castValue?[key];
+                        }
+                    },
+                    {
+                        typeof(object), (value, key) => GetValueFromObjectByName(value, key, ignoreCase)
+                    }
+                };
+            }
+
+            private static object GetValueFromObjectByName(object value, string key, bool ignoreCase)
             {
                 var type = value.GetType();
-                var memberArr = type.GetMember(key, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+
+                    var bindings = ignoreCase
+                        ? BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
+                            BindingFlags.FlattenHierarchy | BindingFlags.IgnoreCase
+                        : BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
+                            BindingFlags.FlattenHierarchy;
+
+                    var memberArr = type.GetMember(key, bindings);
                 if (memberArr.Length != 1)
                 {
                     return null;
@@ -243,8 +270,8 @@ namespace Stubble.Core.Classes
                 {
                     var methodMember = (MethodInfo)member;
                     return methodMember.GetParameters().Length == 0
-                            ? methodMember.Invoke(value, null)
-                            : null;
+                        ? methodMember.Invoke(value, null)
+                        : null;
                 }
 
                 return null;

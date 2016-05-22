@@ -57,6 +57,11 @@ namespace Stubble.Core
         internal int MaxRecursionDepth { get; private set; } = 256;
 
         /// <summary>
+        /// Gets a value indicating whether case should be ignored when looking up keys in the context
+        /// </summary>
+        internal bool IgnoreCaseOnKeyLookup { get; private set; }
+
+        /// <summary>
         /// Builds a <see cref="StubbleRenderer"/> instance with the initalised settings
         /// </summary>
         /// <returns>Returns a <see cref="StubbleRenderer"/> with the initalised settings</returns>
@@ -70,7 +75,8 @@ namespace Stubble.Core
                 TemplateLoader = TemplateLoader,
                 PartialTemplateLoader = PartialTemplateLoader,
                 MaxRecursionDepth = MaxRecursionDepth,
-                EnumerationConverters = EnumerationConverters
+                EnumerationConverters = EnumerationConverters,
+                IgnoreCaseOnKeyLookup = IgnoreCaseOnKeyLookup
             });
             return new StubbleRenderer(registry);
         }
@@ -206,6 +212,17 @@ namespace Stubble.Core
         public IStubbleBuilder SetMaxRecursionDepth(int maxRecursionDepth)
         {
             MaxRecursionDepth = maxRecursionDepth;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets if the case should be ignored when looking up keys in the context
+        /// </summary>
+        /// <param name="ignoreCaseOnKeyLookup">if the case should be ignored on key lookup</param>
+        /// <returns>The IStubbleBuilder for chaining</returns>
+        public IStubbleBuilder SetIgnoreCaseOnKeyLookup(bool ignoreCaseOnKeyLookup)
+        {
+            IgnoreCaseOnKeyLookup = ignoreCaseOnKeyLookup;
             return this;
         }
 

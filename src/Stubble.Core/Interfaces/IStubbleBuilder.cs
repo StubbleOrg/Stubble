@@ -108,6 +108,13 @@ namespace Stubble.Core.Interfaces
         IStubbleBuilder SetMaxRecursionDepth(int maxRecursionDepth);
 
         /// <summary>
+        /// Sets if the case should be ignored when looking up keys in the context
+        /// </summary>
+        /// <param name="ignoreCaseOnKeyLookup">if the case should be ignored on key lookup</param>
+        /// <returns>The IStubbleBuilder for chaining</returns>
+        IStubbleBuilder SetIgnoreCaseOnKeyLookup(bool ignoreCaseOnKeyLookup);
+
+        /// <summary>
         /// Builds a <see cref="StubbleRenderer"/> instance with the initalised settings
         /// </summary>
         /// <returns>Returns a <see cref="StubbleRenderer"/> with the initalised settings</returns>
