@@ -8,7 +8,7 @@
     },
     "dependencies": {
         "xunit": "2.1.0",
-        "dotnet-test-xunit": "1.0.0-rc2-build10015",
+        "dotnet-test-xunit": "1.0.0-rc2-build10025",
         "Stubble.Core": { "target": "project" },
         "OpenCover": {
             "version": "4.6.519",
