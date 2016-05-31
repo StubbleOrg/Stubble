@@ -8,12 +8,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Stubble.Core.Classes.Loaders;
 using Stubble.Core.Classes.Tokens;
 using Stubble.Core.Helpers;
 using Stubble.Core.Interfaces;
+using System.Collections.Concurrent;
 
 namespace Stubble.Core.Classes
 {
@@ -234,9 +236,84 @@ namespace Stubble.Core.Classes
                         }
                     },
                     {
-                        typeof(object), (value, key) => GetValueFromObjectByName(value, key, ignoreCase)
+                        typeof(object), (value, key) => GetValueFromObjectByName_New(value, key, ignoreCase)
                     }
                 };
+            }
+
+            private static readonly ConcurrentDictionary<Type, Tuple<Dictionary<string, Func<object, object>>, Dictionary<string, Func<object, object>>>> GettersCache
+                = new ConcurrentDictionary<Type, Tuple<Dictionary<string, Func<object, object>>, Dictionary<string, Func<object, object>>>>();
+
+            private static object GetValueFromObjectByName_New(object value, string key, bool ignoreCase)
+            {
+                var objectType = value.GetType();
+                Tuple<Dictionary<string, Func<object, object>>, Dictionary<string, Func<object, object>>> typeLookup;
+                if (!GettersCache.TryGetValue(objectType, out typeLookup))
+                {
+                    var memberLookup = GetMemberLookup(objectType);
+                    var noCase = memberLookup.ToDictionary(m => m.Key, m => m.Value, StringComparer.OrdinalIgnoreCase);
+                    typeLookup = Tuple.Create(memberLookup, noCase);
+
+                    GettersCache.AddOrUpdate(objectType, typeLookup, (_, existing) => existing);
+                }
+
+                var lookup = ignoreCase ? typeLookup.Item2 : typeLookup.Item1;
+
+                return lookup.ContainsKey(key) ? lookup[key](value) : null;
+            }
+
+            private static Dictionary<string, Func<object, object>> GetMemberLookup(Type objectType)
+            {
+                var members = objectType.GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
+                                      BindingFlags.FlattenHierarchy);
+
+                return members.Select(m =>
+                {
+                    Expression ex = null;
+                    var param = Expression.Parameter(typeof(object));
+                    var cast = Expression.Convert(param, objectType);
+
+                    if (m is FieldInfo)
+                    {
+                        var fi = m as FieldInfo;
+
+                        ex = fi.IsStatic ? Expression.Field(null, fi) : Expression.Field(cast, fi);
+                    }
+                    if (m is PropertyInfo)
+                    {
+                        var pi = m as PropertyInfo;
+                        var mi = pi.GetGetMethod();
+                        ex = mi.IsStatic ? Expression.Call(mi) : (Expression)Expression.Property(cast, m as PropertyInfo);
+                    }
+
+                    var methodInfo = m as MethodInfo;
+                    if (methodInfo != null && methodInfo.GetParameters().Length == 0 && !methodInfo.IsGenericMethod && methodInfo.ReturnType != typeof(void))
+                    {
+                        ex = methodInfo.IsStatic ? Expression.Call(methodInfo) : Expression.Call(cast, methodInfo);
+                    }
+
+                    if (ex == null)
+                    {
+                        return null;
+                    }
+
+                    return new MemberInfo
+                    {
+                        AccessorExpression = ex,
+                        Parameter = param,
+                        Name = m.Name
+                    };
+                }).Where(mi => mi != null).ToDictionary(mi => mi.Name, mi => Expression.Lambda<Func<object, object>>(
+                    Expression.Convert(mi.AccessorExpression, typeof(object)),
+                    mi.Parameter
+                ).Compile());
+            }
+
+            private class MemberInfo
+            {
+                public Expression AccessorExpression { get; set; }
+                public ParameterExpression Parameter { get; set; }
+                public string Name { get; set; }
             }
 
             private static object GetValueFromObjectByName(object value, string key, bool ignoreCase)
