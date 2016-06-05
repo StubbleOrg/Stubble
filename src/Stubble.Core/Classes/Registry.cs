@@ -24,8 +24,8 @@ namespace Stubble.Core.Classes
     /// </summary>
     public sealed class Registry
     {
-        private static readonly string[] DefaultTokenTypes = { @"\/", "=", @"\{", "!" };
-        private static readonly string[] ReservedTokens = { "name", "text" }; // Name and text are used internally for tokens so must exist
+        private static readonly HashSet<string> DefaultTokenTypes = new HashSet<string> { @"\/", "=", @"\{", "!" };
+        private static readonly HashSet<string> ReservedTokens = new HashSet<string> { "name", "text" }; // Name and text are used internally for tokens so must exist
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Registry"/> class
@@ -167,10 +167,20 @@ namespace Stubble.Core.Classes
 
         private void SetTokenMatchRegex()
         {
-            TokenMatchRegex = new Regex(
-                string.Join("|", TokenGetters.Where(s => !ReservedTokens.Contains(s.Key))
-                                        .Select(s => Parser.EscapeRegexExpression(s.Key))
-                                        .Concat(DefaultTokenTypes)));
+            var str = new HashSet<string>();
+            foreach (var getter in TokenGetters)
+            {
+                if (ReservedTokens.Contains(getter.Key))
+                {
+                    continue;
+                }
+
+                str.Add(Parser.EscapeRegexExpression(getter.Key));
+            }
+
+            str.UnionWith(DefaultTokenTypes);
+
+            TokenMatchRegex = new Regex(string.Join("|", str));
         }
 
         private static class RegistryDefaults
@@ -251,7 +261,7 @@ namespace Stubble.Core.Classes
                 if (!GettersCache.TryGetValue(objectType, out typeLookup))
                 {
                     var memberLookup = GetMemberLookup(objectType);
-                    var noCase = memberLookup.ToDictionary(m => m.Key, m => m.Value, StringComparer.OrdinalIgnoreCase);
+                    var noCase = new Dictionary<string, Func<object, object>>(memberLookup, StringComparer.OrdinalIgnoreCase);
                     typeLookup = Tuple.Create(memberLookup, noCase);
 
                     GettersCache.AddOrUpdate(objectType, typeLookup, (_, existing) => existing);

@@ -238,8 +238,13 @@ namespace Stubble.Core
         /// <returns>The value if found or null if not</returns>
         private object GetValueFromRegistry(object value, string key)
         {
-            foreach (var entry in Registry.ValueGetters.Where(x => x.Key.IsInstanceOfType(value)))
+            foreach (var entry in Registry.ValueGetters)
             {
+                if (!entry.Key.IsInstanceOfType(value))
+                {
+                    continue;
+                }
+
                 var outputVal = entry.Value(value, key);
                 if (outputVal != null)
                 {

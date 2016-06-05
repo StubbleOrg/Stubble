@@ -158,9 +158,15 @@ namespace Stubble.Core
             }
 
             var sb = new StringBuilder();
-            foreach (var token in tokens.OfType<IRenderableToken>())
+            foreach (var token in tokens)
             {
-                var renderResult = token.Render(this, context, partials, originalTemplate);
+                var renderable = token as IRenderableToken;
+                if (renderable == null)
+                {
+                    continue;
+                }
+
+                var renderResult = renderable.Render(this, context, partials, originalTemplate);
                 sb.Append(renderResult);
             }
 

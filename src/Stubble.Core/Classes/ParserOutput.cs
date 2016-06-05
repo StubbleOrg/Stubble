@@ -83,7 +83,14 @@ namespace Stubble.Core.Classes
                     return false;
                 }
 
-                return !ChildTokens.Where((token, i) => !token.Equals(other.ChildTokens[i])).Any();
+                for (var i = 0; i < ChildTokens.Count; i++)
+                {
+                    var equal = other.ChildTokens[i].Equals(ChildTokens[i]);
+                    if (!equal)
+                    {
+                        return false;
+                    }
+                }
             }
 
             return !(ChildTokens == null & other.ChildTokens != null) && !(ChildTokens != null & other.ChildTokens == null);
