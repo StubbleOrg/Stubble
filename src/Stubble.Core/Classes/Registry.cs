@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,7 +16,6 @@ using Stubble.Core.Classes.Loaders;
 using Stubble.Core.Classes.Tokens;
 using Stubble.Core.Helpers;
 using Stubble.Core.Interfaces;
-using System.Collections.Concurrent;
 
 namespace Stubble.Core.Classes
 {
@@ -189,6 +189,9 @@ namespace Stubble.Core.Classes
             public static readonly IDictionary<Type, Func<object, IEnumerable>> DefaultEnumerationConverters = new Dictionary
                 <Type, Func<object, IEnumerable>>();
 
+            private static readonly ConcurrentDictionary<Type, Tuple<Dictionary<string, Func<object, object>>, Dictionary<string, Func<object, object>>>> GettersCache
+                = new ConcurrentDictionary<Type, Tuple<Dictionary<string, Func<object, object>>, Dictionary<string, Func<object, object>>>>();
+
             public static IDictionary<Type, Func<object, string, object>> GetDefaultValueGetters(
                 bool ignoreCase)
             {
@@ -236,15 +239,12 @@ namespace Stubble.Core.Classes
                         }
                     },
                     {
-                        typeof(object), (value, key) => GetValueFromObjectByName_New(value, key, ignoreCase)
+                        typeof(object), (value, key) => GetValueFromObjectByName(value, key, ignoreCase)
                     }
                 };
             }
 
-            private static readonly ConcurrentDictionary<Type, Tuple<Dictionary<string, Func<object, object>>, Dictionary<string, Func<object, object>>>> GettersCache
-                = new ConcurrentDictionary<Type, Tuple<Dictionary<string, Func<object, object>>, Dictionary<string, Func<object, object>>>>();
-
-            private static object GetValueFromObjectByName_New(object value, string key, bool ignoreCase)
+            private static object GetValueFromObjectByName(object value, string key, bool ignoreCase)
             {
                 var objectType = value.GetType();
                 Tuple<Dictionary<string, Func<object, object>>, Dictionary<string, Func<object, object>>> typeLookup;
@@ -305,53 +305,16 @@ namespace Stubble.Core.Classes
                     };
                 }).Where(mi => mi != null).ToDictionary(mi => mi.Name, mi => Expression.Lambda<Func<object, object>>(
                     Expression.Convert(mi.AccessorExpression, typeof(object)),
-                    mi.Parameter
-                ).Compile());
+                    mi.Parameter).Compile());
             }
 
             private class MemberInfo
             {
                 public Expression AccessorExpression { get; set; }
+
                 public ParameterExpression Parameter { get; set; }
+
                 public string Name { get; set; }
-            }
-
-            private static object GetValueFromObjectByName(object value, string key, bool ignoreCase)
-            {
-                var type = value.GetType();
-
-                    var bindings = ignoreCase
-                        ? BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
-                            BindingFlags.FlattenHierarchy | BindingFlags.IgnoreCase
-                        : BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
-                            BindingFlags.FlattenHierarchy;
-
-                    var memberArr = type.GetMember(key, bindings);
-                if (memberArr.Length != 1)
-                {
-                    return null;
-                }
-
-                var member = memberArr[0];
-                if (member is FieldInfo)
-                {
-                    return ((FieldInfo)member).GetValue(value);
-                }
-
-                if (member is PropertyInfo)
-                {
-                    return ((PropertyInfo)member).GetValue(value, null);
-                }
-
-                if (member is MethodInfo)
-                {
-                    var methodMember = (MethodInfo)member;
-                    return methodMember.GetParameters().Length == 0
-                        ? methodMember.Invoke(value, null)
-                        : null;
-                }
-
-                return null;
             }
         }
     }
