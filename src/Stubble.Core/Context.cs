@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -176,17 +177,37 @@ namespace Stubble.Core
                 }
             }
 
-            bool boolValue;
-            var parseResult = bool.TryParse(value.ToString(), out boolValue) ? (bool?)boolValue : null;
-            if (parseResult.HasValue || value is bool)
+            if (value is bool)
             {
-                return parseResult ?? (bool)value;
+                return (bool)value;
             }
 
             var strValue = value as string;
             if (strValue != null)
             {
-                return !string.IsNullOrEmpty(strValue);
+                var trimmed = strValue.Trim();
+
+                if (trimmed == "1")
+                {
+                    return true;
+                }
+
+                if (trimmed == "0")
+                {
+                    return false;
+                }
+
+                if (trimmed.Equals("true", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+
+                if (trimmed.Equals("false", StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+
+                return !string.IsNullOrEmpty(trimmed);
             }
 
             var enumerableValue = value as IEnumerable;
