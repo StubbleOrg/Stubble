@@ -285,7 +285,7 @@ namespace Stubble.Core.Classes
 
                     if (m is FieldInfo)
                     {
-                        var fi = m as FieldInfo;
+                        var fi = (FieldInfo)m;
 
                         ex = fi.IsStatic ? Expression.Field(null, fi) : Expression.Field(cast, fi);
                     }
@@ -293,10 +293,20 @@ namespace Stubble.Core.Classes
                     {
                         var pi = m as PropertyInfo;
                         var mi = pi.GetGetMethod();
-                        ex = mi.IsStatic ? Expression.Call(mi) : (Expression)Expression.Property(cast, m as PropertyInfo);
+
+                        if (mi != null && mi.GetParameters().Length == 0 && !mi.IsGenericMethod &&
+                            mi.ReturnType != typeof(void))
+                        {
+                            ex = mi.IsStatic ? Expression.Call(mi) : Expression.Call(cast, mi);
+                        }
+                        else if(pi.GetIndexParameters().Length == 0)
+                        {
+                            ex = Expression.Property(cast, pi);
+                        }
                     }
 
                     var methodInfo = m as MethodInfo;
+
                     if (methodInfo != null && methodInfo.GetParameters().Length == 0 && !methodInfo.IsGenericMethod && methodInfo.ReturnType != typeof(void))
                     {
                         ex = methodInfo.IsStatic ? Expression.Call(methodInfo) : Expression.Call(cast, methodInfo);
