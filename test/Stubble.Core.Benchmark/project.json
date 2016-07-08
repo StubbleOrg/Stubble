@@ -1,27 +1,15 @@
 ﻿{
     "version": "1.0.0-*",
-    "buildOptions": {
-        "emitEntryPoint": true
+    "dependencies": {
+        "BenchmarkDotNet": "0.9.6",
+        "BenchmarkDotNet.Diagnostics.Windows": "0.9.6",
+        "Stubble.Core": {
+            "version": "1.0.0-*",
+            "target": "project"
+        },
+        "Nustache": "1.16.0.1"
     },
-
     "frameworks": {
-        "net46": {
-            "dependencies": {
-                "BenchmarkDotNet": "0.9.6",
-                "BenchmarkDotNet.Diagnostics.Windows": "0.9.6",
-                "Microsoft.NETCore.App": {
-                    "type": "platform",
-                    "version": "1.0.0-rc2-3002702"
-                },
-                "Stubble.Core": {
-                    "version": "1.0.0-*",
-                    "target": "project"
-                },
-                "Nustache": "1.16.0.1"
-            },
-            "imports": [
-                "dnxcore50"
-            ]
-        }
+        "net46": {}
     }
 }

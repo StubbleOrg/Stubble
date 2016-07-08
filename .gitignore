@@ -204,3 +204,5 @@ FakesAssemblies/
 *.opt
 
 *.DotSettings
+
+BenchmarkDotNet.Artifacts/
