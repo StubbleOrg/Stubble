@@ -27,7 +27,7 @@ namespace Stubble.Core.Tests.Spec
 
         public static IEnumerable<SpecTest> GetTests(string filename)
         {
-            var path = Path.Combine(AppContext.BaseDirectory, string.Format("../../../../../../spec/specs/{0}.json", filename));
+            var path = Path.Combine(AppContext.BaseDirectory, string.Format("./spec/specs/{0}.json", filename));
 
             using (var reader = File.OpenText(path))
             {

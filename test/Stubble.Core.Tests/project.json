@@ -4,7 +4,10 @@
         "warningsAsErrors": false,
         "allowUnsafe": false,
         "keyFile": "Stubble.Tests.snk",
-        "xmlDoc": false
+        "xmlDoc": false,
+        "copyToOutput": [
+            "../../spec/specs/*.json"
+        ]
     },
     "dependencies": {
         "xunit": "2.2.0-beta2-build3300",
