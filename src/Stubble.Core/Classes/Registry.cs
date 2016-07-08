@@ -277,64 +277,55 @@ namespace Stubble.Core.Classes
                 var members = objectType.GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
                                       BindingFlags.FlattenHierarchy);
 
-                return members.Select(m =>
+                var dict = new Dictionary<string, Func<object, object>>(members.Length);
+                var param = Expression.Parameter(typeof(object));
+                var cast = Expression.Convert(param, objectType);
+
+                foreach (var m in members)
                 {
                     Expression ex = null;
-                    var param = Expression.Parameter(typeof(object));
-                    var cast = Expression.Convert(param, objectType);
+                    var fi = m as FieldInfo;
+                    var pi = m as PropertyInfo;
+                    var mi = m as MethodInfo;
 
-                    if (m is FieldInfo)
+                    if (fi != null)
                     {
-                        var fi = (FieldInfo)m;
-
                         ex = fi.IsStatic ? Expression.Field(null, fi) : Expression.Field(cast, fi);
                     }
-                    if (m is PropertyInfo)
+                    else if (pi != null)
                     {
-                        var pi = m as PropertyInfo;
-                        var mi = pi.GetGetMethod();
-
-                        if (mi != null && mi.GetParameters().Length == 0 && !mi.IsGenericMethod &&
-                            mi.ReturnType != typeof(void))
+                        var getter = pi.GetGetMethod();
+                        if (IsZeroArityGetterMethod(getter))
                         {
-                            ex = mi.IsStatic ? Expression.Call(mi) : Expression.Call(cast, mi);
+                            ex = getter.IsStatic ? Expression.Call(getter) : Expression.Call(cast, getter);
                         }
-                        else if(pi.GetIndexParameters().Length == 0)
+                        else if (pi.GetIndexParameters().Length == 0)
                         {
                             ex = Expression.Property(cast, pi);
                         }
                     }
-
-                    var methodInfo = m as MethodInfo;
-
-                    if (methodInfo != null && methodInfo.GetParameters().Length == 0 && !methodInfo.IsGenericMethod && methodInfo.ReturnType != typeof(void))
+                    else if (IsZeroArityGetterMethod(mi))
                     {
-                        ex = methodInfo.IsStatic ? Expression.Call(methodInfo) : Expression.Call(cast, methodInfo);
+                        ex = mi.IsStatic ? Expression.Call(mi) : Expression.Call(cast, mi);
                     }
 
                     if (ex == null)
                     {
-                        return null;
+                        continue;
                     }
 
-                    return new MemberInfo
-                    {
-                        AccessorExpression = ex,
-                        Parameter = param,
-                        Name = m.Name
-                    };
-                }).Where(mi => mi != null).ToDictionary(mi => mi.Name, mi => Expression.Lambda<Func<object, object>>(
-                    Expression.Convert(mi.AccessorExpression, typeof(object)),
-                    mi.Parameter).Compile());
+                    var func = Expression.Lambda<Func<object, object>>(Expression.Convert(ex, typeof(object)), param).Compile();
+
+                    dict.Add(m.Name, func);
+                }
+
+                return dict;
             }
 
-            private class MemberInfo
+            private static bool IsZeroArityGetterMethod(MethodInfo mi)
             {
-                public Expression AccessorExpression { get; set; }
-
-                public ParameterExpression Parameter { get; set; }
-
-                public string Name { get; set; }
+                return mi != null && mi.GetParameters().Length == 0 && !mi.IsGenericMethod &&
+                       mi.ReturnType != typeof(void);
             }
         }
     }
