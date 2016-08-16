@@ -15,7 +15,7 @@
         ]
     },
     "buildOptions": {
-        "warningsAsErrors": false,
+        "warningsAsErrors": true,
         "allowUnsafe": false,
         "keyFile": "Stubble.Core.snk",
         "xmlDoc": true,
