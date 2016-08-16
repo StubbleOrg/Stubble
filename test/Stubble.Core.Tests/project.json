@@ -17,11 +17,11 @@
             "version": "4.6.519",
             "type": "build"
         },
+        "System.Collections.Specialized": "4.0.1",
         "coveralls.net": {
-            "version": "0.6.0",
+            "version": "0.7.0",
             "type": "build"
-        },
-        "System.Collections.Specialized": "4.0.1"
+        }
     },
     "testRunner": "xunit",
     "frameworks": {
