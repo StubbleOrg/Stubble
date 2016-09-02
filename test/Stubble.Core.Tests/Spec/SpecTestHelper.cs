@@ -1,6 +1,10 @@
+// <copyright file="SpecTestHelper.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -16,18 +20,20 @@ namespace Stubble.Core.Tests.Spec
             { "comments", new List<string> { "Standalone Without Newline" } },
             { "delimiters", new List<string> { "Standalone Without Newline" } },
             { "inverted", new List<string> { "Standalone Without Newline" } },
-            { "partials", new List<string>
+            {
+                "partials", new List<string>
             {
                 "Standalone Without Previous Line",
                 "Standalone Without Newline",
                 "Standalone Indentation"
-            }},
+            }
+            },
             { "sections", new List<string> { "Standalone Without Newline" } },
         };
 
         public static IEnumerable<SpecTest> GetTests(string filename)
         {
-            var path = Path.Combine(AppContext.BaseDirectory, string.Format("./spec/specs/{0}.json", filename));
+            var path = Path.Combine(AppContext.BaseDirectory, string.Format("./{0}.json", filename));
 
             using (var reader = File.OpenText(path))
             {

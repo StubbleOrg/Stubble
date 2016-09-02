@@ -7,11 +7,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
-#if NETSTANDARD1_3
-using System.Reflection;
-#endif
 
 namespace Stubble.Core
 {

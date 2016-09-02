@@ -28,7 +28,7 @@ namespace Stubble.Core.Classes.Tokens
                 value = context.Registry.PartialTemplateLoader.Load(Value);
             }
 
-            return value != null ? writer.RenderTokens(writer.Parse(value), context, partials, value) : null;
+            return value != null ? writer.RenderWithOriginalTemplate(value, context, partials, originalTemplate) : null;
         }
     }
 }

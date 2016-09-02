@@ -28,16 +28,32 @@ namespace Stubble.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Parser"/> class.
         /// </summary>
+        /// <param name="cacheLimit">The max size of the template token cache</param>
         /// <param name="registry">The registry instance to use</param>
-        public Parser(Registry registry)
+        public Parser(uint cacheLimit, Registry registry)
         {
             Registry = registry;
+            Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>((int)cacheLimit);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Parser"/> class with a cache size of 15
+        /// </summary>
+        /// <param name="registry">The registry instance to use</param>
+        public Parser(Registry registry)
+            : this(15, registry)
+        {
         }
 
         /// <summary>
         /// Gets the default <see cref="Tags"/> instance
         /// </summary>
         public static Tags DefaultTags { get; } = new Tags("{{", "}}");
+
+        /// <summary>
+        /// Gets the Template Token Cache
+        /// </summary>
+        internal LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; }
 
         private Registry Registry { get; }
 
@@ -49,6 +65,33 @@ namespace Stubble.Core
         public static string EscapeRegexExpression(string expression)
         {
             return ParserStatic.EscapeRegex.Replace(expression, @"\$&");
+        }
+
+        /// <summary>
+        /// Parses a template, looks up the template in the
+        /// template token cache and returns cached version if possible.
+        /// </summary>
+        /// <param name="template">The template to parse</param>
+        /// <returns>A list of tokens parsed from the template</returns>
+        public IList<ParserOutput> Parse(string template) => Parse(template, null);
+
+        /// <summary>
+        /// Parses a template with the given tags, looks up the template in the
+        /// template token cache and returns cached version if possible.
+        /// </summary>
+        /// <param name="template">The template to parse</param>
+        /// <param name="tags">The tags to parse the template with</param>
+        /// <returns>A list of tokens parsed from the template</returns>
+        public IList<ParserOutput> Parse(string template, Tags tags)
+        {
+            IList<ParserOutput> tokens;
+            var success = Cache.TryGetValue(template, out tokens);
+            if (!success)
+            {
+                tokens = Cache[template] = ParseTemplate(template, tags);
+            }
+
+            return tokens;
         }
 
         /// <summary>

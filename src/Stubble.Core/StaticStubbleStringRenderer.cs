@@ -1,49 +1,25 @@
-﻿// <copyright file="StubbleRenderer.cs" company="Stubble Authors">
+﻿// <copyright file="StaticStubbleStringRenderer.cs" company="Stubble Authors">
 // Copyright (c) Stubble Authors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using Stubble.Core.Classes;
-using Stubble.Core.Classes.Exceptions;
-using Stubble.Core.Interfaces;
 
 namespace Stubble.Core
 {
     /// <summary>
-    /// Represents the core StubbleRenderer which renders Mustache templates
+    /// Represents a Static wrapper for a standard StubbleStringRenderer instance
     /// </summary>
-    public sealed class StubbleRenderer : IStubbleRenderer
+    public class StaticStubbleStringRenderer
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StubbleRenderer"/> class
-        /// with a default <see cref="Registry"/>
-        /// </summary>
-        public StubbleRenderer()
-            : this(new Registry())
-        {
-        }
+        private static readonly Lazy<StubbleStringRenderer> Lazy = new Lazy<StubbleStringRenderer>(() => new StubbleStringRenderer());
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StubbleRenderer"/> class
-        /// with a passed Registry
+        /// Gets the wrapped Stubble Instance that is Lazily Instantiated
         /// </summary>
-        /// <param name="registry">A registry instance</param>
-        internal StubbleRenderer(Registry registry)
-        {
-            Registry = registry;
-            Writer = new Writer(Registry);
-        }
-
-        /// <summary>
-        /// Gets the core Registry instance for the Renderer
-        /// </summary>
-        internal Registry Registry { get; }
-
-        /// <summary>
-        /// Gets the core Writer instance for the Renderer
-        /// </summary>
-        internal Writer Writer { get; }
+        public static StubbleStringRenderer Instance => Lazy.Value;
 
         /// <summary>
         /// Renders the template with the given view using the writer.
@@ -51,9 +27,9 @@ namespace Stubble.Core
         /// <param name="template">The mustache teplate to render</param>
         /// <param name="view">The data to use for rendering</param>
         /// <returns>A mustache rendered string</returns>
-        public string Render(string template, object view)
+        public static string Render(string template, object view)
         {
-            return Render(template, view, null, null);
+            return Instance.Render(template, view);
         }
 
         /// <summary>
@@ -64,9 +40,9 @@ namespace Stubble.Core
         /// <param name="view">The data to use for rendering</param>
         /// <param name="settings">Any settings you wish to override the defaults with</param>
         /// <returns>A mustache rendered string</returns>
-        public string Render(string template, object view, RenderSettings settings)
+        public static string Render(string template, object view, RenderSettings settings)
         {
-            return Render(template, view, null, settings);
+            return Instance.Render(template, view, settings);
         }
 
         /// <summary>
@@ -77,9 +53,9 @@ namespace Stubble.Core
         /// <param name="view">The data to use for rendering</param>
         /// <param name="partials">A hash of Partials</param>
         /// <returns>A mustache rendered string</returns>
-        public string Render(string template, object view, IDictionary<string, string> partials)
+        public static string Render(string template, object view, IDictionary<string, string> partials)
         {
-            return Render(template, view, partials, null);
+            return Instance.Render(template, view, partials);
         }
 
         /// <summary>
@@ -91,15 +67,9 @@ namespace Stubble.Core
         /// <param name="partials">A hash of Partials</param>
         /// <param name="settings">Any settings you wish to override the defaults with</param>
         /// <returns>A mustache rendered string</returns>
-        public string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
+        public static string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
         {
-            var loadedTemplate = Registry.TemplateLoader.Load(template);
-            if (loadedTemplate == null)
-            {
-                throw new UnknownTemplateException("No template was found with the name '" + template + "'");
-            }
-
-            return Writer.Render(loadedTemplate, view, partials, settings ?? Registry.RenderSettings);
+            return Instance.Render(template, view, partials, settings);
         }
 
         /// <summary>
@@ -111,9 +81,9 @@ namespace Stubble.Core
         /// </summary>
         /// <param name="template">The mustache teplate to parse</param>
         /// <returns>Returns a list of tokens</returns>
-        public IList<ParserOutput> Parse(string template)
+        public static IList<ParserOutput> Parse(string template)
         {
-            return Parse(template, (Tags)null);
+            return (List<ParserOutput>)Instance.Parse(template);
         }
 
         /// <summary>
@@ -126,10 +96,9 @@ namespace Stubble.Core
         /// <param name="template">The mustache teplate to parse</param>
         /// <param name="tags">The set of tags to use for parsing</param>
         /// <returns>Returns a list of tokens</returns>
-        public IList<ParserOutput> Parse(string template, Tags tags)
+        public static IList<ParserOutput> Parse(string template, Tags tags)
         {
-            var loadedTemplate = Registry.TemplateLoader.Load(template);
-            return Writer.Parse(loadedTemplate, tags);
+            return (List<ParserOutput>)Instance.Parse(template, tags);
         }
 
         /// <summary>
@@ -142,18 +111,18 @@ namespace Stubble.Core
         /// <param name="template">The mustache teplate to parse</param>
         /// <param name="tags">A tag string split by a space e.g. {{ }}</param>
         /// <returns>Returns a list of tokens</returns>
-        public IList<ParserOutput> Parse(string template, string tags)
+        public static IList<ParserOutput> Parse(string template, string tags)
         {
-            return Parse(template, new Tags(tags.Split(' ')));
+            return (List<ParserOutput>)Instance.Parse(template, tags);
         }
 
         /// <summary>
         /// Parses a template and adds the result to the writer cache.
         /// </summary>
         /// <param name="template">The mustache teplate to parse</param>
-        public void CacheTemplate(string template)
+        public static void CacheTemplate(string template)
         {
-            Parse(template);
+            Instance.CacheTemplate(template);
         }
 
         /// <summary>
@@ -161,9 +130,9 @@ namespace Stubble.Core
         /// </summary>
         /// <param name="template">The mustache teplate to parse</param>
         /// <param name="tags">The set of tags to use for parsing</param>
-        public void CacheTemplate(string template, Tags tags)
+        public static void CacheTemplate(string template, Tags tags)
         {
-            Parse(template, tags);
+            Instance.CacheTemplate(template, tags);
         }
 
         /// <summary>
@@ -171,17 +140,17 @@ namespace Stubble.Core
         /// </summary>
         /// <param name="template">The mustache teplate to parse</param>
         /// <param name="tags">A tag string split by a space e.g. {{ }}</param>
-        public void CacheTemplate(string template, string tags)
+        public static void CacheTemplate(string template, string tags)
         {
-            Parse(template, tags);
+            Instance.CacheTemplate(template, tags);
         }
 
         /// <summary>
-        /// Clears all cached templates in the Writer.
+        /// Helper method for clearing the Template Cache on the enclosed Instance.
         /// </summary>
-        public void ClearCache()
+        public static void ClearCache()
         {
-            Writer.ClearCache();
+            Instance.ClearCache();
         }
     }
 }

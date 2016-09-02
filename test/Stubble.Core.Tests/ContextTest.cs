@@ -1,7 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿// <copyright file="ContextTest.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
-//using System.Data;
 using System.Dynamic;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
@@ -41,10 +44,14 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Can_Render_Lambda_Functions()
         {
-            var context = new Context(new
-            {
-                Foo = new Func<object>(() => "TestyTest")
-            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(
+                new
+                {
+                    Foo = new Func<object>(() => "TestyTest")
+                },
+                new Registry(),
+                RenderSettings.GetDefaultRenderSettings());
+
             var output = context.Lookup("Foo");
             var functionOutput = output as Func<object>;
             Assert.Equal("TestyTest", functionOutput.Invoke());
@@ -53,11 +60,15 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Can_Render_Lambda_Functions_WithArguments()
         {
-            var context = new Context(new
-            {
-                MyData = "Data!",
-                Foo = new Func<dynamic, object>((data) => data.MyData)
-            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(
+                new
+                {
+                    MyData = "Data!",
+                    Foo = new Func<dynamic, object>((data) => data.MyData)
+                },
+                new Registry(),
+                RenderSettings.GetDefaultRenderSettings());
+
             var output = context.Lookup("Foo");
             var functionOutput = output as Func<dynamic, object>;
 
@@ -67,10 +78,13 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Can_Retrieve_Values_From_Objects()
         {
-            var context = new Context(new
-            {
-                MyData = "Data!"
-            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(
+                new
+                {
+                    MyData = "Data!"
+                },
+                new Registry(),
+                RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("MyData");
 
             Assert.Equal("Data!", output);
@@ -79,11 +93,15 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Can_Retrieve_Values_From_Dictionary()
         {
-            var context = new Context(new Dictionary<string, object>
-            {
-                { "Foo", "Bar"},
-                { "Foo2", 1 }
-            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(
+                new Dictionary<string, object>
+                {
+                    { "Foo", "Bar" },
+                    { "Foo2", 1 }
+                },
+                new Registry(),
+                RenderSettings.GetDefaultRenderSettings());
+
             var output = context.Lookup("Foo");
             var output2 = context.Lookup("Foo2");
 
@@ -114,11 +132,14 @@ namespace Stubble.Core.Tests
         {
             StronglyTypedTestClass.StaticProperty = 1;
             StronglyTypedTestClass.StaticField = 1;
-            var context = new Context(new StronglyTypedTestClass()
-            {
-                Field = 1,
-                Property = 1
-            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(
+                new StronglyTypedTestClass()
+                {
+                    Field = 1,
+                    Property = 1
+                },
+                new Registry(),
+                RenderSettings.GetDefaultRenderSettings());
 
             var instanceProperty = context.Lookup("Property");
             var staticProperty = context.Lookup("StaticProperty");
@@ -147,13 +168,16 @@ namespace Stubble.Core.Tests
             StronglyTypedChildTestClass.ChildStaticField = 2;
             StronglyTypedChildTestClass.ChildStaticProperty = 2;
 
-            var context = new Context(new StronglyTypedChildTestClass()
-            {
-                Field = 1,
-                Property = 1,
-                ChildField = 2,
-                ChildProperty = 2
-            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(
+                new StronglyTypedChildTestClass()
+                {
+                    Field = 1,
+                    Property = 1,
+                    ChildField = 2,
+                    ChildProperty = 2
+                },
+                new Registry(),
+                RenderSettings.GetDefaultRenderSettings());
 
             var parentInstanceProperty = context.Lookup("Property");
             var parentInstanceField = context.Lookup("Field");
@@ -205,54 +229,28 @@ namespace Stubble.Core.Tests
                 }
             });
 
-            var context = new Context(new StronglyTypedChildTestClass()
-            {
-                Field = 1,
-                Property = 1,
-                ChildField = 2,
-                ChildProperty = 2
-            }, registry, RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(
+                new StronglyTypedChildTestClass()
+                {
+                    Field = 1,
+                    Property = 1,
+                    ChildField = 2,
+                    ChildProperty = 2
+                },
+                registry,
+                RenderSettings.GetDefaultRenderSettings());
 
             Assert.True(context.IsTruthyValue("Foo"));
             Assert.True(context.IsTruthyValue((uint)5));
             Assert.True(context.IsTruthyValue(true));
         }
 
-        //[Fact]
-        //public void It_Uses_EnumerationConversion()
-        //{
-        //    var registry = new Registry(new RegistrySettings
-        //    {
-        //        EnumerationConverters = new Dictionary<Type, Func<object, IEnumerable>>
-        //        {
-        //            {
-        //                typeof(DataTable),
-        //                o =>
-        //                {
-        //                    var dt = o as DataTable;
-        //                    return dt != null ? dt.Rows : null;
-        //                }
-        //            }
-        //        }
-        //    });
-
-        //    var dataTable = new DataTable();
-        //    dataTable.Columns.Add("IntColumn", typeof(int));
-        //    dataTable.Rows.Add(1);
-        //    dataTable.Rows.Add(2);
-        //    dataTable.Rows.Add(3);
-
-        //    var context = new Context(new { Foo = dataTable }, registry, RenderSettings.GetDefaultRenderSettings());
-
-        //    Assert.True(context.Lookup("Foo") is IEnumerable);
-        //}
-
         [Fact]
         public void It_Can_Retrieve_Array_Values_By_Index()
         {
             var input = new
             {
-                Array = new[] {"Foo", "Bar"}
+                Array = new[] { "Foo", "Bar" }
             };
 
             var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
@@ -265,7 +263,7 @@ namespace Stubble.Core.Tests
         {
             var input = new
             {
-                Array = new[] {new[] {"Foo"}}
+                Array = new[] { new[] { "Foo" } }
             };
 
             var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
@@ -314,15 +312,17 @@ namespace Stubble.Core.Tests
             Assert.Equal("Foo", output);
         }
 
-
         [Fact]
         public void It_Should_Skip_Anything_Not_A_Valid_Property_Field_Method()
         {
-            var context = new Context(new StronglyTypedTestClass()
-            {
-                Field = 1,
-                Property = 1
-            }, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(
+                new StronglyTypedTestClass()
+                {
+                    Field = 1,
+                    Property = 1
+                },
+                new Registry(),
+                RenderSettings.GetDefaultRenderSettings());
 
             Assert.Null(context.Lookup("Foo"));
         }
@@ -369,10 +369,13 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Should_Throw_On_Data_Miss_Based_On_RenderSettings()
         {
-            var context = new Context(new
-            {
-                Foo = "Foo"
-            }, new Registry(), new RenderSettings { ThrowOnDataMiss = true });
+            var context = new Context(
+                new
+                {
+                    Foo = "Foo"
+                },
+                new Registry(),
+                new RenderSettings { ThrowOnDataMiss = true });
 
             var ex = Assert.Throws<StubbleDataMissException>(() => context.Lookup("Bar"));
             Assert.Equal("'Bar' is undefined.", ex.Message);
@@ -425,17 +428,20 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Skips_Recursive_Lookup_By_RenderSettings()
         {
-            var context = new Context(new
-            {
-                Name = "parent",
-                Message = "hi",
-                A = new
+            var context = new Context(
+                new
                 {
-                    B = "b"
-                }
-            }, new Registry(), new RenderSettings {SkipRecursiveLookup = true});
+                    Name = "parent",
+                    Message = "hi",
+                    A = new
+                    {
+                        B = "b"
+                    }
+                },
+                new Registry(),
+                new RenderSettings { SkipRecursiveLookup = true });
 
-            var childContext = context.Push(new {Name = "child", B = "b"});
+            var childContext = context.Push(new { Name = "child", B = "b" });
 
             Assert.Null(childContext.Lookup("Message"));
         }
@@ -443,62 +449,63 @@ namespace Stubble.Core.Tests
 
     public class StronglyTypedTestClass
     {
-        #region Statics
+        public static int StaticField;
+        public int Field;
+
+        public event EventHandler Foo;
+
         public static int StaticProperty
         {
             get;
             set;
         }
-        public static int StaticField;
+
+        public int Property { get; set; }
+
         public static int StaticMethodWithNoArgs()
         {
             return 1;
         }
+
         public static int StaticMethodWithArgs(int i)
         {
             return i;
         }
-        #endregion
-        #region Instance Variables
-        public int Property { get; set; }
-        public int Field;
+
         public int MethodWithoutArgs()
         {
             return 1;
         }
+
         public int MethodWithArgs(int i)
         {
             return i;
         }
 
-        public event EventHandler Foo;
-
-        #endregion
-
         protected virtual void OnFoo()
         {
-            var handler = Foo;
-            if (handler != null) handler(this, EventArgs.Empty);
+            Foo?.Invoke(this, EventArgs.Empty);
         }
     }
 
     public class StronglyTypedChildTestClass : StronglyTypedTestClass
     {
-        #region Statics
-        public static int ChildStaticProperty { get; set; }
         public static int ChildStaticField;
+
+        public static int ChildStaticProperty { get; set; }
+
+        public int ChildProperty { get; set; }
+
+        public int ChildField { get; set; }
+
         public static int ChildStaticMethodWithoutArgs()
         {
             return 2;
         }
-        #endregion
-        #region Instance Variables
-        public int ChildProperty { get; set; }
-        public int ChildField { get; set; }
+
         public int ChildMethodWithoutArgs()
         {
             return 2;
         }
-        #endregion
     }
 }

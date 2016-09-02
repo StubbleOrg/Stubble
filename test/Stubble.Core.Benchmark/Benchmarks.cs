@@ -2,20 +2,39 @@
 using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 using Nustache.Core;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Validators;
+using BenchmarkDotNet.Columns;
+using BenchmarkDotNet.Diagnosers;
+using BenchmarkDotNet.Exporters.Csv;
+using BenchmarkDotNet.Exporters;
 
 namespace Stubble.Core.Benchmark
 {
+    [Config(typeof(Config))]
     public class Benchmarks
     {
+        private class Config : ManualConfig
+        {
+            public Config()
+            {
+                Add(new MemoryDiagnoser());
+                Add(ExecutionValidator.FailOnError);
+                Add(new TagColumn("Renderer", name => name.Split('_')[0]));
+                Add(CsvMeasurementsExporter.Default);
+                Add(RPlotExporter.Default);
+            }
+        }
+
         [Params(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)]
         public int Index { get; set; }
 
-        private StubbleRenderer Stubble;
+        private StubbleStringRenderer Stubble;
 
         [Setup]
         public void SetupRenderers()
         {
-            Stubble = new StubbleRenderer();
+            Stubble = new StubbleStringRenderer();
         }
 
         [Benchmark]

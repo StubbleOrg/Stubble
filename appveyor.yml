@@ -1,5 +1,5 @@
 version: 1.0.{build}
-image: Visual Studio 2015
+image: Visual Studio 2017 RC
 configuration: Release
 platform: Any CPU
 environment:
@@ -23,13 +23,13 @@ before_build:
 - ps: dotnet restore .\src\Stubble.Core\
 - ps: dotnet restore .\test\Stubble.Core.Tests\
 build_script:
-- ps: dotnet --verbose build .\src\Stubble.Core\ -c Release
+- ps: dotnet build .\src\Stubble.Core\ -c Release
 after_test:
 - ps: >-
     if($env:verion_suffix) {
-        dotnet --verbose pack .\src\Stubble.Core\ -o .\out --version-suffix $env:verion_suffix
+        dotnet pack .\src\Stubble.Core\ -o .\out --version-suffix $env:verion_suffix
     } else {
-        dotnet --verbose pack .\src\Stubble.Core\ -o .\out
+        dotnet pack .\src\Stubble.Core\ -o .\out
     }
 artifacts:
 - path: .\out\*.nupkg
