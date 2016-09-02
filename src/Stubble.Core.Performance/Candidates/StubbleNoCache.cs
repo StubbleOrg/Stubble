@@ -8,7 +8,7 @@ namespace Stubble.Core.Performance.Candidates
         public override TimeSpan RunTest(int iterations)
         {
             var stopwatch = Stopwatch.StartNew();
-            var stubble = new StubbleRenderer();
+            var stubble = new StubbleStringRenderer();
 
             for (var i = 0; i < iterations; i++)
             {

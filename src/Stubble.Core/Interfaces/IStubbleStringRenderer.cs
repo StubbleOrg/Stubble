@@ -1,36 +1,25 @@
-﻿// <copyright file="StaticStubbleRenderer.cs" company="Stubble Authors">
+﻿// <copyright file="IStubbleStringRenderer.cs" company="Stubble Authors">
 // Copyright (c) Stubble Authors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
 using Stubble.Core.Classes;
 
-namespace Stubble.Core
+namespace Stubble.Core.Interfaces
 {
     /// <summary>
-    /// Represents a Static wrapper for a standard StubbleRenderer instance
+    /// The interface for an StubbleStringRenderer
     /// </summary>
-    public class StaticStubbleRenderer
+    public interface IStubbleStringRenderer
     {
-        private static readonly Lazy<StubbleRenderer> Lazy = new Lazy<StubbleRenderer>(() => new StubbleRenderer());
-
-        /// <summary>
-        /// Gets the wrapped Stubble Instance that is Lazily Instantiated
-        /// </summary>
-        public static StubbleRenderer Instance => Lazy.Value;
-
         /// <summary>
         /// Renders the template with the given view using the writer.
         /// </summary>
         /// <param name="template">The mustache teplate to render</param>
         /// <param name="view">The data to use for rendering</param>
         /// <returns>A mustache rendered string</returns>
-        public static string Render(string template, object view)
-        {
-            return Instance.Render(template, view);
-        }
+        string Render(string template, object view);
 
         /// <summary>
         /// Renders the template with the given view using the writer
@@ -40,10 +29,7 @@ namespace Stubble.Core
         /// <param name="view">The data to use for rendering</param>
         /// <param name="settings">Any settings you wish to override the defaults with</param>
         /// <returns>A mustache rendered string</returns>
-        public static string Render(string template, object view, RenderSettings settings)
-        {
-            return Instance.Render(template, view, settings);
-        }
+        string Render(string template, object view, RenderSettings settings);
 
         /// <summary>
         /// Renders the template with the given view and partials using
@@ -53,10 +39,7 @@ namespace Stubble.Core
         /// <param name="view">The data to use for rendering</param>
         /// <param name="partials">A hash of Partials</param>
         /// <returns>A mustache rendered string</returns>
-        public static string Render(string template, object view, IDictionary<string, string> partials)
-        {
-            return Instance.Render(template, view, partials);
-        }
+        string Render(string template, object view, IDictionary<string, string> partials);
 
         /// <summary>
         /// Renders the template with the given view and partials using
@@ -67,10 +50,7 @@ namespace Stubble.Core
         /// <param name="partials">A hash of Partials</param>
         /// <param name="settings">Any settings you wish to override the defaults with</param>
         /// <returns>A mustache rendered string</returns>
-        public static string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
-        {
-            return Instance.Render(template, view, partials, settings);
-        }
+        string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings);
 
         /// <summary>
         /// Parses and caches the given template in the writer and returns the list
@@ -81,10 +61,7 @@ namespace Stubble.Core
         /// </summary>
         /// <param name="template">The mustache teplate to parse</param>
         /// <returns>Returns a list of tokens</returns>
-        public static IList<ParserOutput> Parse(string template)
-        {
-            return (List<ParserOutput>)Instance.Parse(template);
-        }
+        IList<ParserOutput> Parse(string template);
 
         /// <summary>
         /// Parses and caches the given template in the writer and returns the list
@@ -96,10 +73,7 @@ namespace Stubble.Core
         /// <param name="template">The mustache teplate to parse</param>
         /// <param name="tags">The set of tags to use for parsing</param>
         /// <returns>Returns a list of tokens</returns>
-        public static IList<ParserOutput> Parse(string template, Tags tags)
-        {
-            return (List<ParserOutput>)Instance.Parse(template, tags);
-        }
+        IList<ParserOutput> Parse(string template, Tags tags);
 
         /// <summary>
         /// Parses and caches the given template in the writer and returns the list
@@ -111,46 +85,31 @@ namespace Stubble.Core
         /// <param name="template">The mustache teplate to parse</param>
         /// <param name="tags">A tag string split by a space e.g. {{ }}</param>
         /// <returns>Returns a list of tokens</returns>
-        public static IList<ParserOutput> Parse(string template, string tags)
-        {
-            return (List<ParserOutput>)Instance.Parse(template, tags);
-        }
+        IList<ParserOutput> Parse(string template, string tags);
 
         /// <summary>
         /// Parses a template and adds the result to the writer cache.
         /// </summary>
         /// <param name="template">The mustache teplate to parse</param>
-        public static void CacheTemplate(string template)
-        {
-            Instance.CacheTemplate(template);
-        }
+        void CacheTemplate(string template);
 
         /// <summary>
         /// Parses a template with given tags and adds the result to the writer cache.
         /// </summary>
         /// <param name="template">The mustache teplate to parse</param>
         /// <param name="tags">The set of tags to use for parsing</param>
-        public static void CacheTemplate(string template, Tags tags)
-        {
-            Instance.CacheTemplate(template, tags);
-        }
+        void CacheTemplate(string template, Tags tags);
 
         /// <summary>
         /// Parses a template with given tags and adds the result to the writer cache.
         /// </summary>
         /// <param name="template">The mustache teplate to parse</param>
         /// <param name="tags">A tag string split by a space e.g. {{ }}</param>
-        public static void CacheTemplate(string template, string tags)
-        {
-            Instance.CacheTemplate(template, tags);
-        }
+        void CacheTemplate(string template, string tags);
 
         /// <summary>
-        /// Helper method for clearing the Template Cache on the enclosed Instance.
+        /// Clears all cached templates in the Writer.
         /// </summary>
-        public static void ClearCache()
-        {
-            Instance.ClearCache();
-        }
+        void ClearCache();
     }
 }

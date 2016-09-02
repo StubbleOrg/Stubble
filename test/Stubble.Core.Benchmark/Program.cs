@@ -14,14 +14,13 @@ namespace Stubble.Core.Benchmark
     {
         public static void Main(string[] args)
         {
-            var config = (ManualConfig)ManualConfig
-                .Create(DefaultConfig.Instance)
-                .With(ExecutionValidator.FailOnError);
+            var switcher = new BenchmarkSwitcher(new[]
+            {
+                typeof(Benchmarks),
+                typeof(ParserBenchmarks)
+            });
 
-            config.Add(new MemoryDiagnoser());
-            config.Add(new TagColumn("Renderer", name => name.Split('_')[0]));
-
-            var summary = BenchmarkRunner.Run<Benchmarks>(config);
+            switcher.Run();
         }
     }
 }

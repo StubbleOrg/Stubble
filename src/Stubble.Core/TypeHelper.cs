@@ -29,5 +29,14 @@ namespace Stubble.Core
             return a.IsSubclassOf(b);
 #endif
         }
+
+        public static bool IsAssignableFrom(this Type a, Type b)
+        {
+#if NETSTANDARD1_3
+            return a.GetTypeInfo().IsAssignableFrom(b.GetTypeInfo());
+#else
+            return a.IsAssignableFrom(b);
+#endif
+        }
     }
 }

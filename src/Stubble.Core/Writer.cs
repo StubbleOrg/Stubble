@@ -19,45 +19,44 @@ namespace Stubble.Core
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Writer"/> class
-        /// with a cacheLimit and explicit registry
+        /// with explicit registry and parser instance
         /// </summary>
-        /// <param name="cacheLimit">The max size of the template token cache</param>
         /// <param name="registry">The registry to use</param>
-        public Writer(int cacheLimit, Registry registry)
+        /// <param name="parser">A parser the can be used by the writer</param>
+        public Writer(Registry registry, Parser parser)
         {
+            if (registry == null)
+            {
+                throw new ArgumentNullException(nameof(registry));
+            }
+
+            if (parser == null)
+            {
+                throw new ArgumentNullException(nameof(parser));
+            }
+
             Registry = registry;
-            Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>(cacheLimit);
-            Parser = new Parser(Registry);
+            Parser = parser;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Writer"/> class
-        /// with a explicit registry and cacheSize of 15
+        /// with a explicit registry and a default <see cref="Parser"/>
         /// </summary>
         /// <param name="registry">The registry to use</param>
         public Writer(Registry registry)
-            : this(15, registry)
+            : this(registry, new Parser(15, registry))
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Writer"/> class
-        /// with a default <see cref="Registry"/> and a cache size of 15
+        /// with a default <see cref="Registry"/> and a default <see cref="Parser"/>
         /// </summary>
         public Writer()
-            : this(15, new Registry())
+            : this(new Registry())
         {
         }
-
-        /// <summary>
-        /// Gets the Template Token Cache
-        /// </summary>
-        internal LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; }
-
-        /// <summary>
-        /// Gets an internal Parser for parsing the template to tokens
-        /// </summary>
-        private Parser Parser { get; }
 
         /// <summary>
         /// Gets a copy of the registry
@@ -65,36 +64,14 @@ namespace Stubble.Core
         private Registry Registry { get; }
 
         /// <summary>
+        /// Gets the internal parser instance to be used for interpolation
+        /// </summary>
+        private Parser Parser { get; }
+
+        /// <summary>
         /// Gets or sets the current depth of the writer
         /// </summary>
         private int CurrentDepth { get; set; }
-
-        /// <summary>
-        /// Parses a template, looks up the template in the
-        /// template token cache and returns cached version if possible.
-        /// </summary>
-        /// <param name="template">The template to parse</param>
-        /// <returns>A list of tokens parsed from the template</returns>
-        public IList<ParserOutput> Parse(string template) => Parse(template, null);
-
-        /// <summary>
-        /// Parses a template with the given tags, looks up the template in the
-        /// template token cache and returns cached version if possible.
-        /// </summary>
-        /// <param name="template">The template to parse</param>
-        /// <param name="tags">The tags to parse the template with</param>
-        /// <returns>A list of tokens parsed from the template</returns>
-        public IList<ParserOutput> Parse(string template, Tags tags)
-        {
-            IList<ParserOutput> tokens;
-            var success = Cache.TryGetValue(template, out tokens);
-            if (!success)
-            {
-                tokens = Cache[template] = Parser.ParseTemplate(template, tags);
-            }
-
-            return tokens;
-        }
 
         /// <summary>
         /// Takes a template, view object, partials and render settings and Renders them
@@ -128,16 +105,38 @@ namespace Stubble.Core
         /// <returns>The template rendered with the passed context object</returns>
         public string Render(string template, Context context, IDictionary<string, string> partials, Tags tags)
         {
-            var tokens = Parse(template, tags);
+            var tokens = Parser.Parse(template, tags);
+            return Render(template, tokens, context, partials);
+        }
+
+        /// <summary>
+        /// Renders the preparsed tokens with the given context and partials.
+        /// </summary>
+        /// <param name="template">The template that the tokens were parsed from</param>
+        /// <param name="tokens">The template as parsed tokens</param>
+        /// <param name="context">The context object to use to render</param>
+        /// <param name="partials">The partials available to the template</param>
+        /// <returns>The tokens rendered with the passed context object</returns>
+        public string Render(string template, IList<ParserOutput> tokens, Context context, IDictionary<string, string> partials)
+        {
             var renderResult = RenderTokens(tokens, context, partials, template);
-            ResetCurrentDepth();
             return renderResult;
         }
 
         /// <summary>
-        /// Clears the Template Token Cache
+        /// Takes a template, context, partials and originalTemplate and renders the template
         /// </summary>
-        public void ClearCache() => Cache.Clear();
+        /// <param name="template">The template to parse and render</param>
+        /// <param name="context">The context object to use to render</param>
+        /// <param name="partials">The partials available to the template</param>
+        /// <param name="originalTemplate">The original template</param>
+        /// <returns>The template rendered with the passed context object</returns>
+        public string RenderWithOriginalTemplate(string template, Context context, IDictionary<string, string> partials, string originalTemplate)
+        {
+            var tokens = Parser.Parse(template);
+            var renderResult = RenderTokens(tokens, context, partials, originalTemplate);
+            return renderResult;
+        }
 
         /// <summary>
         /// Renders a list of tokens with the context, partials and passed original template
@@ -170,12 +169,8 @@ namespace Stubble.Core
                 sb.Append(renderResult);
             }
 
+            CurrentDepth--;
             return sb.ToString();
-        }
-
-        private void ResetCurrentDepth()
-        {
-            CurrentDepth = 0;
         }
     }
 }

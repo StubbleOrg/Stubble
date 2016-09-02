@@ -1,9 +1,12 @@
-﻿using System;
+﻿// <copyright file="TypeBySubclassAndAssignableTest.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Tokens;
@@ -18,14 +21,13 @@ namespace Stubble.Core.Tests
         {
             var list = new List<Type>
             {
-                typeof (ParserOutput),
-                typeof (RawValueToken)
+                typeof(ParserOutput),
+                typeof(RawValueToken)
             };
             var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
 
-
             var rawTokenIndex = orderedList.IndexOf(typeof(RawValueToken));
-            var parserOutputIndex = orderedList.IndexOf(typeof (ParserOutput));
+            var parserOutputIndex = orderedList.IndexOf(typeof(ParserOutput));
 
             Assert.True(rawTokenIndex < parserOutputIndex);
         }
@@ -35,8 +37,8 @@ namespace Stubble.Core.Tests
         {
             var list = new List<Type>
             {
-                typeof (RawValueToken),
-                typeof (ParserOutput)
+                typeof(RawValueToken),
+                typeof(ParserOutput)
             };
             var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
 
@@ -51,8 +53,8 @@ namespace Stubble.Core.Tests
         {
             var list = new List<Type>
             {
-                typeof (IEnumerable),
-                typeof (JToken)
+                typeof(IEnumerable),
+                typeof(JToken)
             };
             var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
 
@@ -67,8 +69,8 @@ namespace Stubble.Core.Tests
         {
             var list = new List<Type>
             {
-                typeof (JToken),
-                typeof (IEnumerable)
+                typeof(JToken),
+                typeof(IEnumerable)
             };
             var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
 

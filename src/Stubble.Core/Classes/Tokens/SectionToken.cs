@@ -21,7 +21,10 @@ namespace Stubble.Core.Classes.Tokens
     /// </summary>
     internal class SectionToken : ParserOutput, IRenderableToken, ISection
     {
-        private static readonly List<Type> EnumerableBlacklist = new List<Type>
+        /// <summary>
+        /// Lists the types that should be excluded from being treated like Enumerables
+        /// </summary>
+        public static readonly List<Type> EnumerableBlacklist = new List<Type>
         {
             typeof(IDictionary),
             typeof(string)

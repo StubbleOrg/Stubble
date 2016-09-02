@@ -13,5 +13,3 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1101:PrefixLocalCallsWithThis", Justification = "Reviewed.")]
-[assembly: SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields must be private", Justification = "Reviewed", Scope = "member", Target = "~F:Stubble.Core.StubbleBuilder.TemplateLoader")]
-[assembly: SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields must be private", Justification = "Reviewed", Scope = "member", Target = "~F:Stubble.Core.StubbleBuilder.PartialTemplateLoader")]

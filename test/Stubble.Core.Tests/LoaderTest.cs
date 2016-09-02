@@ -1,8 +1,9 @@
-﻿using System;
+﻿// <copyright file="LoaderTest.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Classes.Loaders;
 using Stubble.Core.Interfaces;
@@ -44,7 +45,8 @@ namespace Stubble.Core.Tests
         [Fact]
         public void CompositeLoader_Should_Fall_Through()
         {
-            var loader = new CompositeLoader(new DictionaryLoader(new Dictionary<string, string>
+            var loader = new CompositeLoader(
+                new DictionaryLoader(new Dictionary<string, string>
             {
                 { "test", "{{foo}}" }
             }), new StringLoader());
@@ -59,8 +61,8 @@ namespace Stubble.Core.Tests
             var stubble = new StubbleBuilder()
                 .AddToTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
                 {
-                    {"Foo", "I'm Foo"},
-                    {"Bar", "I'm Bar"}
+                    { "Foo", "I'm Foo" },
+                    { "Bar", "I'm Bar" }
                 })).Build();
             Assert.Equal("I'm Foo", stubble.Render("Foo", new { foo = "bar" }));
             Assert.Equal("bar", stubble.Render("{{foo}}", new { foo = "bar" }));
@@ -72,8 +74,8 @@ namespace Stubble.Core.Tests
             var stubble = new StubbleBuilder()
                 .AddToPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
                 {
-                    {"Foo", "I'm Foo"},
-                    {"Bar", "I'm Bar"}
+                    { "Foo", "I'm Foo" },
+                    { "Bar", "I'm Bar" }
                 })).Build();
             Assert.Equal("I'm Foo", stubble.Render("{{> Foo}}", new { foo = "blah" }));
             Assert.Equal("bar", stubble.Render("{{foo}}", new { foo = "bar" }));
@@ -82,16 +84,16 @@ namespace Stubble.Core.Tests
 
     internal class DictionaryLoader : IStubbleLoader
     {
-        private readonly IDictionary<string, string> _templates;
+        private readonly IDictionary<string, string> templates;
 
         public DictionaryLoader(IDictionary<string, string> templates)
         {
-            _templates = templates;
+            this.templates = templates;
         }
 
         public string Load(string name)
         {
-            return _templates.ContainsKey(name) ? _templates[name] : null;
+            return templates.ContainsKey(name) ? templates[name] : null;
         }
     }
 }
