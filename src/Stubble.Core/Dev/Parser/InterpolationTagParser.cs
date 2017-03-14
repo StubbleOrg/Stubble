@@ -5,6 +5,7 @@
 
 using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Dev.Imported;
+using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev.Parser
 {

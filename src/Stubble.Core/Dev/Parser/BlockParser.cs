@@ -35,6 +35,7 @@ namespace Stubble.Core.Dev.Parser
         /// </summary>
         /// <param name="tag">The opening tag</param>
         /// <param name="closeTag">The closing tag</param>
-        public abstract void EndBlock(BlockTag tag, BlockCloseTag closeTag);
+        /// <param name="content">The contents the tag was parsed from</param>
+        public abstract void EndBlock(BlockTag tag, BlockCloseTag closeTag, StringSlice content);
     }
 }

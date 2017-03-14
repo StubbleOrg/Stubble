@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using Stubble.Core.Classes;
+using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev.Renderers
 {
@@ -48,10 +49,27 @@ namespace Stubble.Core.Dev.Renderers
         /// Render a given token
         /// </summary>
         /// <param name="token">token</param>
+        /// <param name="context">The context to write the tag with</param>
         /// <returns>The writer</returns>
-        public override object Render(ParserOutput token)
+        public override object Render(MustacheTag token, Context context)
         {
-            Write(token);
+            Write(token, context);
+            return Writer;
+        }
+
+        /// <summary>
+        /// Renders a block tag and its children
+        /// </summary>
+        /// <param name="block">The tag to render</param>
+        /// <param name="context">The context to write the tag with</param>
+        /// <returns>The writer</returns>
+        public override object Render(BlockTag block, Context context)
+        {
+            foreach (var tag in block.Children)
+            {
+                Write(tag, context);
+            }
+
             return Writer;
         }
     }

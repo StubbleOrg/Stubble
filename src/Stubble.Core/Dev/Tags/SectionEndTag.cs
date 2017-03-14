@@ -19,5 +19,10 @@ namespace Stubble.Core.Dev.Tags
         /// Gets or sets the end position of the close tag
         /// </summary>
         public int EndPosition { get; set; }
+
+        /// <summary>
+        /// Gets or sets the end position for the content
+        /// </summary>
+        public int ContentEndPosition { get; set; }
     }
 }

@@ -40,7 +40,7 @@ namespace Stubble.Core.Dev.Parser
         /// <param name="startingTags">The starting tag description</param>
         /// <param name="pipeline">The pipeline to use for parsing</param>
         /// <returns>The string converted to Tags</returns>
-        public static List<MustacheTag> Parse(string text, Classes.Tags startingTags = null, ParserPipeline pipeline = null)
+        public static MustacheTemplate Parse(string text, Classes.Tags startingTags = null, ParserPipeline pipeline = null)
         {
             if (text == null)
             {
@@ -54,7 +54,7 @@ namespace Stubble.Core.Dev.Parser
             return markdownParser.Parse();
         }
 
-        private List<MustacheTag> Parse()
+        private MustacheTemplate Parse()
         {
             processor.ProcessTemplate(content);
 

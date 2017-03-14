@@ -30,6 +30,12 @@ namespace Stubble.Core
 #endif
         }
 
+        /// <summary>
+        /// Returns a value that indicates whether the specified type can be assigned to the current type
+        /// </summary>
+        /// <param name="a">The type to compare the second type to</param>
+        /// <param name="b">The type to compare the first type to</param>
+        /// <returns>whether the current <see cref="Type"/> can be assigned to current <see cref="Type"/></returns>
         public static bool IsAssignableFrom(this Type a, Type b)
         {
 #if NETSTANDARD1_3

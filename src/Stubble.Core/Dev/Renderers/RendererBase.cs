@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Stubble.Core.Classes;
+using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev.Renderers
 {
@@ -34,16 +35,26 @@ namespace Stubble.Core.Dev.Renderers
         /// Renders a given tag
         /// </summary>
         /// <param name="token">The tag to render</param>
+        /// <param name="context">The context to write the tag with</param>
         /// <returns>The current renderer</returns>
-        public abstract object Render(ParserOutput token);
+        public abstract object Render(MustacheTag token, Context context);
+
+        /// <summary>
+        /// Renders a block tag
+        /// </summary>
+        /// <param name="tag">The block tag to render</param>
+        /// <param name="context">The context to write the tag with</param>
+        /// <returns>The current renderer</returns>
+        public abstract object Render(BlockTag tag, Context context);
 
         /// <summary>
         /// Write the current tag to the renderer
         /// </summary>
         /// <typeparam name="T">The type of tag</typeparam>
         /// <param name="obj">The tag to write</param>
-        public void Write<T>(T obj)
-            where T : ParserOutput
+        /// <param name="context">The context to write the tag with</param>
+        public void Write<T>(T obj, Context context)
+            where T : MustacheTag
         {
             if (obj == null)
             {
@@ -66,7 +77,7 @@ namespace Stubble.Core.Dev.Renderers
                 }
             }
 
-            renderer?.Write(this, obj);
+            renderer?.Write(this, obj, context);
         }
     }
 }

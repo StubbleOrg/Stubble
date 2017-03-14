@@ -29,6 +29,11 @@ namespace Stubble.Core.Dev.Tags
         public override string Identifier => SectionName;
 
         /// <summary>
+        /// Gets or sets the string definition of the section content
+        /// </summary>
+        public string SectionContent { get; set; }
+
+        /// <summary>
         /// Checks if one section tag is equal to another
         /// </summary>
         /// <param name="other">The other section tag</param>

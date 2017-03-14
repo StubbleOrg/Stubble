@@ -5,6 +5,7 @@
 
 using Stubble.Core.Classes;
 using Stubble.Core.Dev.Renderers;
+using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev
 {
@@ -19,13 +20,14 @@ namespace Stubble.Core.Dev
         /// <param name="renderer">The renderer</param>
         /// <param name="obj">The current tag</param>
         /// <returns>If the renderer accepts the tag</returns>
-        bool Accept(RendererBase renderer, ParserOutput obj);
+        bool Accept(RendererBase renderer, MustacheTag obj);
 
         /// <summary>
         /// Writes the tag using the renderer
         /// </summary>
         /// <param name="renderer">The renderer to write with</param>
         /// <param name="objectToRender">The tag to write</param>
-        void Write(RendererBase renderer, ParserOutput objectToRender);
+        /// <param name="context">The context to write the token</param>
+        void Write(RendererBase renderer, MustacheTag objectToRender, Context context);
     }
 }

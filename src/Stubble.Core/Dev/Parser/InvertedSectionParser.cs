@@ -1,4 +1,4 @@
-﻿// <copyright file="SectionTagParser.cs" company="Stubble Authors">
+﻿// <copyright file="InvertedSectionParser.cs" company="Stubble Authors">
 // Copyright (c) Stubble Authors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,14 +10,14 @@ using Stubble.Core.Dev.Tags;
 namespace Stubble.Core.Dev.Parser
 {
     /// <summary>
-    /// A parser for section tags
+    /// A parser for inverted section tags
     /// </summary>
-    public class SectionTagParser : BlockParser
+    public class InvertedSectionParser : BlockParser
     {
-        private const char OpeningTagDelimiter = '#';
+        private const char OpeningTagDelimiter = '^';
 
         /// <summary>
-        /// Tries to open a section tag using the slice
+        /// Tries to open an inverted section tag using the slice
         /// </summary>
         /// <param name="processor">The processor</param>
         /// <param name="slice">The slice</param>
@@ -54,11 +54,10 @@ namespace Stubble.Core.Dev.Parser
                 var sectionName = slice.ToString(startIndex, slice.Start).TrimEnd();
                 var contentStartPosition = slice.Start + processor.CurrentTags.EndTag.Length;
 
-                var sectionTag = new SectionTag
+                var sectionTag = new InvertedSectionTag
                 {
                     SectionName = sectionName,
                     StartPosition = tagStart,
-                    ContentStartPosition = contentStartPosition,
                     Parser = this,
                     IsClosed = false
                 };
@@ -74,23 +73,21 @@ namespace Stubble.Core.Dev.Parser
         }
 
         /// <summary>
-        /// Close the block with the given block close tag
+        /// Closes the block using the provided close tag
         /// </summary>
         /// <param name="tag">The open tag</param>
         /// <param name="closeTag">the closing tag</param>
         /// <param name="content">the content the tags were parsed from</param>
         public override void EndBlock(BlockTag tag, BlockCloseTag closeTag, StringSlice content)
         {
-            var sectionTag = tag as SectionTag;
+            var sectionTag = tag as InvertedSectionTag;
             var sectionEndTag = closeTag as SectionEndTag;
             if (sectionTag != null && sectionEndTag != null)
             {
                 if (sectionTag.SectionName.Equals(sectionEndTag.SectionName))
                 {
                     sectionTag.EndPosition = sectionEndTag.EndPosition;
-                    sectionTag.ContentEndPosition = sectionEndTag.ContentEndPosition;
                     sectionTag.IsClosed = true;
-                    sectionTag.SectionContent = new StringSlice(content.Text, sectionTag.ContentStartPosition, sectionTag.ContentEndPosition - 1).ToString();
                 }
             }
         }
@@ -104,7 +101,7 @@ namespace Stubble.Core.Dev.Parser
         /// <returns>If the close was successful</returns>
         public override bool TryClose(Processor processor, ref StringSlice slice, BlockTag tag)
         {
-            var sectionTag = (SectionTag)tag;
+            var sectionTag = (InvertedSectionTag)tag;
             while (slice.CurrentChar.IsWhitespace())
             {
                 slice.NextChar();
