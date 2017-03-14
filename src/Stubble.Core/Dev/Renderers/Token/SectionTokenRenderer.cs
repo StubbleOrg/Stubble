@@ -6,14 +6,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Stubble.Core.Classes.Tokens;
+using System.Linq;
+using System.Reflection;
+using Stubble.Core.Dev.Parser;
+using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev.Renderers.Token
 {
     /// <summary>
     /// A <see cref="StringObjectRenderer{SectionToken}"/> for rendering section tokens
     /// </summary>
-    internal class SectionTokenRenderer : StringObjectRenderer<SectionToken>
+    internal class SectionTokenRenderer : StringObjectRenderer<SectionTag>
     {
         private static readonly List<Type> EnumerableBlacklist = new List<Type>
         {
@@ -22,8 +25,49 @@ namespace Stubble.Core.Dev.Renderers.Token
         };
 
         /// <inheritdoc/>
-        protected override void Write(StringRender renderer, SectionToken obj)
+        protected override void Write(StringRender renderer, SectionTag obj, Context context)
         {
+            var value = context.Lookup(obj.SectionName);
+
+            if (!context.IsTruthyValue(value))
+            {
+                return;
+            }
+
+            if (value is IEnumerable && !EnumerableBlacklist.Any(x => x.IsInstanceOfType(value)))
+            {
+                var arrayValue = value as IEnumerable;
+
+                foreach (var v in arrayValue)
+                {
+                    renderer.Render(obj, context.Push(v));
+                }
+            }
+            else if (value is IEnumerator)
+            {
+                var enumeratorValue = value as IEnumerator;
+                while (enumeratorValue.MoveNext())
+                {
+                    renderer.Render(obj, context.Push(enumeratorValue.Current));
+                }
+            }
+            else if (value is Func<dynamic, string, object> || value is Func<string, object>)
+            {
+                var functionDynamicValue = value as Func<dynamic, string, object>;
+                var functionStringValue = value as Func<string, object>;
+                var sectionContent = obj.SectionContent; // originalTemplate.Slice(End, ParentSectionEnd);
+
+                value = functionDynamicValue != null
+                    ? functionDynamicValue.Invoke(context.View, sectionContent)
+                    : functionStringValue.Invoke(sectionContent);
+
+                renderer.Render(MustacheParser.Parse(value.ToString()), context);
+            }
+            else if (value is IDictionary || value != null)
+            {
+                renderer.Render(obj, context.Push(value));
+            }
+
             return;
         }
     }

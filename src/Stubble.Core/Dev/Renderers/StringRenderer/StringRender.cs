@@ -4,7 +4,6 @@
 // </copyright>
 
 using System.IO;
-using Stubble.Core.Dev.Renderer;
 using Stubble.Core.Dev.Renderers.StringRenderer;
 using Stubble.Core.Dev.Renderers.Token;
 
@@ -23,14 +22,11 @@ namespace Stubble.Core.Dev.Renderers
         public StringRender(TextWriter writer)
             : base(writer)
         {
-            Context = null;
             TokenRenderers.Add(new SectionTokenRenderer());
-            TokenRenderers.Add(new RawValueTokenRenderer());
+            TokenRenderers.Add(new LiteralTokenRenderer());
+            TokenRenderers.Add(new InterpolationTokenRenderer());
+            TokenRenderers.Add(new PartialTokenRenderer());
+            TokenRenderers.Add(new InvertedSectionTokenRenderer());
         }
-
-        /// <summary>
-        /// Gets the context for the renderer
-        /// </summary>
-        public Context Context { get; }
     }
 }

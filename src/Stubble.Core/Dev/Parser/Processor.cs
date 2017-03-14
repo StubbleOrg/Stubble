@@ -25,6 +25,11 @@ namespace Stubble.Core.Dev.Parser
         private readonly List<MustacheTag> tagCache = new List<MustacheTag>();
 
         /// <summary>
+        /// The content to be parsed and its state
+        /// </summary>
+        private StringSlice content;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Processor"/> class.
         /// </summary>
         /// <param name="inlineParsers">The inline parsers</param>
@@ -34,11 +39,6 @@ namespace Stubble.Core.Dev.Parser
             this.inlineParsers = inlineParsers;
             this.blockParsers = blockParsers;
         }
-
-        /// <summary>
-        /// The content to be parsed and its state
-        /// </summary>
-        private StringSlice content;
 
         /// <summary>
         /// Gets or sets the CurrentTags in scope
@@ -63,7 +63,7 @@ namespace Stubble.Core.Dev.Parser
         /// <summary>
         /// Gets the document that has been parsed from the content string
         /// </summary>
-        public List<MustacheTag> Document { get; } = new List<MustacheTag>();
+        public MustacheTemplate Document { get; } = new MustacheTemplate();
 
         private Stack<BlockTag> OpenBlocks { get; } = new Stack<BlockTag>();
 
@@ -153,20 +153,20 @@ namespace Stubble.Core.Dev.Parser
         private void SquashAndNestTokens()
         {
             var openblocks = new Stack<BlockTag>();
-            for (var i = 0; i < Document.Count; i++)
+            for (var i = 0; i < Document.Children.Count; i++)
             {
-                var tag = Document[i];
+                var tag = Document.Children[i];
 
-                if (tag is LiteralTag && i + 1 < Document.Count)
+                if (tag is LiteralTag && i + 1 < Document.Children.Count)
                 {
                     var literalTag = tag as LiteralTag;
-                    var nextTag = Document[i + 1] as LiteralTag;
+                    var nextTag = Document.Children[i + 1] as LiteralTag;
                     if (nextTag != null)
                     {
                         literalTag.ContentEndPosition = nextTag.ContentEndPosition;
                         literalTag.TagEndPosition = nextTag.TagEndPosition;
                         literalTag.Content += nextTag.Content;
-                        Document.Remove(nextTag);
+                        Document.Children.Remove(nextTag);
                         i--;
                         continue;
                     }
@@ -174,9 +174,9 @@ namespace Stubble.Core.Dev.Parser
                 else if (tag is BlockCloseTag)
                 {
                     var currentBlock = openblocks.Peek();
-                    currentBlock?.Parser.EndBlock(currentBlock, tag as BlockCloseTag);
+                    currentBlock?.Parser.EndBlock(currentBlock, tag as BlockCloseTag, content);
                     openblocks.Pop();
-                    Document.Remove(tag);
+                    Document.Children.Remove(tag);
                     i--;
                     continue;
                 }
@@ -185,7 +185,7 @@ namespace Stubble.Core.Dev.Parser
                 {
                     var currentBlock = openblocks.Peek();
                     currentBlock.Children.Add(tag);
-                    Document.Remove(tag);
+                    Document.Children.Remove(tag);
                     i--;
                 }
 
@@ -264,7 +264,7 @@ namespace Stubble.Core.Dev.Parser
 
         private void ClearTagCache()
         {
-            Document.AddRange(tagCache);
+            Document.Children.AddRange(tagCache);
             tagCache.Clear();
         }
     }

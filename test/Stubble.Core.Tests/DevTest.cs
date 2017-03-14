@@ -475,6 +475,19 @@ namespace Stubble.Core.Tests
                         new InterpolationTag { Content = "😺", TagStartPosition = 4, ContentStartPosition = 6, ContentEndPosition = 8, TagEndPosition = 10, EscapeResult = false, IsClosed = true }
                     }
                 },
+                new
+                {
+                    index = 51, name="{{^a}}a\n b{{/a}}", arguments = new List<MustacheTag>
+                    {
+                        new InvertedSectionTag
+                        {
+                            SectionName = "a", StartPosition = 0, EndPosition = 16, IsClosed = true, Children = new List<MustacheTag>
+                            {
+                                new LiteralTag { Content = "a\n b", TagStartPosition = 6, ContentStartPosition = 6, ContentEndPosition = 10, TagEndPosition = 10, IsClosed = true }
+                            }
+                        }
+                    }
+                },
             }.Select(x => new[] { new TestData { Index = x.index, Name = x.name, Arguments = x.arguments } });
         }
 
@@ -484,11 +497,11 @@ namespace Stubble.Core.Tests
         {
             OutputStream.WriteLine($"Index: {data.Index}, Template: '{data.Name}'");
             var results = MustacheParser.Parse(data.Name);
-            Assert.Equal(data.Arguments.Count, results.Count);
+            Assert.Equal(data.Arguments.Count, results.Children.Count);
 
-            for (var i = 0; i < results.Count; i++)
+            for (var i = 0; i < results.Children.Count; i++)
             {
-                Assert.StrictEqual(data.Arguments[i], results[i]);
+                Assert.StrictEqual(data.Arguments[i], results.Children[i]);
             }
         }
 

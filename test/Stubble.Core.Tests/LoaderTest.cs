@@ -6,7 +6,6 @@
 using System.Collections.Generic;
 using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Classes.Loaders;
-using Stubble.Core.Interfaces;
 using Xunit;
 
 namespace Stubble.Core.Tests
@@ -79,21 +78,6 @@ namespace Stubble.Core.Tests
                 })).Build();
             Assert.Equal("I'm Foo", stubble.Render("{{> Foo}}", new { foo = "blah" }));
             Assert.Equal("bar", stubble.Render("{{foo}}", new { foo = "bar" }));
-        }
-    }
-
-    internal class DictionaryLoader : IStubbleLoader
-    {
-        private readonly IDictionary<string, string> templates;
-
-        public DictionaryLoader(IDictionary<string, string> templates)
-        {
-            this.templates = templates;
-        }
-
-        public string Load(string name)
-        {
-            return templates.ContainsKey(name) ? templates[name] : null;
         }
     }
 }

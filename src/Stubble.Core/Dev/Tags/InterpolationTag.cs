@@ -6,7 +6,7 @@
 using Stubble.Core.Classes.Tokens.Interface;
 using Stubble.Core.Dev.Tags;
 
-namespace Stubble.Core.Dev.Parser
+namespace Stubble.Core.Dev.Tags
 {
     /// <summary>
     /// An inline tag representing an InterpolationTag

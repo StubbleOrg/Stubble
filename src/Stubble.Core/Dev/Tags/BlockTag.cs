@@ -28,5 +28,15 @@ namespace Stubble.Core.Dev.Tags
         /// Gets or sets the children of the block.
         /// </summary>
         public List<MustacheTag> Children { get; set; } = new List<MustacheTag>();
+
+        /// <summary>
+        /// Gets or sets the tags content start position
+        /// </summary>
+        public int ContentStartPosition { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tags content end position
+        /// </summary>
+        public int ContentEndPosition { get; set; }
     }
 }

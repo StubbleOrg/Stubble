@@ -4,6 +4,7 @@
 // </copyright>
 
 using Stubble.Core.Classes;
+using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev.Renderers
 {
@@ -12,7 +13,7 @@ namespace Stubble.Core.Dev.Renderers
     /// </summary>
     /// <typeparam name="TToken">The tag type</typeparam>
     public abstract class StringObjectRenderer<TToken> : MustacheTokenRenderer<StringRender, TToken>
-        where TToken : ParserOutput
+        where TToken : MustacheTag
     {
     }
 }

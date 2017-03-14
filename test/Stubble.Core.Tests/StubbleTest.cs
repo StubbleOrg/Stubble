@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
 using Xunit;
+using Stubble.Core.Classes.Loaders;
 
 namespace Stubble.Core.Tests
 {

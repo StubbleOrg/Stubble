@@ -32,6 +32,7 @@ namespace Stubble.Core.Dev
             BlockParsers = new List<BlockParser>
             {
                 new SectionTagParser(),
+                new InvertedSectionParser(),
             };
         }
 

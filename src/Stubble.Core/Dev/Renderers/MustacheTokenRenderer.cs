@@ -4,6 +4,7 @@
 // </copyright>
 
 using Stubble.Core.Classes;
+using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev.Renderers
 {
@@ -14,21 +15,21 @@ namespace Stubble.Core.Dev.Renderers
     /// <typeparam name="TToken">The type of tag that it renders</typeparam>
     public abstract class MustacheTokenRenderer<TRenderer, TToken> : ITokenRenderer
         where TRenderer : RendererBase
-        where TToken : ParserOutput
+        where TToken : MustacheTag
     {
         /// <inheritdoc/>
-        public bool Accept(RendererBase renderer, ParserOutput obj)
+        public bool Accept(RendererBase renderer, MustacheTag obj)
         {
             return obj is TToken;
         }
 
         /// <inheritdoc/>
-        public virtual void Write(RendererBase renderer, ParserOutput obj)
+        public virtual void Write(RendererBase renderer, MustacheTag obj, Context context)
         {
             var typedRenderer = (TRenderer)renderer;
             var typedObj = (TToken)obj;
 
-            Write(typedRenderer, typedObj);
+            Write(typedRenderer, typedObj, context);
         }
 
         /// <summary>
@@ -36,6 +37,7 @@ namespace Stubble.Core.Dev.Renderers
         /// </summary>
         /// <param name="renderer">The renderer to use</param>
         /// <param name="obj">The tag to write</param>
-        protected abstract void Write(TRenderer renderer, TToken obj);
+        /// <param name="context">The context to write the tag with</param>
+        protected abstract void Write(TRenderer renderer, TToken obj, Context context);
     }
 }
