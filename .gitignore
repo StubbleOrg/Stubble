@@ -206,3 +206,6 @@ FakesAssemblies/
 *.DotSettings
 
 BenchmarkDotNet.Artifacts/
+tools/*
+coverage-results/*
+coverage-report/*

@@ -1,3 +1,9 @@
 ﻿{
-    "packagePostfix": "alpha15"
+    "version": "1.0-alpha16",
+    "assemblyVersion": "1.0",
+    "cloudBuild": {
+        "buildNumber": {
+            "enabled": true
+        }
+    }
 }
