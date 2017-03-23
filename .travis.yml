@@ -3,9 +3,11 @@
 language: csharp
 sudo: required
 dist: trusty
-mono: none
+mono: latest
 env:
   - CLI_VERSION=latest
+git:
+  depth: 9999999
 
 addons:
   apt:
@@ -22,8 +24,4 @@ install:
     - export PATH="$DOTNET_INSTALL_DIR:$PATH"
 
 script:
-  - dotnet --info
-  - dotnet restore ./src/Stubble.Core/
-  - dotnet restore ./test/Stubble.Core.Tests/
-  - dotnet build ./src/Stubble.Core/Stubble.Core.csproj --framework netstandard13 -c Release
-  - dotnet test ./test/Stubble.Core.Tests/Stubble.Core.Tests.csproj --framework netcoreapp1.1
+  - ./build.sh --target Travis -- -runCoverage=false -framework="netstandard1.3" -testFramework="netcoreapp1.1"

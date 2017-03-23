@@ -10,14 +10,6 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Stubble")]
-[assembly: AssemblyDescription("Trimmed down {{mustache}} templates in .NET")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Alex McAuliffe")]
-[assembly: AssemblyProduct("Stubble")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 [assembly: InternalsVisibleTo("Stubble.Core.Tests,PublicKey=" +
 "00240000048000009400000006020000002400005253413100040000010001004704c42e715bb3" +
 "70ce2b5662560a34210a9bb2f25ca48687d7a35879a2a96472c80edb71fe8b4cc05cf1f5a0397c" +
@@ -43,6 +35,3 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyFileVersion("0.1.0.0")]
-[assembly: AssemblyInformationalVersion("0.1.0.0")]

@@ -11,16 +11,16 @@
     <PackageId>Stubble.Core</PackageId>
     <PackageTags>template;mustache;text;generation;fast</PackageTags>
     <RepositoryType>git</RepositoryType>
+    <Company>Alex McAuliffe</Company>
+    <Authors>Alex McAuliffe</Authors>
+    <Copyright>Copyright © 2017</Copyright>
+    <Version>1.0.0</Version>
     <RepositoryUrl>https://github.com/stubbleorg/stubble</RepositoryUrl>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <PackageProjectUrl>https://github.com/stubbleorg/stubble</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/StubbleOrg/Stubble/blob/master/licence.md</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,7 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.0.0" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="1.6.25" PrivateAssets="All" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

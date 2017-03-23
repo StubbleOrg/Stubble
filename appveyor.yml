@@ -8,44 +8,13 @@ environment:
 install:
 - cmd: git submodule update --init --recursive
 - ps: >-
-    $project = Get-Content ./src/Stubble.Core/project.json -Raw | ConvertFrom-Json;
-    $version = Get-Content ./src/Stubble.Core/version.json -Raw | ConvertFrom-Json;
-
-    $ci_version = $project.version.Split('-')[0] + "." + $env:APPVEYOR_BUILD_NUMBER;
-    Update-AppveyorBuild -Version $ci_version;
-
-    if($version.packagePostfix) {
-        $env:verion_suffix=$version.packagePostfix;
-    }
-
     dotnet --info
-before_build:
-- ps: dotnet restore .\src\Stubble.Core\
-- ps: dotnet restore .\test\Stubble.Core.Tests\
 build_script:
-- ps: dotnet build .\src\Stubble.Core\ -c Release
-after_test:
-- ps: >-
-    if($env:verion_suffix) {
-        dotnet pack .\src\Stubble.Core\ -o .\out --version-suffix $env:verion_suffix
-    } else {
-        dotnet pack .\src\Stubble.Core\ -o .\out
-    }
+- ps: .\build.ps1 -Target Appveyor
 artifacts:
-- path: .\out\*.nupkg
-test_script:
-- ps: >-
-    $Package_Locations = $env:USERPROFILE + "\.nuget\packages";
-    $OpenCover_Location = Get-ChildItem ($Package_Locations + "\OpenCover*\*\tools") | Select-Object -First 1 -ExpandProperty FullName;
-    $CoverallsNet_Location = Get-ChildItem ($Package_Locations + "\coveralls.net\*\tools") | Select-Object -First 1 -ExpandProperty FullName;
-
-    $openCoverExe = "$OpenCover_Location\OpenCover.Console.exe -register:user -target:""dotnet.exe"" ""-targetargs:test .\test\Stubble.Core.Tests --framework netcoreapp1.0 -appveyor"" -filter:""+[Stubble.*]*"" -skipautoprops -oldstyle -output:coverage.xml";
-    $coverallsExe = "$CoverallsNet_Location\csmacnz.Coveralls.exe --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage ""$env:APPVEYOR_REPO_COMMIT_MESSAGE"" --jobId $env:APPVEYOR_JOB_ID";
-
-    iex $openCoverExe;
-
-    Write-Host "Running Coveralls";
-    iex $coverallsExe;
+- path: .\artifacts\*.nupkg
+- path: .\coverage-results\*
+test: off
 deploy:
 - provider: NuGet
   api_key:
