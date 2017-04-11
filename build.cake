@@ -95,7 +95,8 @@ Task("Test")
                 Register = "user",
                 SkipAutoProps = true,
                 OldStyle = true,
-                ToolPath = path
+                ToolPath = path,
+                ReturnTargetCodeOffset = 0
             }
             .WithFilter("-[Stubble.Core.Tests]*")
             .WithFilter("+[Stubble.*]*")
@@ -121,7 +122,8 @@ Task("Pack")
     var settings = new DotNetCorePackSettings
     {
         OutputDirectory = artifactsDir,
-        NoBuild = true
+        NoBuild = true,
+        Configuration = configuration,
     };
 
     DotNetCorePack("./src/Stubble.Core/Stubble.Core.csproj", settings);

@@ -18,14 +18,14 @@ namespace Stubble.Core.Dev.Renderers.Token
         {
             var partialName = obj.Content;
             string template = null;
-            if (template == null && context.Registry.PartialTemplateLoader != null)
+            if (context.PartialLoader != null)
             {
-                template = context.Registry.PartialTemplateLoader.Load(partialName);
+                template = context.PartialLoader.Load(partialName);
             }
 
             if (template != null)
             {
-                renderer.Render(MustacheParser.Parse(template), context);
+                renderer.Render(MustacheParser.Parse(template, lineIndent: obj.LineIndent), context);
             }
         }
     }

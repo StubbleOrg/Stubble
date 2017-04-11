@@ -12,6 +12,8 @@ namespace Stubble.Core.Dev.Tags
     /// </summary>
     public class PartialTag : InlineTag<PartialTag>
     {
+        public int LineIndent { get; set; }
+
         /// <inheritdoc/>
         public override bool Equals(PartialTag other)
         {

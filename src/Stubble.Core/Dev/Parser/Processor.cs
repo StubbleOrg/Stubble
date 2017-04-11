@@ -24,6 +24,8 @@ namespace Stubble.Core.Dev.Parser
 
         private readonly List<MustacheTag> tagCache = new List<MustacheTag>();
 
+        private bool firstOnLine = true;
+
         /// <summary>
         /// The content to be parsed and its state
         /// </summary>
@@ -59,6 +61,16 @@ namespace Stubble.Core.Dev.Parser
         /// Gets or sets a value indicating whether a non space characters has been seen on the line
         /// </summary>
         public bool HasSeenNonSpaceOnLine { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating the indent for the current line
+        /// </summary>
+        public int LineIndent { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets a value for the default line indent
+        /// </summary>
+        public int DefaultLineIndent { get; set; }
 
         /// <summary>
         /// Gets the document that has been parsed from the content string
@@ -139,6 +151,8 @@ namespace Stubble.Core.Dev.Parser
                 }
             }
 
+            RemoveEmptyTags();
+
             ClearTagCache();
 
             if (OpenBlocks.Count > 0)
@@ -174,7 +188,7 @@ namespace Stubble.Core.Dev.Parser
                 else if (tag is BlockCloseTag)
                 {
                     var currentBlock = openblocks.Peek();
-                    currentBlock?.Parser.EndBlock(currentBlock, tag as BlockCloseTag, content);
+                    currentBlock?.Parser.EndBlock(this, currentBlock, tag as BlockCloseTag, content);
                     openblocks.Pop();
                     Document.Children.Remove(tag);
                     i--;
@@ -230,10 +244,36 @@ namespace Stubble.Core.Dev.Parser
                 HasSeenNonSpaceOnLine = true;
             }
 
+            if (firstOnLine)
+            {
+                AddIndentToLine();
+                firstOnLine = false;
+            }
+
             tagCache.Add(tag);
         }
 
         private void NewLine()
+        {
+            RemoveEmptyTags();
+
+            if (content.CurrentChar == '\n')
+            {
+                content.Start += 1;
+            }
+            else
+            {
+                content.Start += 2;
+            }
+
+            HasTagOnLine = false;
+            HasSeenNonSpaceOnLine = false;
+            firstOnLine = true;
+            LineIndent = DefaultLineIndent;
+            ClearTagCache();
+        }
+
+        private void RemoveEmptyTags()
         {
             if (HasTagOnLine && !HasSeenNonSpaceOnLine)
             {
@@ -247,25 +287,24 @@ namespace Stubble.Core.Dev.Parser
                     }
                 }
             }
-
-            if (content.CurrentChar == '\n')
-            {
-                content.Start += 1;
-            }
-            else
-            {
-                content.Start += 2;
-            }
-
-            HasTagOnLine = false;
-            HasSeenNonSpaceOnLine = false;
-            ClearTagCache();
         }
 
         private void ClearTagCache()
         {
             Document.Children.AddRange(tagCache);
             tagCache.Clear();
+        }
+
+        private void AddIndentToLine()
+        {
+            if (DefaultLineIndent > 0)
+            {
+                tagCache.Add(new LiteralTag
+                {
+                    Content = new string(' ', DefaultLineIndent),
+                    IsClosed = true
+                });
+            }
         }
     }
 }

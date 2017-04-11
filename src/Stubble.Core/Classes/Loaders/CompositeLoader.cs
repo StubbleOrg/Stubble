@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Stubble.Core.Classes.Exceptions;
@@ -24,7 +25,7 @@ namespace Stubble.Core.Classes.Loaders
         /// <param name="loaders">A list of child loaders to initalise with</param>
         public CompositeLoader(params IStubbleLoader[] loaders)
         {
-            this.loaders = new List<IStubbleLoader>(loaders);
+            this.loaders = new List<IStubbleLoader>(loaders.Where(i => i != null));
         }
 
         /// <summary>
@@ -34,6 +35,11 @@ namespace Stubble.Core.Classes.Loaders
         /// <returns>The composite loader instance</returns>
         public CompositeLoader AddLoader(IStubbleLoader loader)
         {
+            if (loader == null)
+            {
+                throw new ArgumentNullException(nameof(loader));
+            }
+
             loaders.Add(loader);
             return this;
         }
@@ -45,7 +51,7 @@ namespace Stubble.Core.Classes.Loaders
         /// <returns>The composite loader instance</returns>
         public CompositeLoader AddLoaders(params IStubbleLoader[] newLoaders)
         {
-            loaders.AddRange(newLoaders);
+            loaders.AddRange(newLoaders.Where(i => i != null));
             return this;
         }
 

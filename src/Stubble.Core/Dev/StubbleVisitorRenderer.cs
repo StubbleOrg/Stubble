@@ -4,15 +4,20 @@
 // </copyright>
 
 using System.Collections.Generic;
+using System.IO;
 using Stubble.Core.Classes;
-using OldParser = Stubble.Core.Parser;
+using Stubble.Core.Classes.Exceptions;
+using Stubble.Core.Dev.Parser;
+using Stubble.Core.Dev.Renderers;
+using Stubble.Core.Interfaces;
+using Stubble.Core.Classes.Loaders;
 
 namespace Stubble.Core.Dev
 {
     /// <summary>
     /// A renderer which renders a string using visitors
     /// </summary>
-    public class StubbleVisitorRenderer
+    public class StubbleVisitorRenderer : IStubbleRenderer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StubbleVisitorRenderer"/> class
@@ -31,7 +36,6 @@ namespace Stubble.Core.Dev
         public StubbleVisitorRenderer(Registry registry)
         {
             Registry = registry;
-            Parser = new OldParser(Registry);
         }
 
         /// <summary>
@@ -39,32 +43,50 @@ namespace Stubble.Core.Dev
         /// </summary>
         internal Registry Registry { get; }
 
-        /// <summary>
-        /// Gets the core Parser instance for the Renderer
-        /// </summary>
-        internal OldParser Parser { get; }
-
-        /// <summary>
-        /// Render the template with the provided data
-        /// </summary>
-        /// <param name="template">The template to render</param>
-        /// <param name="view">The data to use</param>
-        /// <returns>The rendered template</returns>
+        /// <inheritdoc/>
         public string Render(string template, object view)
         {
-            return Render(template, view, null);
+            return Render(template, view, null, null);
         }
 
-        /// <summary>
-        /// Render the template with the provided data and partials
-        /// </summary>
-        /// <param name="template">The template to render</param>
-        /// <param name="view">The data to use</param>
-        /// <param name="partials">The partials to use</param>
-        /// <returns>The rendered template</returns>
+        /// <inheritdoc/>
+        public string Render(string template, object view, RenderSettings settings)
+        {
+            return Render(template, view, null, settings);
+        }
+
+        /// <inheritdoc/>
         public string Render(string template, object view, IDictionary<string, string> partials)
         {
-            return null;
+            return Render(template, view, partials, null);
+        }
+
+        /// <inheritdoc/>
+        public string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
+        {
+            var loadedTemplate = Registry.TemplateLoader.Load(template);
+
+            if (loadedTemplate == null)
+            {
+                throw new UnknownTemplateException("No template was found with the name '" + template + "'");
+            }
+
+            var document = MustacheParser.Parse(loadedTemplate);
+
+            var textwriter = new StringWriter();
+            var renderer = new StringRender(textwriter);
+
+            var partialsLoader = Registry.PartialTemplateLoader;
+            if (partials != null && partials.Keys.Count > 0)
+            {
+                partialsLoader = new CompositeLoader(new DictionaryLoader(partials), Registry.PartialTemplateLoader);
+            }
+
+            // TODO: Figure out Partials
+            renderer.Render(document, new Context(view, Registry, partialsLoader, settings ?? Registry.RenderSettings));
+
+            renderer.Writer.Flush();
+            return ((StringWriter)renderer.Writer).ToString();
         }
     }
 }

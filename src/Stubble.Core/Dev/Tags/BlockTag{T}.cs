@@ -14,6 +14,11 @@ namespace Stubble.Core.Dev.Tags
     public abstract class BlockTag<T> : BlockTag, IEquatable<T>
     {
         /// <summary>
+        /// Gets or sets the tags used to parse the block
+        /// </summary>
+        public Classes.Tags Tags { get; set; }
+
+        /// <summary>
         /// Is the block tag equal to another
         /// </summary>
         /// <param name="other">The other</param>

@@ -52,6 +52,11 @@ namespace Stubble.Core.Dev.Parser
                 // If this is whitespace then increase the start pointer by one
                 if (c.IsWhitespace())
                 {
+                    if (!processor.HasSeenNonSpaceOnLine)
+                    {
+                        processor.LineIndent++;
+                    }
+
                     start++;
                 }
                 else

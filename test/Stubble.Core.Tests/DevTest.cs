@@ -31,49 +31,49 @@ namespace Stubble.Core.Tests
                 {
                     index = 2, name="{{hi}}", arguments = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "hi", TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 4, TagEndPosition = 6, EscapeResult = false, IsClosed = true }
+                        new InterpolationTag { Content = "hi", TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 4, TagEndPosition = 6, EscapeResult = true, IsClosed = true }
                     }
                 },
                 new
                 {
                     index = 3, name="{{hi.world}}", arguments = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "hi.world", TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 10, TagEndPosition = 12, EscapeResult = false, IsClosed = true }
+                        new InterpolationTag { Content = "hi.world", TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 10, TagEndPosition = 12, EscapeResult = true, IsClosed = true }
                     }
                 },
                 new
                 {
                     index = 4, name="{{hi . world}}", arguments = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "hi . world", TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 12, TagEndPosition = 14, EscapeResult = false, IsClosed = true }
+                        new InterpolationTag { Content = "hi . world", TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 12, TagEndPosition = 14, EscapeResult = true, IsClosed = true }
                     }
                 },
                 new
                 {
                     index = 5, name="{{ hi}}", arguments = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "hi", TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = false, IsClosed = true }
+                        new InterpolationTag { Content = "hi", TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = true, IsClosed = true }
                     }
                 },
                 new
                 {
                     index = 6, name="{{hi }}", arguments = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "hi", TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 4, TagEndPosition = 7, EscapeResult = false, IsClosed = true }
+                        new InterpolationTag { Content = "hi", TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 4, TagEndPosition = 7, EscapeResult = true, IsClosed = true }
                     }
                 },
                 new
                 {
                     index = 7, name="{{ hi }}", arguments = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "hi", TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 8, EscapeResult = false, IsClosed = true }
+                        new InterpolationTag { Content = "hi", TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 8, EscapeResult = true, IsClosed = true }
                     }
                 },
                 new
                 {
                     index = 8, name="{{{hi}}}", arguments = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "hi", TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 8, EscapeResult = true, IsClosed = true }
+                        new InterpolationTag { Content = "hi", TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 8, EscapeResult = false, IsClosed = true }
                     }
                 },
                 new
@@ -130,7 +130,7 @@ namespace Stubble.Core.Tests
                     index = 16, name="a{{hi}}", arguments = new List<MustacheTag>
                     {
                         new LiteralTag { Content = "a", TagStartPosition = 0, ContentStartPosition = 0, ContentEndPosition = 1, TagEndPosition = 1, IsClosed = true },
-                        new InterpolationTag { Content = "hi", TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, IsClosed = true },
+                        new InterpolationTag { Content = "hi", TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = true, IsClosed = true },
                     }
                 },
                 new
@@ -138,7 +138,7 @@ namespace Stubble.Core.Tests
                     index = 17, name="a {{hi}}", arguments = new List<MustacheTag>
                     {
                         new LiteralTag { Content = "a ", TagStartPosition = 0, ContentStartPosition = 0, ContentEndPosition = 2, TagEndPosition = 2, IsClosed = true },
-                        new InterpolationTag { Content = "hi", TagStartPosition = 2, ContentStartPosition = 4, ContentEndPosition = 6, TagEndPosition = 8, IsClosed = true },
+                        new InterpolationTag { Content = "hi", TagStartPosition = 2, ContentStartPosition = 4, ContentEndPosition = 6, TagEndPosition = 8, EscapeResult = true, IsClosed = true },
                     }
                 },
                 new
@@ -146,7 +146,7 @@ namespace Stubble.Core.Tests
                     index = 18, name=" a{{hi}}", arguments = new List<MustacheTag>
                     {
                         new LiteralTag { Content = " a", TagStartPosition = 0, ContentStartPosition = 0, ContentEndPosition = 2, TagEndPosition = 2, IsClosed = true },
-                        new InterpolationTag { Content = "hi", TagStartPosition = 2, ContentStartPosition = 4, ContentEndPosition = 6, TagEndPosition = 8, IsClosed = true },
+                        new InterpolationTag { Content = "hi", TagStartPosition = 2, ContentStartPosition = 4, ContentEndPosition = 6, TagEndPosition = 8, EscapeResult = true, IsClosed = true },
                     }
                 },
                 new
@@ -154,7 +154,7 @@ namespace Stubble.Core.Tests
                     index = 19, name=" a {{hi}}", arguments = new List<MustacheTag>
                     {
                         new LiteralTag { Content = " a ", TagStartPosition = 0, ContentStartPosition = 0, ContentEndPosition = 3, TagEndPosition = 3, IsClosed = true },
-                        new InterpolationTag { Content = "hi", TagStartPosition = 3, ContentStartPosition = 5, ContentEndPosition = 7, TagEndPosition = 9, IsClosed = true },
+                        new InterpolationTag { Content = "hi", TagStartPosition = 3, ContentStartPosition = 5, ContentEndPosition = 7, TagEndPosition = 9, EscapeResult = true, IsClosed = true },
                     }
                 },
                 new
@@ -162,7 +162,7 @@ namespace Stubble.Core.Tests
                     index = 20, name="a{{hi}}b", arguments = new List<MustacheTag>
                     {
                         new LiteralTag { Content = "a", TagStartPosition = 0, ContentStartPosition = 0, ContentEndPosition = 1, TagEndPosition = 1, IsClosed = true },
-                        new InterpolationTag { Content = "hi", TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, IsClosed = true },
+                        new InterpolationTag { Content = "hi", TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = true, IsClosed = true },
                         new LiteralTag { Content = "b", TagStartPosition = 7, ContentStartPosition = 7, ContentEndPosition = 8, TagEndPosition = 8, IsClosed = true },
                     }
                 },
@@ -171,7 +171,7 @@ namespace Stubble.Core.Tests
                     index = 21, name="a{{hi}} b", arguments = new List<MustacheTag>
                     {
                         new LiteralTag { Content = "a", TagStartPosition = 0, ContentStartPosition = 0, ContentEndPosition = 1, TagEndPosition = 1, IsClosed = true },
-                        new InterpolationTag { Content = "hi", TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, IsClosed = true },
+                        new InterpolationTag { Content = "hi", TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = true, IsClosed = true },
                         new LiteralTag { Content = " b", TagStartPosition = 7, ContentStartPosition = 7, ContentEndPosition = 9, TagEndPosition = 9, IsClosed = true },
                     }
                 },
@@ -180,7 +180,7 @@ namespace Stubble.Core.Tests
                     index = 22, name="a{{hi}}b ", arguments = new List<MustacheTag>
                     {
                         new LiteralTag { Content = "a", TagStartPosition = 0, ContentStartPosition = 0, ContentEndPosition = 1, TagEndPosition = 1, IsClosed = true },
-                        new InterpolationTag { Content = "hi", TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, IsClosed = true },
+                        new InterpolationTag { Content = "hi", TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = true, IsClosed = true },
                         new LiteralTag { Content = "b ", TagStartPosition = 7, ContentStartPosition = 7, ContentEndPosition = 9, TagEndPosition = 9, IsClosed = true },
                     }
                 },
@@ -189,7 +189,7 @@ namespace Stubble.Core.Tests
                     index = 23, name="a\n{{hi}} b \n", arguments = new List<MustacheTag>
                     {
                         new LiteralTag { Content = "a\n", TagStartPosition = 0, ContentStartPosition = 0, ContentEndPosition = 2, TagEndPosition = 2, IsClosed = true },
-                        new InterpolationTag { Content = "hi", TagStartPosition = 2, ContentStartPosition = 4, ContentEndPosition = 6, TagEndPosition = 8, IsClosed = true },
+                        new InterpolationTag { Content = "hi", TagStartPosition = 2, ContentStartPosition = 4, ContentEndPosition = 6, TagEndPosition = 8, EscapeResult = true, IsClosed = true },
                         new LiteralTag { Content = " b \n", TagStartPosition = 8, ContentStartPosition = 8, ContentEndPosition = 12, TagEndPosition = 12, IsClosed = true },
                     }
                 },
@@ -198,7 +198,7 @@ namespace Stubble.Core.Tests
                     index = 24, name="a\n {{hi}} \nb", arguments = new List<MustacheTag>
                     {
                         new LiteralTag { Content = "a\n ", TagStartPosition = 0, ContentStartPosition = 0, ContentEndPosition = 3, TagEndPosition = 3, IsClosed = true },
-                        new InterpolationTag { Content = "hi", TagStartPosition = 3, ContentStartPosition = 5, ContentEndPosition = 7, TagEndPosition = 9, IsClosed = true },
+                        new InterpolationTag { Content = "hi", TagStartPosition = 3, ContentStartPosition = 5, ContentEndPosition = 7, TagEndPosition = 9, EscapeResult = true, IsClosed = true },
                         new LiteralTag { Content = " \nb", TagStartPosition = 9, ContentStartPosition = 9, ContentEndPosition = 12, TagEndPosition = 12, IsClosed = true },
                     }
                 },
@@ -388,7 +388,7 @@ namespace Stubble.Core.Tests
                     index = 44, name="{{=<% %>=}}<%hi%>", arguments = new List<MustacheTag>
                     {
                         new DelimiterTag { StartTag = "<%", EndTag = "%>", TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 8, TagEndPosition = 11, IsClosed = true },
-                        new InterpolationTag { Content = "hi", TagStartPosition = 11, ContentStartPosition = 13, ContentEndPosition = 15, TagEndPosition = 17, IsClosed = true }
+                        new InterpolationTag { Content = "hi", TagStartPosition = 11, ContentStartPosition = 13, ContentEndPosition = 15, TagEndPosition = 17, EscapeResult = true, IsClosed = true }
                     }
                 },
                 new
@@ -405,9 +405,9 @@ namespace Stubble.Core.Tests
                 {
                     index = 46, name="{{a}}\n{{b}}\n\n{{#c}}\n{{/c}}\n", arguments = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "a", TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 3, TagEndPosition = 5, IsClosed = true },
+                        new InterpolationTag { Content = "a", TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 3, TagEndPosition = 5, EscapeResult = true, IsClosed = true },
                         new LiteralTag { Content = "\n", TagStartPosition = 5, ContentStartPosition = 5, ContentEndPosition = 6, TagEndPosition = 6, IsClosed = true },
-                        new InterpolationTag { Content = "b", TagStartPosition = 6, ContentStartPosition = 8, ContentEndPosition = 9, TagEndPosition = 11, IsClosed = true },
+                        new InterpolationTag { Content = "b", TagStartPosition = 6, ContentStartPosition = 8, ContentEndPosition = 9, TagEndPosition = 11, EscapeResult = true, IsClosed = true },
                         new LiteralTag { Content = "\n\n", TagStartPosition = 11, ContentStartPosition = 11, ContentEndPosition = 13, TagEndPosition = 13, IsClosed = true },
                         new SectionTag { SectionName = "c", StartPosition = 13, EndPosition = 26, IsClosed = true, Children = new List<MustacheTag>() },
                     }
@@ -425,7 +425,7 @@ namespace Stubble.Core.Tests
                                     SectionName = "a", StartPosition = 11, EndPosition = 36, IsClosed = true, Children = new List<MustacheTag>
                                     {
                                         new LiteralTag { Content = "    ", TagStartPosition = 18, ContentStartPosition = 18, ContentEndPosition = 22, TagEndPosition = 22, IsClosed = true },
-                                        new InterpolationTag { Content = "b", TagStartPosition = 22, ContentStartPosition = 24, ContentEndPosition = 25, TagEndPosition = 27, IsClosed = true },
+                                        new InterpolationTag { Content = "b", TagStartPosition = 22, ContentStartPosition = 24, ContentEndPosition = 25, TagEndPosition = 27, EscapeResult = true, IsClosed = true },
                                         new LiteralTag { Content = "\n", TagStartPosition = 27, ContentStartPosition = 27, ContentEndPosition = 28, TagEndPosition = 28, IsClosed = true },
                                     }
                                 }
@@ -446,7 +446,7 @@ namespace Stubble.Core.Tests
                                     SectionName = "a", StartPosition = 12, EndPosition = 39, IsClosed = true, Children = new List<MustacheTag>
                                     {
                                         new LiteralTag { Content = "    ", TagStartPosition = 20, ContentStartPosition = 20, ContentEndPosition = 24, TagEndPosition = 24, IsClosed = true },
-                                        new InterpolationTag { Content = "b", TagStartPosition = 24, ContentStartPosition = 26, ContentEndPosition = 27, TagEndPosition = 29, IsClosed = true },
+                                        new InterpolationTag { Content = "b", TagStartPosition = 24, ContentStartPosition = 26, ContentEndPosition = 27, TagEndPosition = 29, EscapeResult = true, IsClosed = true },
                                         new LiteralTag { Content = "\r\n", TagStartPosition = 29, ContentStartPosition = 29, ContentEndPosition = 31, TagEndPosition = 31, IsClosed = true },
                                     }
                                 }
@@ -472,7 +472,7 @@ namespace Stubble.Core.Tests
                     index = 50, name="Sup {{😺}}", arguments = new List<MustacheTag>
                     {
                         new LiteralTag { Content = "Sup ", ContentStartPosition = 0, TagStartPosition = 0, ContentEndPosition = 4, TagEndPosition = 4, IsClosed = true },
-                        new InterpolationTag { Content = "😺", TagStartPosition = 4, ContentStartPosition = 6, ContentEndPosition = 8, TagEndPosition = 10, EscapeResult = false, IsClosed = true }
+                        new InterpolationTag { Content = "😺", TagStartPosition = 4, ContentStartPosition = 6, ContentEndPosition = 8, TagEndPosition = 10, EscapeResult = true, IsClosed = true }
                     }
                 },
                 new

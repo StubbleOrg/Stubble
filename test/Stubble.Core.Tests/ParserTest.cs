@@ -522,7 +522,7 @@ namespace Stubble.Core.Tests
             Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
         }
 
-        [Fact]
+        [Fact(Skip = "Test results are flakey to check with multiple cache hits at the same time")]
         public void It_Can_Change_Cache_Size_At_Runtime()
         {
             Parser.ParserStatic.RegexCacheSize = 4;
