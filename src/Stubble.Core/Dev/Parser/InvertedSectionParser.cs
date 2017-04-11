@@ -75,10 +75,11 @@ namespace Stubble.Core.Dev.Parser
         /// <summary>
         /// Closes the block using the provided close tag
         /// </summary>
+        /// <param name="processor">The processor</param>
         /// <param name="tag">The open tag</param>
         /// <param name="closeTag">the closing tag</param>
         /// <param name="content">the content the tags were parsed from</param>
-        public override void EndBlock(BlockTag tag, BlockCloseTag closeTag, StringSlice content)
+        public override void EndBlock(Processor processor, BlockTag tag, BlockCloseTag closeTag, StringSlice content)
         {
             var sectionTag = tag as InvertedSectionTag;
             var sectionEndTag = closeTag as SectionEndTag;
@@ -86,6 +87,7 @@ namespace Stubble.Core.Dev.Parser
             {
                 if (sectionTag.SectionName.Equals(sectionEndTag.SectionName))
                 {
+                    sectionTag.Tags = processor.CurrentTags;
                     sectionTag.EndPosition = sectionEndTag.EndPosition;
                     sectionTag.IsClosed = true;
                 }

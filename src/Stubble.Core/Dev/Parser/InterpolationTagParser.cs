@@ -24,7 +24,7 @@ namespace Stubble.Core.Dev.Parser
         {
             var tagStart = slice.Start - processor.CurrentTags.StartTag.Length;
             var index = slice.Start;
-            var escapeResult = false;
+            var escapeResult = true;
             var isTripleMustache = false;
 
             while (slice[index].IsWhitespace())
@@ -35,12 +35,12 @@ namespace Stubble.Core.Dev.Parser
             var match = slice[index];
             if (match == '&')
             {
-                escapeResult = true;
+                escapeResult = false;
                 index++;
             }
             else if (match == '{')
             {
-                escapeResult = true;
+                escapeResult = false;
                 isTripleMustache = true;
                 index++;
             }

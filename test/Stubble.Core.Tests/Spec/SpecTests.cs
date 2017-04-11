@@ -7,30 +7,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Stubble.Core.Tests.Spec
 {
-    public class SpecTestBase
-    {
-        internal readonly ITestOutputHelper OutputStream;
-
-        public SpecTestBase(ITestOutputHelper output)
-        {
-            OutputStream = output;
-        }
-
-        public void It_Can_Pass_Spec_Tests(SpecTest data)
-        {
-            var stubble = new StubbleStringRenderer();
-            var output = data.Partials != null ? stubble.Render(data.Template, data.Data, data.Partials) : stubble.Render(data.Template, data.Data);
-
-            OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.Expected, output);
-            var dic = stubble.Parser.Cache as IDictionary;
-            Assert.Equal(data.Expected, output);
-        }
-    }
 
     [Collection("SpecCommentTests")]
     public class CommentsTests : SpecTestBase
@@ -40,16 +22,23 @@ namespace Stubble.Core.Tests.Spec
         {
         }
 
-        public static IEnumerable<object[]> Spec_Comments()
+        public static IEnumerable<object[]> Spec_Comments(bool skip)
         {
-            return SpecTestHelper.GetTests("comments").Select(test => new object[] { test });
+            return SpecTestHelper.GetTests("comments", skip).Select(test => new object[] { test });
         }
 
         [Theory]
-        [MemberData("Spec_Comments")]
+        [MemberData("Spec_Comments", true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
+        }
+
+        [Theory]
+        [MemberData("Spec_Comments", false)]
+        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
+        {
+            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -61,16 +50,23 @@ namespace Stubble.Core.Tests.Spec
         {
         }
 
-        public static IEnumerable<object[]> Spec_Delimiters()
+        public static IEnumerable<object[]> Spec_Delimiters(bool skip)
         {
-            return SpecTestHelper.GetTests("delimiters").Select(test => new object[] { test });
+            return SpecTestHelper.GetTests("delimiters", skip).Select(test => new object[] { test });
         }
 
         [Theory]
-        [MemberData("Spec_Delimiters")]
+        [MemberData("Spec_Delimiters", true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
+        }
+
+        [Theory]
+        [MemberData("Spec_Delimiters", false)]
+        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
+        {
+            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -82,16 +78,23 @@ namespace Stubble.Core.Tests.Spec
         {
         }
 
-        public static IEnumerable<object[]> Spec_Interpolation()
+        public static IEnumerable<object[]> Spec_Interpolation(bool skip)
         {
-            return SpecTestHelper.GetTests("interpolation").Select(test => new object[] { test });
+            return SpecTestHelper.GetTests("interpolation", skip).Select(test => new object[] { test });
         }
 
         [Theory]
-        [MemberData("Spec_Interpolation")]
+        [MemberData("Spec_Interpolation", true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
+        }
+
+        [Theory]
+        [MemberData("Spec_Interpolation", false)]
+        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
+        {
+            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -103,16 +106,23 @@ namespace Stubble.Core.Tests.Spec
         {
         }
 
-        public static IEnumerable<object[]> Spec_Inverted()
+        public static IEnumerable<object[]> Spec_Inverted(bool skip)
         {
-            return SpecTestHelper.GetTests("inverted").Select(test => new object[] { test });
+            return SpecTestHelper.GetTests("inverted", skip).Select(test => new object[] { test });
         }
 
         [Theory]
-        [MemberData("Spec_Inverted")]
+        [MemberData("Spec_Inverted", true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
+        }
+
+        [Theory]
+        [MemberData("Spec_Inverted", false)]
+        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
+        {
+            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -124,16 +134,23 @@ namespace Stubble.Core.Tests.Spec
         {
         }
 
-        public static IEnumerable<object[]> Spec_Partials()
+        public static IEnumerable<object[]> Spec_Partials(bool skip)
         {
-            return SpecTestHelper.GetTests("partials").Select(test => new object[] { test });
+            return SpecTestHelper.GetTests("partials", skip).Select(test => new object[] { test });
         }
 
         [Theory]
-        [MemberData("Spec_Partials")]
+        [MemberData("Spec_Partials", true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
+        }
+
+        [Theory]
+        [MemberData("Spec_Partials", false)]
+        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
+        {
+            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -145,23 +162,30 @@ namespace Stubble.Core.Tests.Spec
         {
         }
 
-        public static IEnumerable<object[]> Spec_Sections()
+        public static IEnumerable<object[]> Spec_Sections(bool skip)
         {
-            return SpecTestHelper.GetTests("sections").Select(test => new object[] { test });
+            return SpecTestHelper.GetTests("sections", skip).Select(test => new object[] { test });
         }
 
         [Theory]
-        [MemberData("Spec_Sections")]
+        [MemberData("Spec_Sections", true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
+        }
+
+        [Theory]
+        [MemberData("Spec_Sections", false)]
+        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
+        {
+            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
     [Collection("LambdaTestsCollection")]
     public class LambdaTests : SpecTestBase
     {
-        public static int GlobalInt;
+        public static AsyncLocal<int> GlobalInt = new AsyncLocal<int>();
 
         public LambdaTests(ITestOutputHelper output)
             : base(output)
@@ -213,7 +237,7 @@ namespace Stubble.Core.Tests.Spec
                     Desc = "Interpolated lambdas should not be cached.",
                     Data = new Dictionary<string, object>
                     {
-                        { "lambda", new Func<object>(() => ++LambdaTests.GlobalInt) }
+                        { "lambda", new Func<object>(() => ++LambdaTests.GlobalInt.Value) }
                     },
                     Template = "{{lambda}} == {{lambda}} == {{lambda}}",
                     Expected = "1 == 2 == 3"
@@ -296,6 +320,13 @@ namespace Stubble.Core.Tests.Spec
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
+        }
+
+        [Theory]
+        [MemberData("Spec_Lambdas")]
+        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
+        {
+            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 }

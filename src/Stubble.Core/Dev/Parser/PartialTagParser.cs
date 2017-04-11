@@ -44,6 +44,7 @@ namespace Stubble.Core.Dev.Parser
                 var startIndex = slice.Start;
                 var partialTag = new PartialTag
                 {
+                    LineIndent = processor.HasSeenNonSpaceOnLine ? 0 : processor.LineIndent,
                     TagStartPosition = tagStart,
                     ContentStartPosition = startIndex,
                     IsClosed = false

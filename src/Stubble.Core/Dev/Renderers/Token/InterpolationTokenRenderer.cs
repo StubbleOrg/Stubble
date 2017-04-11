@@ -36,7 +36,7 @@ namespace Stubble.Core.Dev.Renderers.Token
                 value = resultString;
             }
 
-            if (obj.EscapeResult)
+            if (obj.EscapeResult && value != null)
             {
                 value = WebUtility.HtmlEncode(value.ToString());
             }

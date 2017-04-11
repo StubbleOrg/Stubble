@@ -21,6 +21,7 @@
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <PackageProjectUrl>https://github.com/stubbleorg/stubble</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/StubbleOrg/Stubble/blob/master/licence.md</PackageLicenseUrl>
+    <Platform>Any CPU</Platform>
   </PropertyGroup>
 
   <ItemGroup>

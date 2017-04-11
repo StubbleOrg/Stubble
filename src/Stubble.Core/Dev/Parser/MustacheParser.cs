@@ -18,7 +18,7 @@ namespace Stubble.Core.Dev.Parser
         private readonly Processor processor;
         private StringSlice content;
 
-        private MustacheParser(string text, Classes.Tags startingTags, ParserPipeline pipeline)
+        private MustacheParser(string text, Classes.Tags startingTags, int lineIndent, ParserPipeline pipeline)
         {
             if (text == null)
             {
@@ -29,7 +29,9 @@ namespace Stubble.Core.Dev.Parser
 
             processor = new Processor(pipeline.InlineParsers, pipeline.BlockParsers)
             {
-                CurrentTags = startingTags
+                CurrentTags = startingTags,
+                LineIndent = lineIndent,
+                DefaultLineIndent = lineIndent
             };
         }
 
@@ -38,9 +40,10 @@ namespace Stubble.Core.Dev.Parser
         /// </summary>
         /// <param name="text">The text to be parsed</param>
         /// <param name="startingTags">The starting tag description</param>
+        /// <param name="lineIndent">The default line indent for the template</param>
         /// <param name="pipeline">The pipeline to use for parsing</param>
         /// <returns>The string converted to Tags</returns>
-        public static MustacheTemplate Parse(string text, Classes.Tags startingTags = null, ParserPipeline pipeline = null)
+        public static MustacheTemplate Parse(string text, Classes.Tags startingTags = null, int lineIndent = 0, ParserPipeline pipeline = null)
         {
             if (text == null)
             {
@@ -50,8 +53,8 @@ namespace Stubble.Core.Dev.Parser
             startingTags = startingTags ?? new Classes.Tags("{{", "}}");
             pipeline = pipeline ?? new ParserPipelineBuilder().Build();
 
-            var markdownParser = new MustacheParser(text, startingTags, pipeline);
-            return markdownParser.Parse();
+            var mustacheParser = new MustacheParser(text, startingTags, lineIndent, pipeline);
+            return mustacheParser.Parse();
         }
 
         private MustacheTemplate Parse()

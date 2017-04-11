@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
+using Stubble.Core.Interfaces;
 
 namespace Stubble.Core
 {
@@ -27,7 +28,7 @@ namespace Stubble.Core
         /// <param name="registry">A reference to the a registry instance</param>
         /// <param name="settings">The render settings </param>
         public Context(object view, Registry registry, RenderSettings settings)
-            : this(view, registry, null, settings)
+            : this(view, registry, registry.PartialTemplateLoader, null, settings)
         {
         }
 
@@ -36,13 +37,27 @@ namespace Stubble.Core
         /// </summary>
         /// <param name="view">The data view to create the context with</param>
         /// <param name="registry">A reference to the a registry instance</param>
+        /// <param name="partialLoader">A reference to loader for partials</param>
+        /// <param name="settings">The render settings </param>
+        public Context(object view, Registry registry, IStubbleLoader partialLoader, RenderSettings settings)
+            : this(view, registry, partialLoader, null, settings)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Context"/> class.
+        /// </summary>
+        /// <param name="view">The data view to create the context with</param>
+        /// <param name="registry">A reference to the a registry instance</param>
+        /// <param name="partialLoader">A reference to loader for partials</param>
         /// <param name="parentContext">The parent context for the new context</param>
         /// <param name="settings">The render settings </param>
-        public Context(object view, Registry registry, Context parentContext, RenderSettings settings)
+        public Context(object view, Registry registry, IStubbleLoader partialLoader, Context parentContext, RenderSettings settings)
         {
             this.view = view;
             View = this.view;
             ParentContext = parentContext;
+            PartialLoader = partialLoader;
             Registry = registry;
             RenderSettings = settings;
             Cache = new Dictionary<string, object>()
@@ -70,6 +85,11 @@ namespace Stubble.Core
         /// Gets the registry for the context
         /// </summary>
         internal Registry Registry { get; }
+
+        /// <summary>
+        /// Gets the partial loader for the context
+        /// </summary>
+        internal IStubbleLoader PartialLoader { get; }
 
         /// <summary>
         /// Gets the value cache to avoid multiple lookups
@@ -225,7 +245,7 @@ namespace Stubble.Core
         /// <returns>A new child data context of the current context</returns>
         public Context Push(object newView)
         {
-            return new Context(newView, Registry, this, RenderSettings);
+            return new Context(newView, Registry, PartialLoader, this, RenderSettings);
         }
 
         /// <summary>

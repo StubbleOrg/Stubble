@@ -22,28 +22,36 @@ namespace Stubble.Core.Tests.Spec
             { "inverted", new List<string> { "Standalone Without Newline" } },
             {
                 "partials", new List<string>
-            {
-                "Standalone Without Previous Line",
-                "Standalone Without Newline",
-                "Standalone Indentation"
-            }
+                {
+                    "Standalone Without Previous Line",
+                    "Standalone Without Newline",
+                    "Standalone Indentation"
+                }
             },
             { "sections", new List<string> { "Standalone Without Newline" } },
         };
 
-        public static IEnumerable<SpecTest> GetTests(string filename)
+        public static IEnumerable<SpecTest> GetTests(string filename, bool skip)
         {
-            var path = Path.Combine(AppContext.BaseDirectory, string.Format("./{0}.json", filename));
+            var @base = System.AppContext.BaseDirectory;
+            var path = Path.Combine(@base, string.Format("../../../../../../spec/specs/{0}.json", filename));
 
             using (var reader = File.OpenText(path))
             {
+                var hasSkipTestsInFile = SkippedTests.ContainsKey(filename);
                 var data = JsonConvert.DeserializeObject<SpecTestDefinition>(reader.ReadToEnd());
                 foreach (var test in data.Tests)
                 {
-                    test.Data = JsonHelper.ToObject((JToken)test.Data);
-                }
+                    if(skip && hasSkipTestsInFile && SkippedTests[filename].Contains(test.Name))
+                    {
+                        continue;
+                    }
 
-                return data.Tests.Where(x => !SkippedTests.ContainsKey(filename) || !SkippedTests[filename].Contains(x.Name));
+                    test.Skip = hasSkipTestsInFile && SkippedTests[filename].Contains(test.Name);
+                    test.Data = JsonHelper.ToObject((JToken)test.Data);
+
+                    yield return test;
+                }
             }
         }
     }

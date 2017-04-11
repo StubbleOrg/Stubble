@@ -19,6 +19,8 @@ namespace Stubble.Core.Tests.Spec
 
         public string Expected { get; set; }
 
+        public bool Skip { get; set; }
+
         public IDictionary<string, string> Partials { get; set; }
     }
 }
