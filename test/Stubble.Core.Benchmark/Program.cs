@@ -17,7 +17,8 @@ namespace Stubble.Core.Benchmark
             var switcher = new BenchmarkSwitcher(new[]
             {
                 typeof(Benchmarks),
-                typeof(ParserBenchmarks)
+                typeof(ParserBenchmarks),
+                typeof(TwitterBenchmark),
             });
 
             switcher.Run();
