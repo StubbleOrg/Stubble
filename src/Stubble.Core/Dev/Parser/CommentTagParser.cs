@@ -55,11 +55,8 @@ namespace Stubble.Core.Dev.Parser
                     return false;
                 }
 
-                var contentEndIndex = slice.Start - 1;
-
                 commentTag.TagEndPosition = slice.Start + processor.CurrentTags.EndTag.Length;
                 commentTag.ContentEndPosition = slice.Start;
-                commentTag.Content = new StringSlice(slice.Text, startIndex, contentEndIndex).ToString();
                 commentTag.IsClosed = true;
                 slice.Start += processor.CurrentTags.EndTag.Length;
                 return true;

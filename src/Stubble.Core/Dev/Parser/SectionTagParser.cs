@@ -91,7 +91,7 @@ namespace Stubble.Core.Dev.Parser
                     sectionTag.EndPosition = sectionEndTag.EndPosition;
                     sectionTag.ContentEndPosition = sectionEndTag.ContentEndPosition;
                     sectionTag.IsClosed = true;
-                    sectionTag.SectionContent = new StringSlice(content.Text, sectionTag.ContentStartPosition, sectionTag.ContentEndPosition - 1).ToString();
+                    sectionTag.SectionContent = new StringSlice(content.Text, sectionTag.ContentStartPosition, sectionTag.ContentEndPosition - 1);
                 }
             }
         }

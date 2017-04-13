@@ -67,7 +67,6 @@ namespace Stubble.Core.Dev.Parser
 
                 partialTag.ContentEndPosition = contentEnd;
                 partialTag.TagEndPosition = slice.Start + processor.CurrentTags.EndTag.Length;
-                partialTag.Content = content.ToString();
                 partialTag.IsClosed = true;
                 slice.Start += processor.CurrentTags.EndTag.Length;
                 return true;

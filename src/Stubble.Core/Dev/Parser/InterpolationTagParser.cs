@@ -68,7 +68,6 @@ namespace Stubble.Core.Dev.Parser
                 EscapeResult = escapeResult,
                 TagStartPosition = tagStart,
                 ContentStartPosition = startIndex,
-                Content = content.ToString(),
                 IsClosed = true
             };
 

@@ -31,7 +31,8 @@ namespace Stubble.Core.Dev.Parser
             {
                 CurrentTags = startingTags,
                 LineIndent = lineIndent,
-                DefaultLineIndent = lineIndent
+                DefaultLineIndent = lineIndent,
+                DefaultLineIndentSlice = lineIndent > 0 ? new StringSlice(new string(' ', lineIndent)) : StringSlice.Empty
             };
         }
 

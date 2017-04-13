@@ -360,5 +360,25 @@ namespace Stubble.Core.Dev.Imported
         {
             return CurrentChar == '\n' || CurrentChar == '\r' && PeekChar(1) == '\n';
         }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is StringSlice)) return false;
+            return Equals((StringSlice)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 13;
+            hash = (hash * 7) + Text.GetHashCode();
+            return hash;
+        }
+
+        public bool Equals(StringSlice other)
+        {
+            return Start == other.Start &&
+                   End == other.End &&
+                   Text == other.Text;
+        }
     }
 }

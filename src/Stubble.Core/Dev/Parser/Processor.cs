@@ -4,10 +4,12 @@
 // </copyright>
 
 using System.Collections.Generic;
+using System.Linq;
 using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Classes.Tokens.Interface;
 using Stubble.Core.Dev.Imported;
 using Stubble.Core.Dev.Tags;
+using static Stubble.Core.Helpers.SliceHelpers;
 
 namespace Stubble.Core.Dev.Parser
 {
@@ -71,6 +73,11 @@ namespace Stubble.Core.Dev.Parser
         /// Gets or sets a value for the default line indent
         /// </summary>
         public int DefaultLineIndent { get; set; }
+
+        /// <summary>
+        /// Gets or sets the slice to use to the default line indent
+        /// </summary>
+        public StringSlice DefaultLineIndentSlice { get; set; }
 
         /// <summary>
         /// Gets the document that has been parsed from the content string
@@ -162,6 +169,7 @@ namespace Stubble.Core.Dev.Parser
             }
 
             SquashAndNestTokens();
+            SetTagContent();
         }
 
         private void SquashAndNestTokens()
@@ -174,12 +182,12 @@ namespace Stubble.Core.Dev.Parser
                 if (tag is LiteralTag && i + 1 < Document.Children.Count)
                 {
                     var literalTag = tag as LiteralTag;
+
                     var nextTag = Document.Children[i + 1] as LiteralTag;
                     if (nextTag != null)
                     {
                         literalTag.ContentEndPosition = nextTag.ContentEndPosition;
-                        literalTag.TagEndPosition = nextTag.TagEndPosition;
-                        literalTag.Content += nextTag.Content;
+                        literalTag.Indent = nextTag.Indent > literalTag.Indent ? nextTag.Indent : literalTag.Indent;
                         Document.Children.Remove(nextTag);
                         i--;
                         continue;
@@ -206,6 +214,40 @@ namespace Stubble.Core.Dev.Parser
                 if (tag is BlockTag)
                 {
                     openblocks.Push(tag as BlockTag);
+                }
+            }
+        }
+
+        private void SetTagContent()
+        {
+            for (var i = 0; i < Document.Children.Count; i++)
+            {
+                ProcessTag(Document.Children[i]);
+            }
+
+            void ProcessTag(MustacheTag tag)
+            {
+                switch (tag)
+                {
+                    case InlineTag inline:
+                        inline.Content = new StringSlice(
+                            content.Text,
+                            inline.ContentStartPosition,
+                            inline.ContentEndPosition - 1);
+                        break;
+                    case LiteralTag literal:
+                        literal.Content = SplitSliceToLines(new StringSlice(
+                            content.Text,
+                            literal.ContentStartPosition,
+                            literal.ContentEndPosition - 1)).ToArray();
+                        break;
+                    case BlockTag blockTag:
+                        foreach (var child in blockTag.Children)
+                        {
+                            ProcessTag(child);
+                        }
+
+                        break;
                 }
             }
         }
@@ -246,7 +288,7 @@ namespace Stubble.Core.Dev.Parser
 
             if (firstOnLine)
             {
-                AddIndentToLine();
+                AddIndentToTag(tag);
                 firstOnLine = false;
             }
 
@@ -295,15 +337,11 @@ namespace Stubble.Core.Dev.Parser
             tagCache.Clear();
         }
 
-        private void AddIndentToLine()
+        private void AddIndentToTag(MustacheTag tag)
         {
             if (DefaultLineIndent > 0)
             {
-                tagCache.Add(new LiteralTag
-                {
-                    Content = new string(' ', DefaultLineIndent),
-                    IsClosed = true
-                });
+                tag.Indent = DefaultLineIndent;
             }
         }
     }

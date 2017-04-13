@@ -14,5 +14,10 @@ namespace Stubble.Core.Dev.Tags
         /// Gets or sets a value indicating whether the tag has been closed
         /// </summary>
         public bool IsClosed { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current indent for the tag
+        /// </summary>
+        public int Indent { get; set; }
     }
 }

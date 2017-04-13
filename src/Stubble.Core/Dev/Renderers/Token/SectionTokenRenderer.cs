@@ -58,8 +58,8 @@ namespace Stubble.Core.Dev.Renderers.Token
                 var sectionContent = obj.SectionContent; // originalTemplate.Slice(End, ParentSectionEnd);
 
                 value = functionDynamicValue != null
-                    ? functionDynamicValue.Invoke(context.View, sectionContent)
-                    : functionStringValue.Invoke(sectionContent);
+                    ? functionDynamicValue.Invoke(context.View, sectionContent.ToString())
+                    : functionStringValue.Invoke(sectionContent.ToString());
 
                 renderer.Render(MustacheParser.Parse(value.ToString(), obj.Tags), context);
             }

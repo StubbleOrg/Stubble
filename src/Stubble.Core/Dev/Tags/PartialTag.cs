@@ -22,7 +22,7 @@ namespace Stubble.Core.Dev.Tags
                 throw new ArgumentNullException(nameof(other));
             }
 
-            return other.Content == Content &&
+            return other.Content.Equals(Content) &&
                    other.TagStartPosition == TagStartPosition &&
                    other.TagEndPosition == TagEndPosition &&
                    other.ContentStartPosition == ContentStartPosition &&

@@ -18,7 +18,7 @@ namespace Stubble.Core.Dev.Tags
                 return false;
             }
 
-            return other.Content == Content &&
+            return other.Content.Equals(Content) &&
                    other.TagStartPosition == TagStartPosition &&
                    other.TagEndPosition == TagEndPosition &&
                    other.ContentStartPosition == ContentStartPosition &&

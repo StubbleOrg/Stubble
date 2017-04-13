@@ -20,7 +20,7 @@ namespace Stubble.Core.Dev.Renderers.Token
             string template = null;
             if (context.PartialLoader != null)
             {
-                template = context.PartialLoader.Load(partialName);
+                template = context.PartialLoader.Load(partialName.ToString());
             }
 
             if (template != null)

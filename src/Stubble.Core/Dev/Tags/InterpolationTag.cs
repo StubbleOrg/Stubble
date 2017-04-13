@@ -27,7 +27,7 @@ namespace Stubble.Core.Dev.Tags
             }
 
             return other.EscapeResult == EscapeResult &&
-                   other.Content == Content &&
+                   other.Content.Equals(Content) &&
                    other.TagStartPosition == TagStartPosition &&
                    other.TagEndPosition == TagEndPosition &&
                    other.ContentStartPosition == ContentStartPosition &&
