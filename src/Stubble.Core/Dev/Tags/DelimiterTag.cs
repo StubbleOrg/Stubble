@@ -32,7 +32,7 @@ namespace Stubble.Core.Dev.Tags
 
             return other.StartTag == StartTag &&
                    other.EndTag == EndTag &&
-                   other.Content == Content &&
+                   other.Content.Equals(Content) &&
                    other.TagStartPosition == TagStartPosition &&
                    other.TagEndPosition == TagEndPosition &&
                    other.ContentStartPosition == ContentStartPosition &&

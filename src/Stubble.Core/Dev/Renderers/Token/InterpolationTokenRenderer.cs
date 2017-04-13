@@ -18,7 +18,7 @@ namespace Stubble.Core.Dev.Renderers.Token
         /// <inheritdoc/>
         protected override void Write(StringRender renderer, InterpolationTag obj, Context context)
         {
-            var value = context.Lookup(obj.Content);
+            var value = context.Lookup(obj.Content.ToString());
 
             var functionValueDynamic = value as Func<dynamic, object>;
             var functionValue = value as Func<object>;
@@ -39,6 +39,11 @@ namespace Stubble.Core.Dev.Renderers.Token
             if (obj.EscapeResult && value != null)
             {
                 value = WebUtility.HtmlEncode(value.ToString());
+            }
+
+            if (obj.Indent > 0)
+            {
+                renderer.Write(new string(' ', obj.Indent));
             }
 
             renderer.Write(value?.ToString());

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Dev.Imported;
 using Stubble.Core.Dev.Renderers;
 using Stubble.Core.Dev.Renderers.Token;
 using Stubble.Core.Dev.Tags;
@@ -20,7 +21,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         [Fact]
         public void It_Can_Render_LiteralTags()
         {
-            const string content = "I'm a literal tag";
+            StringSlice content = new StringSlice("I'm a literal tag");
 
             var context = new Context(
                 new { },
@@ -33,14 +34,14 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                 stringRenderer,
                 new LiteralTag()
                 {
-                    Content = content
+                    Content = new[] {content}
                 }, context);
 
             StreamWriter.Flush();
             MemStream.Position = 0;
             var sr = new StreamReader(MemStream);
             var myStr = sr.ReadToEnd();
-            Assert.Equal(content, myStr);
+            Assert.Equal(content.ToString(), myStr);
         }
 
         [Fact]
@@ -58,7 +59,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                 stringRenderer,
                 new InterpolationTag
                 {
-                    Content = "foo",
+                    Content = new StringSlice("foo"),
                     EscapeResult = false,
                 }, context);
 
@@ -84,7 +85,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                 stringRenderer,
                 new InterpolationTag
                 {
-                    Content = "foo",
+                    Content = new StringSlice("foo"),
                     EscapeResult = true,
                 }, context);
 
@@ -110,7 +111,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                 stringRenderer,
                 new InterpolationTag
                 {
-                    Content = "foo",
+                    Content = new StringSlice("foo"),
                     EscapeResult = true,
                 }, context);
 
@@ -136,7 +137,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                 stringRenderer,
                 new InterpolationTag
                 {
-                    Content = "foo",
+                    Content = new StringSlice("foo"),
                     EscapeResult = true,
                 }, context);
 
@@ -166,7 +167,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                 stringRenderer,
                 new InterpolationTag
                 {
-                    Content = "foo",
+                    Content = new StringSlice("foo"),
                     EscapeResult = true,
                 }, context);
 
@@ -204,7 +205,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                 stringRenderer,
                 new PartialTag
                 {
-                    Content = "foo",
+                    Content = new StringSlice("foo"),
                 }, context);
 
             StreamWriter.Flush();
@@ -241,7 +242,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                 stringRenderer,
                 new PartialTag
                 {
-                    Content = "foo",
+                    Content = new StringSlice("foo"),
                 }, context);
 
             StreamWriter.Flush();
@@ -278,7 +279,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     SectionName = "check",
                     Children = new List<MustacheTag>
                     {
-                        new LiteralTag { Content = "I'm false" }
+                        new LiteralTag { Content = new[] { new StringSlice("I'm false") } }
                     }
                 },
                 context);
@@ -317,7 +318,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     SectionName = "list",
                     Children = new List<MustacheTag>
                     {
-                        new LiteralTag { Content = "I'm also false" }
+                        new LiteralTag {
+                            Content = new []
+                            {
+                                new StringSlice("I'm also false")
+                            }
+                        }
                     }
                 },
                 context);
@@ -356,7 +362,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     SectionName = "notfound",
                     Children = new List<MustacheTag>
                     {
-                        new LiteralTag { Content = "I'm also also false" }
+                        new LiteralTag {
+                            Content = new []
+                            {
+                                new StringSlice("I'm also also false")
+                            }
+                        }
                     }
                 },
                 context);
@@ -395,7 +406,13 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     SectionName = "check",
                     Children = new List<MustacheTag>
                     {
-                        new LiteralTag { Content = "I'm not displayed" }
+                        new LiteralTag
+                        {
+                            Content = new []
+                            {
+                                new StringSlice("I'm not displayed")
+                            }
+                        }
                     }
                 },
                 context);

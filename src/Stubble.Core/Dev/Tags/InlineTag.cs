@@ -3,6 +3,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Stubble.Core.Dev.Imported;
+
 namespace Stubble.Core.Dev.Tags
 {
     /// <summary>
@@ -33,6 +35,6 @@ namespace Stubble.Core.Dev.Tags
         /// <summary>
         /// Gets or sets the tag content
         /// </summary>
-        public string Content { get; set; }
+        public StringSlice Content { get; set; }
     }
 }

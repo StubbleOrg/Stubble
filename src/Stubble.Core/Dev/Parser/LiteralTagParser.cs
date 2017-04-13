@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Collections.Generic;
 using Stubble.Core.Dev.Imported;
 using Stubble.Core.Dev.Tags;
 
@@ -28,7 +29,6 @@ namespace Stubble.Core.Dev.Parser
 
             var tag = new LiteralTag
             {
-                TagStartPosition = index,
                 ContentStartPosition = index
             };
             processor.CurrentTag = tag;
@@ -37,14 +37,14 @@ namespace Stubble.Core.Dev.Parser
             {
                 if (slice.Match(processor.CurrentTags.StartTag))
                 {
-                    if (tag.TagStartPosition == slice.Start)
+                    if (tag.ContentStartPosition == slice.Start)
                     {
                         return LiteralTagResult.NoContent;
                     }
 
-                    tag.TagEndPosition = slice.Start;
                     tag.ContentEndPosition = slice.Start;
-                    tag.Content = new StringSlice(slice.Text, tag.ContentStartPosition, tag.ContentEndPosition - 1).ToString();
+                    tag.IsWhitespace = new StringSlice(slice.Text, tag.ContentStartPosition, tag.ContentEndPosition - 1).IsEmptyOrWhitespace();
+
                     tag.IsClosed = true;
                     return LiteralTagResult.TagStart;
                 }
@@ -76,9 +76,9 @@ namespace Stubble.Core.Dev.Parser
                         endIndex = slice.Start + 2;
                     }
 
-                    tag.TagEndPosition = endIndex;
                     tag.ContentEndPosition = endIndex;
-                    tag.Content = new StringSlice(slice.Text, tag.ContentStartPosition, tag.ContentEndPosition - 1).ToString();
+                    tag.IsWhitespace = new StringSlice(slice.Text, tag.ContentStartPosition, tag.ContentEndPosition - 1).IsEmptyOrWhitespace();
+
                     tag.IsClosed = true;
                     return LiteralTagResult.NewLine;
                 }
@@ -86,14 +86,14 @@ namespace Stubble.Core.Dev.Parser
                 c = slice.NextChar();
             }
 
-            if (tag.TagStartPosition == slice.Start)
+            if (tag.ContentStartPosition == slice.Start)
             {
                 return LiteralTagResult.NoContent;
             }
 
-            tag.TagEndPosition = slice.Start;
             tag.ContentEndPosition = slice.Start;
-            tag.Content = new StringSlice(slice.Text, tag.ContentStartPosition, tag.ContentEndPosition - 1).ToString();
+            tag.IsWhitespace = new StringSlice(slice.Text, tag.ContentStartPosition, tag.ContentEndPosition - 1).IsEmptyOrWhitespace();
+
             tag.IsClosed = true;
 
             return LiteralTagResult.EndOfFile;

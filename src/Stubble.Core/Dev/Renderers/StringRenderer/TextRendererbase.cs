@@ -34,15 +34,9 @@ namespace Stubble.Core.Dev.Renderers
         /// </summary>
         public TextWriter Writer
         {
-            get
-            {
-                return writer;
-            }
+            get => writer;
 
-            set
-            {
-                writer = value ?? throw new ArgumentNullException(nameof(value));
-            }
+            set => writer = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         /// <summary>

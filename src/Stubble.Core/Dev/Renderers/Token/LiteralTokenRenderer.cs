@@ -16,7 +16,17 @@ namespace Stubble.Core.Dev.Renderers.Token
         /// <inheritdoc/>
         protected override void Write(StringRender renderer, LiteralTag obj, Context context)
         {
-            renderer.Write(obj.Content);
+            var indentStr = new string(' ', obj.Indent);
+
+            foreach (var item in obj.Content)
+            {
+                if (obj.Indent > 0 && !item.IsEmptyOrWhitespace())
+                {
+                    renderer.Write(indentStr);
+                }
+
+                renderer.Write(item.ToString());
+            }
         }
     }
 }

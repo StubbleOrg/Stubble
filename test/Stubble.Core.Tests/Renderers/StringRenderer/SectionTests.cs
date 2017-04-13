@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Stubble.Core.Classes;
+using Stubble.Core.Dev.Imported;
 using Stubble.Core.Dev.Renderers;
 using Stubble.Core.Dev.Renderers.Token;
 using Stubble.Core.Dev.Tags;
@@ -44,7 +45,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     SectionName = "condition",
                     Children = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "bar" }
+                        new InterpolationTag { Content = new StringSlice("bar") }
                     }
                 },
                 context);
@@ -84,7 +85,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     SectionName = "condition",
                     Children = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "bar" }
+                        new InterpolationTag { Content = new StringSlice("bar") }
                     }
                 },
                 context);
@@ -130,10 +131,10 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     SectionName = "list",
                     Children = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "a" },
-                        new LiteralTag { Content = " " },
-                        new InterpolationTag { Content = "bar" },
-                        new LiteralTag { Content = "\n" },
+                        new InterpolationTag { Content = new StringSlice("a") },
+                        new LiteralTag { Content = new [] { new StringSlice(" ") } },
+                        new InterpolationTag { Content = new StringSlice("bar") },
+                        new LiteralTag { Content = new [] { new StringSlice("\n") } },
                     }
                 },
                 context);
@@ -177,8 +178,8 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     SectionName = "list",
                     Children = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "." },
-                        new LiteralTag { Content = " " },
+                        new InterpolationTag { Content = new StringSlice(".") },
+                        new LiteralTag { Content = new [] { new StringSlice(" ") } },
                     }
                 },
                 context);
@@ -218,8 +219,8 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     SectionName = "lambda",
                     Children = new List<MustacheTag>
                     {
-                        new InterpolationTag { Content = "." },
-                        new LiteralTag { Content = " " },
+                        new InterpolationTag { Content = new StringSlice(".") },
+                        new LiteralTag { Content = new [] { new StringSlice(" ") } },
                     }
                 },
                 context);
@@ -296,7 +297,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                 new SectionTag
                 {
                     SectionName = "lambda",
-                    SectionContent = "a b c {{bar}} d e f"
+                    SectionContent = new StringSlice("a b c {{bar}} d e f")
                 },
                 context);
 
