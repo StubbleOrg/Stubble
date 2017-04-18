@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using Stubble.Core.Interfaces;
 
@@ -26,6 +27,12 @@ namespace Stubble.Core.Classes.Loaders
         /// Gets the template cache for the loader
         /// </summary>
         internal IDictionary<string, string> TemplateCache { get; }
+
+        /// <inheritdoc/>
+        public IStubbleLoader Clone()
+        {
+            return new DictionaryLoader(new Dictionary<string, string>(TemplateCache));
+        }
 
         /// <summary>
         /// Loads the template from the dictionary cache

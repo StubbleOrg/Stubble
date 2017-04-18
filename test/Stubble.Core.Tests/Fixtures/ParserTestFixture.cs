@@ -11,7 +11,8 @@ namespace Stubble.Core.Tests.Fixtures
     {
         public ParserTestFixture()
         {
-            Parser = new Parser(new Registry());
+            var registry = new Registry();
+            Parser = new Parser(registry.TokenMatchRegex, registry.TokenGetters);
         }
 
         public Parser Parser { get; set; }

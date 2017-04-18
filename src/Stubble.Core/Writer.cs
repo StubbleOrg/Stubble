@@ -9,6 +9,9 @@ using System.Linq;
 using System.Text;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
+using Stubble.Core.Dev.Settings;
+using Stubble.Core.Helpers;
+using System.Text.RegularExpressions;
 
 namespace Stubble.Core
 {
@@ -21,31 +24,23 @@ namespace Stubble.Core
         /// Initializes a new instance of the <see cref="Writer"/> class
         /// with explicit registry and parser instance
         /// </summary>
-        /// <param name="registry">The registry to use</param>
+        /// <param name="rendererSettings">The renderer settings to use</param>
         /// <param name="parser">A parser the can be used by the writer</param>
-        public Writer(Registry registry, Parser parser)
+        public Writer(RendererSettings rendererSettings, Parser parser)
         {
-            if (registry == null)
-            {
-                throw new ArgumentNullException(nameof(registry));
-            }
-
-            if (parser == null)
-            {
-                throw new ArgumentNullException(nameof(parser));
-            }
-
-            Registry = registry;
-            Parser = parser;
+            Parser = parser ?? throw new ArgumentNullException(nameof(parser));
+            RendererSettings = rendererSettings ?? throw new ArgumentNullException(nameof(rendererSettings));
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Writer"/> class
         /// with a explicit registry and a default <see cref="Parser"/>
         /// </summary>
-        /// <param name="registry">The registry to use</param>
-        public Writer(Registry registry)
-            : this(registry, new Parser(15, registry))
+        /// <param name="rendererSettings">The renderer settings</param>
+        /// <param name="tokenMatchRegex">The regex to match tokens with</param>
+        /// <param name="tokenGetters">The map to get the token definitions from</param>
+        public Writer(RendererSettings rendererSettings, Regex tokenMatchRegex, IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> tokenGetters)
+            : this(rendererSettings, new Parser(15, tokenMatchRegex, tokenGetters))
         {
         }
 
@@ -53,15 +48,14 @@ namespace Stubble.Core
         /// Initializes a new instance of the <see cref="Writer"/> class
         /// with a default <see cref="Registry"/> and a default <see cref="Parser"/>
         /// </summary>
-        public Writer()
-            : this(new Registry())
+        /// <param name="tokenMatchRegex">The regex to match tokens with</param>
+        /// <param name="tokenGetters">The map to get the token definitions from</param>
+        public Writer(Regex tokenMatchRegex, IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> tokenGetters)
+            : this(new RendererSettingsBuilder().BuildSettings(), tokenMatchRegex, tokenGetters)
         {
         }
 
-        /// <summary>
-        /// Gets a copy of the registry
-        /// </summary>
-        private Registry Registry { get; }
+        private RendererSettings RendererSettings { get; }
 
         /// <summary>
         /// Gets the internal parser instance to be used for interpolation
@@ -83,7 +77,7 @@ namespace Stubble.Core
         /// <param name="settings">The settings to use for rendering</param>
         /// <returns>The template rendered with the view object</returns>
         public string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
-            => Render(template, new Context(view, Registry, settings), partials, null);
+            => Render(template, new Context(view, RendererSettings, settings), partials, null);
 
         /// <summary>
         /// Takes a template, context and partials and Renders them using default tags
@@ -150,10 +144,10 @@ namespace Stubble.Core
         {
             CurrentDepth++;
 
-            if (CurrentDepth >= Registry.MaxRecursionDepth)
+            if (CurrentDepth >= RendererSettings.MaxRecursionDepth)
             {
                 throw new StubbleException(
-                    $"You have reached the maximum recursion limit of {Registry.MaxRecursionDepth}.");
+                    $"You have reached the maximum recursion limit of {RendererSettings.MaxRecursionDepth}.");
             }
 
             var sb = new StringBuilder();

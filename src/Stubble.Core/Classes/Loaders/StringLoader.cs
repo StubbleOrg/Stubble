@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
 using Stubble.Core.Interfaces;
 
 namespace Stubble.Core.Classes.Loaders
@@ -12,6 +13,12 @@ namespace Stubble.Core.Classes.Loaders
     /// </summary>
     public sealed class StringLoader : IStubbleLoader
     {
+        /// <inheritdoc/>
+        public IStubbleLoader Clone()
+        {
+            return new StringLoader();
+        }
+
         /// <summary>
         /// Returns the passed string the parse as a template
         /// </summary>

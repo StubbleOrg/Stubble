@@ -10,6 +10,7 @@ using Stubble.Core.Classes;
 using Stubble.Core.Dev.Imported;
 using Stubble.Core.Dev.Renderers;
 using Stubble.Core.Dev.Renderers.Token;
+using Stubble.Core.Dev.Settings;
 using Stubble.Core.Dev.Tags;
 using Xunit;
 
@@ -22,17 +23,13 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "Bar";
 
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
-
             var context = new Context(
                 new
                 {
                     condition = true,
                     bar = "Bar"
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -62,17 +59,13 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "";
 
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
-
             var context = new Context(
                 new
                 {
                     condition = false,
                     bar = "Bar"
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -102,10 +95,6 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "1 Bar\n2 Bar\n3 Bar\n4 Bar\n";
 
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
-
             var context = new Context(
                 new
                 {
@@ -118,7 +107,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     },
                     bar = "Bar"
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -151,10 +140,6 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "a b c d e f g ";
 
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
-
             // Get Enumerator doesn't exist on string (netstandard 1.3)
             // will be added back in netstandard 2.0
             var enumerator = "abcdefg".ToCharArray().GetEnumerator();
@@ -165,7 +150,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     list = enumerator,
                     bar = "Bar"
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -196,17 +181,13 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "1";
 
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
-
             var context = new Context(
                 new
                 {
                     lambda = new Func<string, object>((str) => 1),
                     bar = "Bar"
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -237,17 +218,13 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "1 Bar";
 
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
-
             var context = new Context(
                 new
                 {
                     lambda = new Func<dynamic, string, object>((dyn, str) => $"1 {dyn.bar}"),
                     bar = "Bar"
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -276,17 +253,13 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "<b>a b c Bar d e f</b>";
 
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
-
             var context = new Context(
                 new
                 {
                     lambda = new Func<string, object>(str => $"<b>{str}</b>"),
                     bar = "Bar"
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);

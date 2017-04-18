@@ -27,8 +27,8 @@ namespace Stubble.Core.Tests
             var builder = (StubbleBuilder)new StubbleBuilder()
                                 .AddValueGetter(typeof(string), (o, s) => null);
 
-            Assert.Contains(typeof(string), builder.ValueGetters.Keys);
-            Assert.Null(builder.ValueGetters[typeof(string)](null, null));
+            Assert.Contains(typeof(string), builder.SettingsBuilder.ValueGetters.Keys);
+            Assert.Null(builder.SettingsBuilder.ValueGetters[typeof(string)](null, null));
         }
 
         [Fact]
@@ -47,8 +47,8 @@ namespace Stubble.Core.Tests
             var builder = (StubbleBuilder)new StubbleBuilder()
                             .AddEnumerationConversion(typeof(NameValueCollection), (obj) => null);
 
-            Assert.Contains(typeof(NameValueCollection), builder.EnumerationConverters.Keys);
-            Assert.Null(builder.EnumerationConverters[typeof(NameValueCollection)](null));
+            Assert.Contains(typeof(NameValueCollection), builder.SettingsBuilder.EnumerationConverters.Keys);
+            Assert.Null(builder.SettingsBuilder.EnumerationConverters[typeof(NameValueCollection)](null));
         }
 
         [Fact]
@@ -64,10 +64,10 @@ namespace Stubble.Core.Tests
                     return null;
                 });
 
-            Assert.Equal(1, builder.TruthyChecks.Count);
-            Assert.True(builder.TruthyChecks[0]("Foo"));
-            Assert.False(builder.TruthyChecks[0]("Bar"));
-            Assert.Null(builder.TruthyChecks[0](null));
+            Assert.Equal(1, builder.SettingsBuilder.TruthyChecks.Count);
+            Assert.True(builder.SettingsBuilder.TruthyChecks[0]("Foo"));
+            Assert.False(builder.SettingsBuilder.TruthyChecks[0]("Bar"));
+            Assert.Null(builder.SettingsBuilder.TruthyChecks[0](null));
         }
 
         [Fact]
@@ -76,8 +76,8 @@ namespace Stubble.Core.Tests
             var builder = (StubbleBuilder)new StubbleBuilder()
                 .SetTemplateLoader(new DictionaryLoader(new Dictionary<string, string> { { "test", "{{foo}}" } }));
 
-            Assert.NotNull(builder.TemplateLoader);
-            Assert.True(builder.TemplateLoader is DictionaryLoader);
+            Assert.NotNull(builder.SettingsBuilder.TemplateLoader);
+            Assert.True(builder.SettingsBuilder.TemplateLoader is DictionaryLoader);
         }
 
         [Fact]
@@ -86,8 +86,8 @@ namespace Stubble.Core.Tests
             var builder = (StubbleBuilder)new StubbleBuilder()
                    .SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string> { { "test", "{{foo}}" } }));
 
-            Assert.NotNull(builder.PartialTemplateLoader);
-            Assert.True(builder.PartialTemplateLoader is DictionaryLoader);
+            Assert.NotNull(builder.SettingsBuilder.PartialTemplateLoader);
+            Assert.True(builder.SettingsBuilder.PartialTemplateLoader is DictionaryLoader);
         }
 
         [Fact]
@@ -98,8 +98,8 @@ namespace Stubble.Core.Tests
 
             builder.AddToTemplateLoader(new DictionaryLoader(new Dictionary<string, string> { { "test2", "{{bar}}" } }));
 
-            Assert.NotNull(builder.TemplateLoader);
-            Assert.True(builder.TemplateLoader is CompositeLoader);
+            Assert.NotNull(builder.SettingsBuilder.TemplateLoader);
+            Assert.True(builder.SettingsBuilder.TemplateLoader is CompositeLoader);
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace Stubble.Core.Tests
             var builder = (StubbleBuilder)new StubbleBuilder()
                .SetIgnoreCaseOnKeyLookup(true);
 
-            Assert.True(builder.IgnoreCaseOnKeyLookup);
+            Assert.True(builder.SettingsBuilder.IgnoreCaseOnKeyLookup);
         }
 
         [Fact]
@@ -117,16 +117,13 @@ namespace Stubble.Core.Tests
             var stubble = new StubbleBuilder().Build();
 
             Assert.NotNull(stubble);
-            Assert.NotNull(stubble.Registry.ValueGetters);
-            Assert.NotNull(stubble.Registry.TokenGetters);
-            Assert.NotNull(stubble.Registry.TokenMatchRegex);
-            Assert.NotNull(stubble.Registry.TruthyChecks);
-            Assert.True(stubble.Registry.TemplateLoader is StringLoader);
-            Assert.False(stubble.Registry.IgnoreCaseOnKeyLookup);
-            Assert.Null(stubble.Registry.PartialTemplateLoader);
+            Assert.NotNull(stubble.RendererSettings.ValueGetters);
+            Assert.NotNull(stubble.RendererSettings.TruthyChecks);
+            Assert.True(stubble.RendererSettings.TemplateLoader is StringLoader);
+            Assert.False(stubble.RendererSettings.IgnoreCaseOnKeyLookup);
+            Assert.Null(stubble.RendererSettings.PartialTemplateLoader);
 
-            Assert.NotEmpty(stubble.Registry.ValueGetters);
-            Assert.NotEmpty(stubble.Registry.TokenGetters);
+            Assert.NotEmpty(stubble.RendererSettings.ValueGetters);
         }
 
         [Fact]

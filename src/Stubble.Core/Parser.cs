@@ -24,24 +24,29 @@ namespace Stubble.Core
         private Regex closingTagRegex;
         private Regex closingCurlyRegex;
         private Tags currentTags;
+        private readonly Regex tokenMatchRegex;
+        private IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> tokenGetters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Parser"/> class.
         /// </summary>
         /// <param name="cacheLimit">The max size of the template token cache</param>
-        /// <param name="registry">The registry instance to use</param>
-        public Parser(uint cacheLimit, Registry registry)
+        /// <param name="tokenMatchRegex">The regex to use for token matching</param>
+        /// <param name="tokenGetters">The token getters for the tokens</param>
+        public Parser(uint cacheLimit, Regex tokenMatchRegex, IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> tokenGetters)
         {
-            Registry = registry;
+            this.tokenMatchRegex = tokenMatchRegex;
+            this.tokenGetters = tokenGetters;
             Cache = new LimitedSizeConcurrentDictionary<string, IList<ParserOutput>>((int)cacheLimit);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Parser"/> class with a cache size of 15
         /// </summary>
-        /// <param name="registry">The registry instance to use</param>
-        public Parser(Registry registry)
-            : this(15, registry)
+        /// <param name="tokenMatchRegex">The regex to use for token matching</param>
+        /// <param name="tokenGetters">The token getters for the tokens</param>
+        public Parser(Regex tokenMatchRegex, IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> tokenGetters)
+            : this(15, tokenMatchRegex, tokenGetters)
         {
         }
 
@@ -54,8 +59,6 @@ namespace Stubble.Core
         /// Gets the Template Token Cache
         /// </summary>
         internal LimitedSizeConcurrentDictionary<string, IList<ParserOutput>> Cache { get; }
-
-        private Registry Registry { get; }
 
         /// <summary>
         /// Takes a given expression and escapes it
@@ -182,7 +185,7 @@ namespace Stubble.Core
 
                 hasTag = true;
 
-                var type = scanner.Scan(Registry.TokenMatchRegex);
+                var type = scanner.Scan(tokenMatchRegex);
                 type = string.IsNullOrEmpty(type) ? "name" : type;
                 scanner.Scan(ParserStatic.WhitespaceRegex);
 
@@ -334,8 +337,8 @@ namespace Stubble.Core
 
         private ParserOutput GetCorrectTypedToken(string tokenType, Tags tags)
         {
-            return Registry.TokenGetters.ContainsKey(tokenType) ?
-                Registry.TokenGetters[tokenType](tokenType, tags)
+            return tokenGetters.ContainsKey(tokenType) ?
+                tokenGetters[tokenType](tokenType, tags)
                 : new ParserOutput { TokenType = tokenType };
         }
 

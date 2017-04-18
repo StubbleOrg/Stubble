@@ -55,6 +55,12 @@ namespace Stubble.Core.Classes.Loaders
             return this;
         }
 
+        /// <inheritdoc/>
+        public IStubbleLoader Clone()
+        {
+            return new CompositeLoader(loaders.Select(i => i.Clone()).ToArray());
+        }
+
         /// <summary>
         /// Loads a template with the given name.
         /// Returns null if the template is not found

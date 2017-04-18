@@ -4,6 +4,7 @@
 // </copyright>
 
 using Stubble.Core.Classes;
+using Stubble.Core.Dev.Settings;
 
 namespace Stubble.Core.Tests.Fixtures
 {
@@ -21,7 +22,7 @@ namespace Stubble.Core.Tests.Fixtures
                         B = "b"
                     }
                 },
-                new Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
         }
 

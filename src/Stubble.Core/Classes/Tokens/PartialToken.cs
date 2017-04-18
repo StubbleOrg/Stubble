@@ -23,9 +23,9 @@ namespace Stubble.Core.Classes.Tokens
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
             var value = partials != null && partials.ContainsKey(Value) ? partials[Value] : null;
-            if (value == null && context.Registry.PartialTemplateLoader != null)
+            if (value == null && context.RendererSettings.PartialTemplateLoader != null)
             {
-                value = context.Registry.PartialTemplateLoader.Load(Value);
+                value = context.RendererSettings.PartialTemplateLoader.Load(Value);
             }
 
             return value != null ? writer.RenderWithOriginalTemplate(value, context, partials, originalTemplate) : null;

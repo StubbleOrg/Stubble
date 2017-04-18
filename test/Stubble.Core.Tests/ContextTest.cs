@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
+using Stubble.Core.Dev.Settings;
 using Stubble.Core.Tests.Fixtures;
 using Xunit;
 
@@ -49,7 +50,7 @@ namespace Stubble.Core.Tests
                 {
                     Foo = new Func<object>(() => "TestyTest")
                 },
-                new Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var output = context.Lookup("Foo");
@@ -66,7 +67,7 @@ namespace Stubble.Core.Tests
                     MyData = "Data!",
                     Foo = new Func<dynamic, object>((data) => data.MyData)
                 },
-                new Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var output = context.Lookup("Foo");
@@ -83,7 +84,7 @@ namespace Stubble.Core.Tests
                 {
                     MyData = "Data!"
                 },
-                new Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("MyData");
 
@@ -99,7 +100,7 @@ namespace Stubble.Core.Tests
                     { "Foo", "Bar" },
                     { "Foo2", 1 }
                 },
-                new Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var output = context.Lookup("Foo");
@@ -117,7 +118,7 @@ namespace Stubble.Core.Tests
             input.Number = 1;
             input.Blah = new { String = "Test" };
 
-            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(input, new RendererSettingsBuilder().BuildSettings(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Foo");
             var output2 = context.Lookup("Number");
             var output3 = context.Lookup("Blah.String");
@@ -138,7 +139,7 @@ namespace Stubble.Core.Tests
                     Field = 1,
                     Property = 1
                 },
-                new Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var instanceProperty = context.Lookup("Property");
@@ -176,7 +177,7 @@ namespace Stubble.Core.Tests
                     ChildField = 2,
                     ChildProperty = 2
                 },
-                new Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var parentInstanceProperty = context.Lookup("Property");
@@ -206,28 +207,26 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Can_Use_Truthy_Checks()
         {
-            var registry = new Registry(new RegistrySettings
-            {
-                TruthyChecks = new List<Func<object, bool?>>
+
+            var builder = new RendererSettingsBuilder();
+
+            builder
+                .AddTruthyCheck((val) =>
                 {
-                    (val) =>
+                    if (val is string)
                     {
-                        if (val is string)
-                        {
-                            return val.Equals("Foo");
-                        }
-                        return null;
-                    },
-                    (val) =>
-                    {
-                        if (val is uint)
-                        {
-                            return (uint)val > 0;
-                        }
-                        return null;
+                        return val.Equals("Foo");
                     }
-                }
-            });
+                    return null;
+                })
+                .AddTruthyCheck((val) =>
+                {
+                    if (val is uint)
+                    {
+                        return (uint) val > 0;
+                    }
+                    return null;
+                });
 
             var context = new Context(
                 new StronglyTypedChildTestClass()
@@ -237,7 +236,7 @@ namespace Stubble.Core.Tests
                     ChildField = 2,
                     ChildProperty = 2
                 },
-                registry,
+                builder.BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             Assert.True(context.IsTruthyValue("Foo"));
@@ -253,7 +252,7 @@ namespace Stubble.Core.Tests
                 Array = new[] { "Foo", "Bar" }
             };
 
-            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(input, new RendererSettingsBuilder().BuildSettings(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Array.0");
             Assert.Equal("Foo", output);
         }
@@ -266,7 +265,7 @@ namespace Stubble.Core.Tests
                 Array = new[] { new[] { "Foo" } }
             };
 
-            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(input, new RendererSettingsBuilder().BuildSettings(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Array.0.0");
             Assert.Equal("Foo", output);
         }
@@ -279,7 +278,7 @@ namespace Stubble.Core.Tests
                 Array = new[] { "Foo", "Bar" }
             };
 
-            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(input, new RendererSettingsBuilder().BuildSettings(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Array.2");
             var output2 = context.Lookup("Array.10");
             Assert.Null(output);
@@ -294,7 +293,7 @@ namespace Stubble.Core.Tests
                 Array = new[] { "Foo", "Bar" }
             };
 
-            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(input, new RendererSettingsBuilder().BuildSettings(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("Array.Foo");
             Assert.Null(output);
         }
@@ -307,7 +306,7 @@ namespace Stubble.Core.Tests
                 List = new List<string> { "Foo", "Bar" }
             };
 
-            var context = new Context(input, new Registry(), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(input, new RendererSettingsBuilder().BuildSettings(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("List.0");
             Assert.Equal("Foo", output);
         }
@@ -321,7 +320,7 @@ namespace Stubble.Core.Tests
                     Field = 1,
                     Property = 1
                 },
-                new Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             Assert.Null(context.Lookup("Foo"));
@@ -335,7 +334,7 @@ namespace Stubble.Core.Tests
                 List = new Dictionary<string, object> { { "Foo", "Bar" } }
             };
 
-            var context = new Context(input, new Registry(new RegistrySettings { IgnoreCaseOnKeyLookup = true }), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(input, new RendererSettingsBuilder().SetIgnoreCaseOnKeyLookup(true).BuildSettings(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("List.foo");
             Assert.Equal("Bar", output);
         }
@@ -348,7 +347,7 @@ namespace Stubble.Core.Tests
                 List = "Bar"
             };
 
-            var context = new Context(input, new Registry(new RegistrySettings { IgnoreCaseOnKeyLookup = true }), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(input, new RendererSettingsBuilder().SetIgnoreCaseOnKeyLookup(true).BuildSettings(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("list");
             Assert.Equal("Bar", output);
         }
@@ -361,7 +360,7 @@ namespace Stubble.Core.Tests
             input.Number = 1;
             input.Blah = new { String = "Test" };
 
-            var context = new Context(input, new Registry(new RegistrySettings { IgnoreCaseOnKeyLookup = true }), RenderSettings.GetDefaultRenderSettings());
+            var context = new Context(input, new RendererSettingsBuilder().SetIgnoreCaseOnKeyLookup(true).BuildSettings(), RenderSettings.GetDefaultRenderSettings());
             var output = context.Lookup("foo");
             Assert.Equal("Bar", output);
         }
@@ -374,7 +373,7 @@ namespace Stubble.Core.Tests
                 {
                     Foo = "Foo"
                 },
-                new Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 new RenderSettings { ThrowOnDataMiss = true });
 
             var ex = Assert.Throws<StubbleDataMissException>(() => context.Lookup("Bar"));
@@ -438,7 +437,7 @@ namespace Stubble.Core.Tests
                         B = "b"
                     }
                 },
-                new Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 new RenderSettings { SkipRecursiveLookup = true });
 
             var childContext = context.Push(new { Name = "child", B = "b" });
