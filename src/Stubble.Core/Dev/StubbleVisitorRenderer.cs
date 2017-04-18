@@ -72,7 +72,7 @@ namespace Stubble.Core.Dev
                 throw new UnknownTemplateException("No template was found with the name '" + template + "'");
             }
 
-            var document = MustacheParser.Parse(loadedTemplate);
+            var document = RendererSettings.Parser.Parse(loadedTemplate);
 
             var textwriter = new StringWriter();
             var renderer = new StringRender(textwriter);

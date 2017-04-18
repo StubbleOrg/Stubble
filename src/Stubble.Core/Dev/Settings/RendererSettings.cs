@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using Stubble.Core.Classes;
 using Stubble.Core.Interfaces;
+using Stubble.Core.Dev.Parser;
 
 namespace Stubble.Core.Dev.Settings
 {
@@ -23,6 +24,7 @@ namespace Stubble.Core.Dev.Settings
         /// <param name="renderSettings">The render settings</param>
         /// <param name="enumerationConverters">The enumeration converters</param>
         /// <param name="ignoreCaseOnLookup">Should case be ignored on lookup</param>
+        /// <param name="parser">The mustache parser to use</param>
         public RendererSettings(
             Dictionary<Type, Func<object, string, object>> valueGetters,
             IEnumerable<Func<object, bool?>> truthyChecks,
@@ -31,7 +33,8 @@ namespace Stubble.Core.Dev.Settings
             int maxRecursionDepth,
             RenderSettings renderSettings,
             Dictionary<Type, Func<object, IEnumerable>> enumerationConverters,
-            bool ignoreCaseOnLookup)
+            bool ignoreCaseOnLookup,
+            IMustacheParser parser)
         {
             ValueGetters = valueGetters.ToImmutableDictionary();
             TruthyChecks = truthyChecks.ToImmutableArray();
@@ -41,6 +44,7 @@ namespace Stubble.Core.Dev.Settings
             RenderSettings = renderSettings;
             EnumerationConverters = enumerationConverters.ToImmutableDictionary();
             IgnoreCaseOnKeyLookup = ignoreCaseOnLookup;
+            Parser = parser;
         }
 
         /// <summary>
@@ -82,5 +86,10 @@ namespace Stubble.Core.Dev.Settings
         /// Gets a value indicating whether keys should be looked up with case sensitivity
         /// </summary>
         public bool IgnoreCaseOnKeyLookup { get; }
+
+        /// <summary>
+        /// Gets the parser for mustache templates
+        /// </summary>
+        public IMustacheParser Parser { get; }
     }
 }

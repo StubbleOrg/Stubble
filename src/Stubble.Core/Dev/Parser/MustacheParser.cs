@@ -37,7 +37,7 @@ namespace Stubble.Core.Dev.Parser
         }
 
         /// <summary>
-        /// Parse a template and return a <see cref="List{MustacheTag}"/>
+        /// Parse a template and return a <see cref="MustacheTemplate"/>
         /// </summary>
         /// <param name="text">The text to be parsed</param>
         /// <param name="startingTags">The starting tag description</param>

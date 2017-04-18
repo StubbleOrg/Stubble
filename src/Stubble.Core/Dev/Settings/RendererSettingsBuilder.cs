@@ -6,6 +6,7 @@ using Stubble.Core.Classes.Loaders;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Helpers;
 using System.Linq;
+using Stubble.Core.Dev.Parser;
 
 namespace Stubble.Core.Dev.Settings
 {
@@ -62,6 +63,11 @@ namespace Stubble.Core.Dev.Settings
         internal bool IgnoreCaseOnKeyLookup { get; set; }
 
         /// <summary>
+        /// Gets or sets the mustache parser to use
+        /// </summary>
+        internal IMustacheParser Parser { get; set; }
+
+        /// <summary>
         /// Builds a RegistrySettings class with all the provided details
         /// </summary>
         /// <returns>The registry settings</returns>
@@ -81,7 +87,8 @@ namespace Stubble.Core.Dev.Settings
                 MaxRecursionDepth ?? 256,
                 RenderSettings ?? RenderSettings.GetDefaultRenderSettings(),
                 EnumerationConverters,
-                IgnoreCaseOnKeyLookup);
+                IgnoreCaseOnKeyLookup,
+                Parser ?? new CachedMustacheParser());
         }
 
         /// <summary>
@@ -89,7 +96,7 @@ namespace Stubble.Core.Dev.Settings
         /// </summary>
         /// <param name="type">The type to add the value getter function for</param>
         /// <param name="valueGetter">A value getter function</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
         public RendererSettingsBuilder AddValueGetter(Type type, Func<object, string, object> valueGetter)
         {
             ValueGetters.Add(type, valueGetter);
@@ -101,7 +108,7 @@ namespace Stubble.Core.Dev.Settings
         /// </summary>
         /// <param name="type">The type to add an enumeration conversion function for</param>
         /// <param name="enumerationConversion">An enumeration conversion</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
         public RendererSettingsBuilder AddEnumerationConversion(
             Type type,
             Func<object, IEnumerable> enumerationConversion)
@@ -114,7 +121,7 @@ namespace Stubble.Core.Dev.Settings
         /// Adds a truthy check
         /// </summary>
         /// <param name="truthyCheck">A truthy check</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
         public RendererSettingsBuilder AddTruthyCheck(Func<object, bool?> truthyCheck)
         {
             TruthyChecks.Add(truthyCheck);
@@ -127,7 +134,7 @@ namespace Stubble.Core.Dev.Settings
         /// combining the Template Loader and loader parameter.
         /// </summary>
         /// <param name="loader">The loader to add to the Template Loader</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
         public RendererSettingsBuilder AddToTemplateLoader(IStubbleLoader loader)
         {
             return CombineLoaders(ref templateLoader, loader.Clone());
@@ -137,7 +144,7 @@ namespace Stubble.Core.Dev.Settings
         /// Sets the Template Loader to be the passed loader
         /// </summary>
         /// <param name="loader">The loader to set as the Template Loader</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
         public RendererSettingsBuilder SetTemplateLoader(IStubbleLoader loader)
         {
             templateLoader = loader.Clone();
@@ -150,7 +157,7 @@ namespace Stubble.Core.Dev.Settings
         /// combining the Partial Template Loader and loader parameter.
         /// </summary>
         /// <param name="loader">The loader to add to the Partial Template Loader</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
         public RendererSettingsBuilder AddToPartialTemplateLoader(IStubbleLoader loader)
         {
             return CombineLoaders(ref partialTemplateLoader, loader.Clone());
@@ -160,7 +167,7 @@ namespace Stubble.Core.Dev.Settings
         /// Sets the Partial Template Loader to be the passed loader
         /// </summary>
         /// <param name="loader">The loader to set as the Partial Template Loader</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
         public RendererSettingsBuilder SetPartialTemplateLoader(IStubbleLoader loader)
         {
             partialTemplateLoader = loader.Clone();
@@ -171,7 +178,7 @@ namespace Stubble.Core.Dev.Settings
         /// Sets the Max Recursion Depth for recursive templates
         /// </summary>
         /// <param name="maxRecursionDepth">the max depth for the recursion</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
         public RendererSettingsBuilder SetMaxRecursionDepth(int maxRecursionDepth)
         {
             MaxRecursionDepth = maxRecursionDepth;
@@ -182,10 +189,21 @@ namespace Stubble.Core.Dev.Settings
         /// Sets if the case should be ignored when looking up keys in the context
         /// </summary>
         /// <param name="ignoreCaseOnKeyLookup">if the case should be ignored on key lookup</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
         public RendererSettingsBuilder SetIgnoreCaseOnKeyLookup(bool ignoreCaseOnKeyLookup)
         {
             IgnoreCaseOnKeyLookup = ignoreCaseOnKeyLookup;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the mustache parser to use for the renderer settings
+        /// </summary>
+        /// <param name="parser">The parser to use</param>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
+        public RendererSettingsBuilder SetMustacheParser(IMustacheParser parser)
+        {
+            Parser = parser;
             return this;
         }
 

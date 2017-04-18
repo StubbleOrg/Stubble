@@ -61,7 +61,7 @@ namespace Stubble.Core.Dev.Renderers.Token
                     ? functionDynamicValue.Invoke(context.View, sectionContent.ToString())
                     : functionStringValue.Invoke(sectionContent.ToString());
 
-                renderer.Render(MustacheParser.Parse(value.ToString(), obj.Tags), context);
+                renderer.Render(context.RendererSettings.Parser.Parse(value.ToString(), obj.Tags), context);
             }
             else if (value is IDictionary || value != null)
             {
