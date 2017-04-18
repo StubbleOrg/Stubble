@@ -4,6 +4,7 @@
 // </copyright>
 
 using Stubble.Core.Classes;
+using Stubble.Core.Dev.Settings;
 
 namespace Stubble.Core.Interfaces
 {
@@ -13,10 +14,10 @@ namespace Stubble.Core.Interfaces
     public interface IStubbleBuilder
     {
         /// <summary>
-        /// Fill the builders internal store with those from a <see cref="RegistrySettings"/>
+        /// Set the new stubble builders internal state to that of an existing settings builder
         /// instance
         /// </summary>
-        /// <param name="settings">The settings to fill from</param>
-        void FillFromRegistrySettings(RegistrySettings settings);
+        /// <param name="settingsBuilder">The builder to set as the child builder</param>
+        void SetRendererSettings(RendererSettingsBuilder settingsBuilder);
     }
 }

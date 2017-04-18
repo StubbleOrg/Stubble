@@ -29,7 +29,8 @@ namespace Stubble.Core.Benchmark
         [Benchmark(Baseline = true)]
         public void RegexParser()
         {
-            new Parser(new Registry()).ParseTemplate(template);
+            var registry = new Registry();
+            new Parser(registry.TokenMatchRegex, registry.TokenGetters).ParseTemplate(template);
         }
 
         [Benchmark]

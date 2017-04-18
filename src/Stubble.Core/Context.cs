@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
+using Stubble.Core.Dev.Settings;
 using Stubble.Core.Interfaces;
 
 namespace Stubble.Core
@@ -25,10 +26,10 @@ namespace Stubble.Core
         /// Initializes a new instance of the <see cref="Context"/> class.
         /// </summary>
         /// <param name="view">The data view to create the context with</param>
-        /// <param name="registry">A reference to the a registry instance</param>
+        /// <param name="rendererSettings">A reference to the a registry instance</param>
         /// <param name="settings">The render settings </param>
-        public Context(object view, Registry registry, RenderSettings settings)
-            : this(view, registry, registry.PartialTemplateLoader, null, settings)
+        public Context(object view, RendererSettings rendererSettings, RenderSettings settings)
+            : this(view, rendererSettings, rendererSettings.PartialTemplateLoader, null, settings)
         {
         }
 
@@ -36,11 +37,11 @@ namespace Stubble.Core
         /// Initializes a new instance of the <see cref="Context"/> class.
         /// </summary>
         /// <param name="view">The data view to create the context with</param>
-        /// <param name="registry">A reference to the a registry instance</param>
+        /// <param name="rendererSettings">A reference to the a registry instance</param>
         /// <param name="partialLoader">A reference to loader for partials</param>
         /// <param name="settings">The render settings </param>
-        public Context(object view, Registry registry, IStubbleLoader partialLoader, RenderSettings settings)
-            : this(view, registry, partialLoader, null, settings)
+        public Context(object view, RendererSettings rendererSettings, IStubbleLoader partialLoader, RenderSettings settings)
+            : this(view, rendererSettings, partialLoader, null, settings)
         {
         }
 
@@ -48,17 +49,17 @@ namespace Stubble.Core
         /// Initializes a new instance of the <see cref="Context"/> class.
         /// </summary>
         /// <param name="view">The data view to create the context with</param>
-        /// <param name="registry">A reference to the a registry instance</param>
+        /// <param name="rendererSettings">A reference to the a registry instance</param>
         /// <param name="partialLoader">A reference to loader for partials</param>
         /// <param name="parentContext">The parent context for the new context</param>
         /// <param name="settings">The render settings </param>
-        public Context(object view, Registry registry, IStubbleLoader partialLoader, Context parentContext, RenderSettings settings)
+        public Context(object view, RendererSettings rendererSettings, IStubbleLoader partialLoader, Context parentContext, RenderSettings settings)
         {
             this.view = view;
             View = this.view;
             ParentContext = parentContext;
             PartialLoader = partialLoader;
-            Registry = registry;
+            RendererSettings = rendererSettings;
             RenderSettings = settings;
             Cache = new Dictionary<string, object>()
             {
@@ -84,7 +85,7 @@ namespace Stubble.Core
         /// <summary>
         /// Gets the registry for the context
         /// </summary>
-        internal Registry Registry { get; }
+        internal RendererSettings RendererSettings { get; }
 
         /// <summary>
         /// Gets the partial loader for the context
@@ -186,7 +187,7 @@ namespace Stubble.Core
                 return false;
             }
 
-            foreach (var func in Registry.TruthyChecks)
+            foreach (var func in RendererSettings.TruthyChecks)
             {
                 var funcResult = func(value);
                 if (funcResult.HasValue)
@@ -245,7 +246,7 @@ namespace Stubble.Core
         /// <returns>A new child data context of the current context</returns>
         public Context Push(object newView)
         {
-            return new Context(newView, Registry, PartialLoader, this, RenderSettings);
+            return new Context(newView, RendererSettings, PartialLoader, this, RenderSettings);
         }
 
         /// <summary>
@@ -256,7 +257,7 @@ namespace Stubble.Core
         /// <returns>The value if found or null if not</returns>
         private object GetValueFromRegistry(object value, string key)
         {
-            foreach (var entry in Registry.ValueGetters)
+            foreach (var entry in RendererSettings.ValueGetters)
             {
                 if (!entry.Key.IsInstanceOfType(value))
                 {
@@ -280,9 +281,9 @@ namespace Stubble.Core
         /// <returns>The passed value or the value after conversion</returns>
         private object TryEnumerationConversionIfRequired(object value)
         {
-            if (value != null && Registry.EnumerationConverters.ContainsKey(value.GetType()))
+            if (value != null && RendererSettings.EnumerationConverters.ContainsKey(value.GetType()))
             {
-                return Registry.EnumerationConverters[value.GetType()].Invoke(value);
+                return RendererSettings.EnumerationConverters[value.GetType()].Invoke(value);
             }
 
             return value;

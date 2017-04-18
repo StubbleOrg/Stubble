@@ -11,6 +11,7 @@ using Stubble.Core.Dev.Parser;
 using Stubble.Core.Dev.Renderers;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Dev.Settings;
 
 namespace Stubble.Core.Dev
 {
@@ -24,7 +25,7 @@ namespace Stubble.Core.Dev
         /// with a default registry
         /// </summary>
         public StubbleVisitorRenderer()
-            : this(new Registry())
+            : this(new RendererSettingsBuilder().BuildSettings())
         {
         }
 
@@ -33,15 +34,15 @@ namespace Stubble.Core.Dev
         /// with the provided registry
         /// </summary>
         /// <param name="registry">The registry</param>
-        public StubbleVisitorRenderer(Registry registry)
+        public StubbleVisitorRenderer(RendererSettings registry)
         {
-            Registry = registry;
+            RendererSettings = registry;
         }
 
         /// <summary>
         /// Gets the core Registry instance for the Renderer
         /// </summary>
-        internal Registry Registry { get; }
+        internal RendererSettings RendererSettings { get; }
 
         /// <inheritdoc/>
         public string Render(string template, object view)
@@ -64,7 +65,7 @@ namespace Stubble.Core.Dev
         /// <inheritdoc/>
         public string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
         {
-            var loadedTemplate = Registry.TemplateLoader.Load(template);
+            var loadedTemplate = RendererSettings.TemplateLoader.Load(template);
 
             if (loadedTemplate == null)
             {
@@ -76,14 +77,14 @@ namespace Stubble.Core.Dev
             var textwriter = new StringWriter();
             var renderer = new StringRender(textwriter);
 
-            var partialsLoader = Registry.PartialTemplateLoader;
+            var partialsLoader = RendererSettings.PartialTemplateLoader;
             if (partials != null && partials.Keys.Count > 0)
             {
-                partialsLoader = new CompositeLoader(new DictionaryLoader(partials), Registry.PartialTemplateLoader);
+                partialsLoader = new CompositeLoader(new DictionaryLoader(partials), RendererSettings.PartialTemplateLoader);
             }
 
             // TODO: Figure out Partials
-            renderer.Render(document, new Context(view, Registry, partialsLoader, settings ?? Registry.RenderSettings));
+            renderer.Render(document, new Context(view, RendererSettings, partialsLoader, settings ?? RendererSettings.RenderSettings));
 
             renderer.Writer.Flush();
             return ((StringWriter)renderer.Writer).ToString();

@@ -18,5 +18,11 @@ namespace Stubble.Core.Interfaces
         /// <param name="name">The name of the template to load</param>
         /// <returns>A Mustache Template</returns>
         string Load(string name);
+
+        /// <summary>
+        /// Should return a new instance of the loader with the same internals
+        /// </summary>
+        /// <returns>A new <see cref="IStubbleLoader"/> with the same internals</returns>
+        IStubbleLoader Clone();
     }
 }

@@ -22,7 +22,7 @@ namespace Stubble.Core.Helpers
         /// <param name="me">The left dictionry to merge in to</param>
         /// <param name="others">The other dictionaries to merge left</param>
         /// <returns>Returns a new dictionary with all the dictionaries keys merged left-wise.</returns>
-        internal static IDictionary<TK, TV> MergeLeft<TK, TV>(this IDictionary<TK, TV> me, params IDictionary<TK, TV>[] others)
+        internal static Dictionary<TK, TV> MergeLeft<TK, TV>(this IDictionary<TK, TV> me, params IDictionary<TK, TV>[] others)
         {
             var newMap = new Dictionary<TK, TV>(me);
             foreach (var p in new List<IDictionary<TK, TV>> { me }.Concat(others).SelectMany(src => src))

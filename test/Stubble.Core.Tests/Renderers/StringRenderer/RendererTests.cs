@@ -11,6 +11,7 @@ using Stubble.Core.Classes.Loaders;
 using Stubble.Core.Dev.Imported;
 using Stubble.Core.Dev.Renderers;
 using Stubble.Core.Dev.Renderers.Token;
+using Stubble.Core.Dev.Settings;
 using Stubble.Core.Dev.Tags;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             var context = new Context(
                 new { },
-                new Classes.Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 Classes.RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -50,7 +51,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             const string result = "Bar";
             var context = new Context(
                 new { foo = "Bar" },
-                new Classes.Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 Classes.RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -76,7 +77,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             const string result = "A &amp; B";
             var context = new Context(
                 new { foo = "A & B" },
-                new Classes.Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 Classes.RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -102,7 +103,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             const string result = "TestyTest";
             var context = new Context(
                 new { foo = new Func<string>(() => "TestyTest") },
-                new Classes.Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 Classes.RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -128,7 +129,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             const string result = "A &amp; B";
             var context = new Context(
                 new { foo = new Func<string>(() => "A & B") },
-                new Classes.Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 Classes.RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -158,7 +159,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
                     foo = new Func<string>(() => "{{bar}}"),
                     bar = "Bar"
                 },
-                new Classes.Registry(),
+                new RendererSettingsBuilder().BuildSettings(),
                 Classes.RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -183,20 +184,18 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "Bar";
 
-            var setings = default(RegistrySettings);
-            setings.PartialTemplateLoader = new DictionaryLoader(new Dictionary<string, string>()
+            var setingsBuilder = new RendererSettingsBuilder();
+            setingsBuilder.SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>()
             {
                 { "foo", "{{bar}}" }
-            });
-
-            var registry = new Registry(setings);
+            }));
 
             var context = new Context(
                 new
                 {
                     bar = "Bar"
                 },
-                registry,
+                setingsBuilder.BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -220,20 +219,18 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "";
 
-            var setings = default(RegistrySettings);
-            setings.PartialTemplateLoader = new DictionaryLoader(new Dictionary<string, string>()
+            var setingsBuilder = new RendererSettingsBuilder();
+            setingsBuilder.SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>()
             {
                 { "bar", "{{bar}}" }
-            });
-
-            var registry = new Registry(setings);
+            }));
 
             var context = new Context(
                 new
                 {
                     bar = "Bar"
                 },
-                registry,
+                setingsBuilder.BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -255,18 +252,14 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         [Fact]
         public void It_Renders_Inverted_Tags_When_Falsey_Bool()
         {
-            const string result = "I'm false";
-
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
+            const string result = "I'm false";;
 
             var context = new Context(
                 new
                 {
                     check = false
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -296,16 +289,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "I'm also false";
 
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
-
             var context = new Context(
                 new
                 {
                     list = new object[] { }
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -340,16 +329,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "I'm also also false";
 
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
-
             var context = new Context(
                 new
                 {
                     check = false
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);
@@ -384,16 +369,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         {
             const string result = "";
 
-            var setings = default(RegistrySettings);
-
-            var registry = new Registry(setings);
-
             var context = new Context(
                 new
                 {
                     check = true
                 },
-                registry,
+                new RendererSettingsBuilder().BuildSettings(),
                 RenderSettings.GetDefaultRenderSettings());
 
             var stringRenderer = new StringRender(StreamWriter);

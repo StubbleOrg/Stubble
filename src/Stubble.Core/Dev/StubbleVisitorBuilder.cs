@@ -4,6 +4,8 @@
 // </copyright>
 
 using Stubble.Core.Classes;
+using System.Linq;
+using Stubble.Core.Dev.Settings;
 
 namespace Stubble.Core.Dev
 {
@@ -18,7 +20,9 @@ namespace Stubble.Core.Dev
         /// <returns>A new stubble renderer</returns>
         public override StubbleVisitorRenderer Build()
         {
-            return new StubbleVisitorRenderer(new Registry(BuildRegistrySettings()));
+            var rendererSettings = BuildSettings();
+
+            return new StubbleVisitorRenderer(rendererSettings);
         }
     }
 }

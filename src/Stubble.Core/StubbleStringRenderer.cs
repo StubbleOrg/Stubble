@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
+using Stubble.Core.Dev.Settings;
 using Stubble.Core.Interfaces;
 
 namespace Stubble.Core
@@ -20,7 +21,7 @@ namespace Stubble.Core
         /// with a default <see cref="Registry"/>
         /// </summary>
         public StubbleStringRenderer()
-            : this(new Registry())
+            : this(new RendererSettingsBuilder().BuildSettings(), new Registry())
         {
         }
 
@@ -28,18 +29,19 @@ namespace Stubble.Core
         /// Initializes a new instance of the <see cref="StubbleStringRenderer"/> class
         /// with a passed Registry
         /// </summary>
+        /// <param name="rendererSettings">The renderer settings for the renderer</param>
         /// <param name="registry">A registry instance</param>
-        internal StubbleStringRenderer(Registry registry)
+        internal StubbleStringRenderer(RendererSettings rendererSettings, Registry registry)
         {
-            Registry = registry;
-            Parser = new Parser(Registry);
-            Writer = new Writer(Registry);
+            RendererSettings = rendererSettings;
+            Parser = new Parser(registry.TokenMatchRegex, registry.TokenGetters);
+            Writer = new Writer(RendererSettings, Parser);
         }
 
         /// <summary>
-        /// Gets the core Registry instance for the Renderer
+        /// Gets the renderer settings for the renderer
         /// </summary>
-        internal Registry Registry { get; }
+        internal RendererSettings RendererSettings { get; }
 
         /// <summary>
         /// Gets the core Writer instance for the Renderer
@@ -99,7 +101,7 @@ namespace Stubble.Core
         /// <returns>A mustache rendered string</returns>
         public string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
         {
-            var loadedTemplate = Registry.TemplateLoader.Load(template);
+            var loadedTemplate = RendererSettings.TemplateLoader.Load(template);
 
             if (loadedTemplate == null)
             {
@@ -108,7 +110,7 @@ namespace Stubble.Core
 
             var tokens = Parser.Parse(loadedTemplate);
 
-            return Writer.Render(loadedTemplate, tokens, new Context(view, Registry, settings ?? Registry.RenderSettings), partials);
+            return Writer.Render(loadedTemplate, tokens, new Context(view, RendererSettings, settings ?? RendererSettings.RenderSettings), partials);
         }
 
         /// <summary>
@@ -137,7 +139,7 @@ namespace Stubble.Core
         /// <returns>Returns a list of tokens</returns>
         public IList<ParserOutput> Parse(string template, Tags tags)
         {
-            var loadedTemplate = Registry.TemplateLoader.Load(template);
+            var loadedTemplate = RendererSettings.TemplateLoader.Load(template);
             return Parser.Parse(loadedTemplate, tags);
         }
 
