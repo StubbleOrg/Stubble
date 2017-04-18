@@ -25,7 +25,7 @@ namespace Stubble.Core.Dev.Renderers.Token
 
             if (template != null)
             {
-                renderer.Render(MustacheParser.Parse(template, lineIndent: obj.LineIndent), context);
+                renderer.Render(context.RendererSettings.Parser.Parse(template, lineIndent: obj.LineIndent), context);
             }
         }
     }

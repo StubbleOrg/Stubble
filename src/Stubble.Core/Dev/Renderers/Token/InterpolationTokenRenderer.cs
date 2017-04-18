@@ -29,7 +29,7 @@ namespace Stubble.Core.Dev.Renderers.Token
                 var resultString = functionResult.ToString();
                 if (resultString.Contains("{{"))
                 {
-                    renderer.Render(MustacheParser.Parse(resultString), context);
+                    renderer.Render(context.RendererSettings.Parser.Parse(resultString), context);
                     return;
                 }
 
