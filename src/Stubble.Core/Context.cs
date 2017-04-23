@@ -106,9 +106,9 @@ namespace Stubble.Core
         public object Lookup(string name)
         {
             object value = null;
-            if (Cache.ContainsKey(name))
+            if (Cache.TryGetValue(name, out object outValue))
             {
-                value = Cache[name];
+                value = outValue;
             }
             else
             {
@@ -281,9 +281,9 @@ namespace Stubble.Core
         /// <returns>The passed value or the value after conversion</returns>
         private object TryEnumerationConversionIfRequired(object value)
         {
-            if (value != null && RendererSettings.EnumerationConverters.ContainsKey(value.GetType()))
+            if (value != null && RendererSettings.EnumerationConverters.TryGetValue(value.GetType(), out Func<object, IEnumerable> outFunc))
             {
-                return RendererSettings.EnumerationConverters[value.GetType()].Invoke(value);
+                return outFunc.Invoke(value);
             }
 
             return value;
