@@ -43,7 +43,7 @@ namespace Stubble.Core.Dev.Renderers.Token
 
             if (obj.Indent > 0)
             {
-                renderer.Write(new string(' ', obj.Indent));
+                renderer.Write(' ', obj.Indent);
             }
 
             renderer.Write(value?.ToString());

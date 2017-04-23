@@ -15,11 +15,11 @@ namespace Stubble.Core.Dev.Settings
     /// </summary>
     public static class RendererSettingsDefaults
     {
-        private static readonly ConcurrentDictionary<Type, Tuple<Dictionary<string, Func<object, object>>,
-            Dictionary<string, Func<object, object>>>> GettersCache
+        private static readonly ConcurrentDictionary<Type, Tuple<Dictionary<string, Lazy<Func<object, object>>>,
+            Dictionary<string, Lazy<Func<object, object>>>>> GettersCache
             =
-            new ConcurrentDictionary<Type, Tuple<Dictionary<string, Func<object, object>>,
-                Dictionary<string, Func<object, object>>>>();
+            new ConcurrentDictionary<Type, Tuple<Dictionary<string, Lazy<Func<object, object>>>,
+                Dictionary<string, Lazy<Func<object, object>>>>>();
 
         /// <summary>
         /// Returns the default value getters
@@ -56,7 +56,7 @@ namespace Stubble.Core.Dev.Settings
                                 StringComparer.OrdinalIgnoreCase)
                             : value as IDictionary<string, object>;
 
-                        return castValue != null && castValue.ContainsKey(key) ? castValue[key] : null;
+                        return castValue != null && castValue.TryGetValue(key, out object outValue) ? outValue : null;
                     }
                 },
                 {
@@ -81,12 +81,12 @@ namespace Stubble.Core.Dev.Settings
         private static object GetValueFromObjectByName(object value, string key, bool ignoreCase)
         {
             var objectType = value.GetType();
-            Tuple<Dictionary<string, Func<object, object>>, Dictionary<string, Func<object, object>>> typeLookup;
+            Tuple<Dictionary<string, Lazy<Func<object, object>>>, Dictionary<string, Lazy<Func<object, object>>>> typeLookup;
             if (!GettersCache.TryGetValue(objectType, out typeLookup))
             {
                 var memberLookup = GetMemberLookup(objectType);
                 var noCase =
-                    new Dictionary<string, Func<object, object>>(memberLookup, StringComparer.OrdinalIgnoreCase);
+                    new Dictionary<string, Lazy<Func<object, object>>>(memberLookup, StringComparer.OrdinalIgnoreCase);
                 typeLookup = Tuple.Create(memberLookup, noCase);
 
                 GettersCache.AddOrUpdate(objectType, typeLookup, (_, existing) => existing);
@@ -94,59 +94,68 @@ namespace Stubble.Core.Dev.Settings
 
             var lookup = ignoreCase ? typeLookup.Item2 : typeLookup.Item1;
 
-            return lookup.ContainsKey(key) ? lookup[key](value) : null;
+            return lookup.TryGetValue(key, out Lazy<Func<object, object>> outValue) ? outValue.Value(value) : null;
         }
 
-        private static Dictionary<string, Func<object, object>> GetMemberLookup(Type objectType)
+        private static Dictionary<string, Lazy<Func<object, object>>> GetMemberLookup(Type objectType)
         {
             var members = objectType.GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
                                                 BindingFlags.FlattenHierarchy);
 
-            var dict = new Dictionary<string, Func<object, object>>(members.Length);
+            var dict = new Dictionary<string, Lazy<Func<object, object>>>(members.Length);
             var param = Expression.Parameter(typeof(object));
             var cast = Expression.Convert(param, objectType);
 
             foreach (var m in members)
             {
-                Expression ex = null;
-                switch (m)
-                {
-                    case FieldInfo fi:
-                        ex = fi.IsStatic ? Expression.Field(null, fi) : Expression.Field(cast, fi);
-                        break;
-                    case PropertyInfo pi:
-                        var getter = pi.GetGetMethod();
-                        if (getter != null && IsZeroArityGetterMethod(getter))
-                        {
-                            ex = getter.IsStatic ? Expression.Call(getter) : Expression.Call(cast, getter);
-                        }
-                        else if (pi.GetIndexParameters().Length == 0)
-                        {
-                            ex = Expression.Property(cast, pi);
-                        }
-
-                        break;
-                    case MethodInfo mi:
-                        if (IsZeroArityGetterMethod(mi))
-                        {
-                            ex = mi.IsStatic ? Expression.Call(mi) : Expression.Call(cast, mi);
-                        }
-
-                        break;
-                }
+                var ex = GetExpressionFromMemberInfo(m, cast);
 
                 if (ex == null)
                 {
                     continue;
                 }
 
-                var func = Expression.Lambda<Func<object, object>>(Expression.Convert(ex, typeof(object)), param)
-                    .Compile();
+                var func = new Lazy<Func<object, object>>(() => Expression
+                    .Lambda<Func<object, object>>(Expression.Convert(ex, typeof(object)), param)
+                    .Compile());
 
                 dict.Add(m.Name, func);
             }
 
             return dict;
+        }
+
+        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+        private static Expression GetExpressionFromMemberInfo(MemberInfo m, UnaryExpression cast)
+        {
+            Expression ex = null;
+            switch (m)
+            {
+                case FieldInfo fi:
+                    ex = fi.IsStatic ? Expression.Field(null, fi) : Expression.Field(cast, fi);
+                    break;
+                case PropertyInfo pi:
+                    var getter = pi.GetGetMethod();
+                    if (getter != null && IsZeroArityGetterMethod(getter))
+                    {
+                        ex = getter.IsStatic ? Expression.Call(getter) : Expression.Call(cast, getter);
+                    }
+                    else if (pi.GetIndexParameters().Length == 0)
+                    {
+                        ex = Expression.Property(cast, pi);
+                    }
+
+                    break;
+                case MethodInfo mi:
+                    if (IsZeroArityGetterMethod(mi))
+                    {
+                        ex = mi.IsStatic ? Expression.Call(mi) : Expression.Call(cast, mi);
+                    }
+
+                    break;
+            }
+
+            return ex;
         }
 
         [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]

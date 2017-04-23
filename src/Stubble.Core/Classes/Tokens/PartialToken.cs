@@ -22,7 +22,10 @@ namespace Stubble.Core.Classes.Tokens
         /// <returns>The rendered partial template</returns>
         public string Render(Writer writer, Context context, IDictionary<string, string> partials, string originalTemplate)
         {
-            var value = partials != null && partials.ContainsKey(Value) ? partials[Value] : null;
+            var value = partials != null && partials.TryGetValue(Value, out string partialTemplate)
+                ? partialTemplate
+                : null;
+
             if (value == null && context.RendererSettings.PartialTemplateLoader != null)
             {
                 value = context.RendererSettings.PartialTemplateLoader.Load(Value);

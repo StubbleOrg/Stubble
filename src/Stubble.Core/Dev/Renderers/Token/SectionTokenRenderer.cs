@@ -55,7 +55,7 @@ namespace Stubble.Core.Dev.Renderers.Token
             {
                 var functionDynamicValue = value as Func<dynamic, string, object>;
                 var functionStringValue = value as Func<string, object>;
-                var sectionContent = obj.SectionContent; // originalTemplate.Slice(End, ParentSectionEnd);
+                var sectionContent = obj.SectionContent;
 
                 value = functionDynamicValue != null
                     ? functionDynamicValue.Invoke(context.View, sectionContent.ToString())
@@ -67,8 +67,6 @@ namespace Stubble.Core.Dev.Renderers.Token
             {
                 renderer.Render(obj, context.Push(value));
             }
-
-            return;
         }
     }
 }

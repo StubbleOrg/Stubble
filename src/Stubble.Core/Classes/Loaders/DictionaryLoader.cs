@@ -41,7 +41,7 @@ namespace Stubble.Core.Classes.Loaders
         /// <returns>The template or null if not found</returns>
         public string Load(string name)
         {
-            return TemplateCache.ContainsKey(name) ? TemplateCache[name] : null;
+            return TemplateCache.TryGetValue(name, out string outValue) ? outValue : null;
         }
     }
 }
