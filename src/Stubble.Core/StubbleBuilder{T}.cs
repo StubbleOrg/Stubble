@@ -91,7 +91,7 @@ namespace Stubble.Core
         }
 
         /// <inheritdoc/>
-        public IStubbleBuilder<T> SetMaxRecursionDepth(int maxRecursionDepth)
+        public IStubbleBuilder<T> SetMaxRecursionDepth(uint maxRecursionDepth)
         {
             SettingsBuilder.SetMaxRecursionDepth(maxRecursionDepth);
             return this;

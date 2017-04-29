@@ -22,8 +22,9 @@ namespace Stubble.Core.Dev.Renderers.StringRenderer
         /// Initializes a new instance of the <see cref="TextRendererBase{T}"/> class.
         /// </summary>
         /// <param name="writer">The writer to initalize with</param>
-        protected TextRendererBase(TextWriter writer)
-            : base(writer)
+        /// <param name="maxDepth">The max recursion depth for the renderer</param>
+        protected TextRendererBase(TextWriter writer, uint maxDepth)
+            : base(writer, maxDepth)
         {
             buffer = new char[1024];
         }

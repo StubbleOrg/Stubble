@@ -44,7 +44,7 @@ namespace Stubble.Core.Dev.Settings
         /// <summary>
         /// Gets or sets the MaxRecursionDepth
         /// </summary>
-        internal int? MaxRecursionDepth { get; set; }
+        internal uint? MaxRecursionDepth { get; set; }
 
         /// <summary>
         /// Gets or sets the RenderSettings
@@ -84,7 +84,7 @@ namespace Stubble.Core.Dev.Settings
                 TruthyChecks,
                 TemplateLoader,
                 PartialTemplateLoader,
-                MaxRecursionDepth ?? 256,
+                MaxRecursionDepth.HasValue ? (MaxRecursionDepth.Value > 0 ? MaxRecursionDepth.Value : uint.MaxValue) : 256,
                 RenderSettings ?? RenderSettings.GetDefaultRenderSettings(),
                 EnumerationConverters,
                 IgnoreCaseOnKeyLookup,
@@ -175,11 +175,11 @@ namespace Stubble.Core.Dev.Settings
         }
 
         /// <summary>
-        /// Sets the Max Recursion Depth for recursive templates
+        /// Sets the Max Recursion Depth for recursive templates. A value of zero will set to uint.MaxValue
         /// </summary>
         /// <param name="maxRecursionDepth">the max depth for the recursion</param>
         /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
-        public RendererSettingsBuilder SetMaxRecursionDepth(int maxRecursionDepth)
+        public RendererSettingsBuilder SetMaxRecursionDepth(uint maxRecursionDepth)
         {
             MaxRecursionDepth = maxRecursionDepth;
             return this;
