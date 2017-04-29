@@ -3,9 +3,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using Stubble.Core.Dev.Imported;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Stubble.Core.Dev.Imported;
 
 namespace Stubble.Core.Dev.Renderers.StringRenderer
 {

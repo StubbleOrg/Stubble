@@ -5,13 +5,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Dev.Settings;
-using Stubble.Core.Helpers;
-using System.Text.RegularExpressions;
 
 namespace Stubble.Core
 {

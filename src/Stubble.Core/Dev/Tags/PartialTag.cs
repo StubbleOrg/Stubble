@@ -12,6 +12,9 @@ namespace Stubble.Core.Dev.Tags
     /// </summary>
     public class PartialTag : InlineTag<PartialTag>
     {
+        /// <summary>
+        /// Gets or sets the line indent for the partial tag
+        /// </summary>
         public int LineIndent { get; set; }
 
         /// <inheritdoc/>

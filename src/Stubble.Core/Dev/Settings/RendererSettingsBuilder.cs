@@ -1,12 +1,17 @@
-﻿using System;
+﻿// <copyright file="RendererSettingsBuilder.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Loaders;
-using Stubble.Core.Interfaces;
-using Stubble.Core.Helpers;
-using System.Linq;
 using Stubble.Core.Dev.Parser;
+using Stubble.Core.Helpers;
+using Stubble.Core.Interfaces;
 
 namespace Stubble.Core.Dev.Settings
 {

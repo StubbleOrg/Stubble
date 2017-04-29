@@ -20,11 +20,11 @@ namespace Stubble.Core
     /// </summary>
     public sealed class Parser
     {
+        private readonly Regex tokenMatchRegex;
         private Regex openingTagRegex;
         private Regex closingTagRegex;
         private Regex closingCurlyRegex;
         private Tags currentTags;
-        private readonly Regex tokenMatchRegex;
         private IReadOnlyDictionary<string, Func<string, Tags, ParserOutput>> tokenGetters;
 
         /// <summary>
