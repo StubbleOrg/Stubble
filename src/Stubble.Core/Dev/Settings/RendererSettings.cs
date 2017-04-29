@@ -30,7 +30,7 @@ namespace Stubble.Core.Dev.Settings
             IEnumerable<Func<object, bool?>> truthyChecks,
             IStubbleLoader templateLoader,
             IStubbleLoader partialLoader,
-            int maxRecursionDepth,
+            uint maxRecursionDepth,
             RenderSettings renderSettings,
             Dictionary<Type, Func<object, IEnumerable>> enumerationConverters,
             bool ignoreCaseOnLookup,
@@ -70,7 +70,7 @@ namespace Stubble.Core.Dev.Settings
         /// <summary>
         /// Gets the MaxRecursionDepth
         /// </summary>
-        public int MaxRecursionDepth { get; }
+        public uint MaxRecursionDepth { get; }
 
         /// <summary>
         /// Gets the RenderSettings

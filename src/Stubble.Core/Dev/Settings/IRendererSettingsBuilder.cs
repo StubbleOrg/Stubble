@@ -70,7 +70,7 @@ namespace Stubble.Core.Dev.Settings
         /// </summary>
         /// <param name="maxRecursionDepth">the max depth for the recursion</param>
         /// <returns>The IStubbleBuilder{T} for chaining</returns>
-        T SetMaxRecursionDepth(int maxRecursionDepth);
+        T SetMaxRecursionDepth(uint maxRecursionDepth);
 
         /// <summary>
         /// Sets the Partial Template Loader to be the passed loader

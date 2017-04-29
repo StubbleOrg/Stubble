@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using Stubble.Core.Classes;
+using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev.Renderers
@@ -16,17 +17,21 @@ namespace Stubble.Core.Dev.Renderers
     public class TextRendererBase : RendererBase
     {
         private TextWriter writer;
+        private readonly uint maxDepth;
+        private uint currentDepth;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextRendererBase"/> class.
         /// </summary>
         /// <param name="writer">The text writer to use</param>
-        protected TextRendererBase(TextWriter writer)
+        /// <param name="maxDepth">The max recursion depth for the renderer</param>
+        protected TextRendererBase(TextWriter writer, uint maxDepth)
         {
             Writer = writer ?? throw new ArgumentNullException(nameof(writer));
 
             // By default we output a newline with '\n' only even on Windows platforms
             Writer.NewLine = "\n";
+            this.maxDepth = maxDepth;
         }
 
         /// <summary>
@@ -47,7 +52,15 @@ namespace Stubble.Core.Dev.Renderers
         /// <returns>The writer</returns>
         public override object Render(MustacheTag token, Context context)
         {
+            currentDepth++;
+            if (currentDepth >= maxDepth)
+            {
+                throw new StubbleException(
+                    $"You have reached the maximum recursion limit of {maxDepth}.");
+            }
+
             Write(token, context);
+            currentDepth--;
             return Writer;
         }
 
@@ -61,7 +74,15 @@ namespace Stubble.Core.Dev.Renderers
         {
             foreach (var tag in block.Children)
             {
+                currentDepth++;
+                if (currentDepth >= maxDepth)
+                {
+                    throw new StubbleException(
+                        $"You have reached the maximum recursion limit of {maxDepth}.");
+                }
+
                 Write(tag, context);
+                currentDepth--;
             }
 
             return Writer;

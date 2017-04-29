@@ -16,11 +16,22 @@ namespace Stubble.Core.Dev.Renderers
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StringRender"/> class
-        /// with the provided text writer
+        /// with the provided text writer and the default depth
         /// </summary>
         /// <param name="writer">The writer to use</param>
         public StringRender(TextWriter writer)
-            : base(writer)
+            : this(writer, 256)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringRender"/> class
+        /// with the provided text writer and a given depth
+        /// </summary>
+        /// <param name="writer">The writer to use</param>
+        /// <param name="maxDepth">The max recursion depth for the renderer</param>
+        public StringRender(TextWriter writer, uint maxDepth)
+            : base(writer, maxDepth)
         {
             TokenRenderers.Add(new SectionTokenRenderer());
             TokenRenderers.Add(new LiteralTokenRenderer());

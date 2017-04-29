@@ -9,6 +9,7 @@ using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
 using Xunit;
 using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Dev;
 
 namespace Stubble.Core.Tests
 {
@@ -189,6 +190,64 @@ namespace Stubble.Core.Tests
             };
 
             var stubble = new StubbleStringRenderer();
+            var ex =
+                Assert.Throws<StubbleException>(() => stubble.Render(rowTemplate, treeData, new Dictionary<string, string>
+                {
+                    { "row", rowTemplate },
+                    { "column", columnTemplate },
+                    { "text", textTemplate }
+                }));
+
+            Assert.Equal("You have reached the maximum recursion limit of 256.", ex.Message);
+        }
+
+        [Fact]
+        public void It_Should_Error_After_N_Recursions_Visitor()
+        {
+            const string rowTemplate = @"
+            <div class='row'>
+                {{#content}}
+                    {{#is_column}}
+                        {{>column}}
+                    {{/is_column}}
+                {{/content}}
+            </div>";
+
+            const string columnTemplate = @"
+            <div class='column'>
+                {{#content}}
+                    {{#is_text}}
+                        {{>text}}
+                    {{/is_text}}
+                    {{#is_row}}
+                        {{>row}}
+                    {{/is_row}}
+                {{/content}}
+            </div>";
+
+            const string textTemplate = @"
+            <span class='text'>
+                {{text}}
+            </span>";
+
+            var treeData = new
+            {
+                is_row = true,
+                content = new
+                {
+                    is_column = true,
+                    content = new[]
+                    {
+                        new
+                        {
+                            is_text = true,
+                            text = "Hello World!"
+                        }
+                    }
+                }
+            };
+
+            var stubble = new StubbleVisitorRenderer();
             var ex =
                 Assert.Throws<StubbleException>(() => stubble.Render(rowTemplate, treeData, new Dictionary<string, string>
                 {
