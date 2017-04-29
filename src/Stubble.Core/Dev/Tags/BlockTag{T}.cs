@@ -36,7 +36,7 @@ namespace Stubble.Core.Dev.Tags
         /// Gets the hashcode for the block
         /// </summary>
         /// <returns>The hash code</returns>
-        public virtual new int GetHashCode()
+        public new virtual int GetHashCode()
         {
             unchecked
             {

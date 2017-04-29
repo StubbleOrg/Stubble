@@ -7,11 +7,10 @@ using System.Collections.Generic;
 using System.IO;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
-using Stubble.Core.Dev.Parser;
-using Stubble.Core.Dev.Renderers;
-using Stubble.Core.Interfaces;
 using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Dev.Renderers;
 using Stubble.Core.Dev.Settings;
+using Stubble.Core.Interfaces;
 
 namespace Stubble.Core.Dev
 {
@@ -84,7 +83,6 @@ namespace Stubble.Core.Dev
                 partialsLoader = new CompositeLoader(new DictionaryLoader(partials), RendererSettings.PartialTemplateLoader);
             }
 
-            // TODO: Figure out Partials
             renderer.Render(document, new Context(view, RendererSettings, partialsLoader, settings ?? RendererSettings.RenderSettings));
 
             renderer.Writer.Flush();

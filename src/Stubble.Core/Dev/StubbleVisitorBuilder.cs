@@ -3,10 +3,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using Stubble.Core.Classes;
-using System.Linq;
-using Stubble.Core.Dev.Settings;
-
 namespace Stubble.Core.Dev
 {
     /// <summary>

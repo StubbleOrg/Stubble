@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="IRendererSettingsBuilder.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+using System;
 using System.Collections;
 using Stubble.Core.Classes.Loaders;
 using Stubble.Core.Interfaces;

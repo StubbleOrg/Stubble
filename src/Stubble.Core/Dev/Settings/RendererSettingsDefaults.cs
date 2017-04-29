@@ -1,4 +1,8 @@
-﻿using Stubble.Core.Dev.Imported;
+﻿// <copyright file="RendererSettingsDefaults.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -6,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
+using Stubble.Core.Dev.Imported;
 
 namespace Stubble.Core.Dev.Settings
 {
@@ -37,8 +41,7 @@ namespace Stubble.Core.Dev.Settings
                     {
                         var castValue = value as IList;
 
-                        int intVal;
-                        if (int.TryParse(key, out intVal))
+                        if (int.TryParse(key, out int intVal))
                         {
                             return castValue != null && intVal < castValue.Count ? castValue[intVal] : null;
                         }

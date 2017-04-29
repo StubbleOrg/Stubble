@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using Stubble.Core.Classes;
 using Stubble.Core.Classes.Exceptions;
 using Stubble.Core.Dev.Tags;
 
@@ -16,8 +15,8 @@ namespace Stubble.Core.Dev.Renderers
     /// </summary>
     public class TextRendererBase : RendererBase
     {
-        private TextWriter writer;
         private readonly uint maxDepth;
+        private TextWriter writer;
         private uint currentDepth;
 
         /// <summary>

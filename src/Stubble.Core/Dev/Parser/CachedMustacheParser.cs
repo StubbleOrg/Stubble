@@ -1,4 +1,9 @@
-﻿using Stubble.Core.Classes;
+﻿// <copyright file="CachedMustacheParser.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+using Stubble.Core.Classes;
 using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev.Parser

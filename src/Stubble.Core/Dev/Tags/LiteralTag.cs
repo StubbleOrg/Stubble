@@ -4,7 +4,6 @@
 // </copyright>
 
 using Stubble.Core.Dev.Imported;
-using System.Collections.Generic;
 
 namespace Stubble.Core.Dev.Tags
 {
