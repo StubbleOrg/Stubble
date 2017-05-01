@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using Stubble.Core.Classes.Exceptions;
+using Stubble.Core.Dev.Settings;
 using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev.Renderers
@@ -23,8 +24,10 @@ namespace Stubble.Core.Dev.Renderers
         /// Initializes a new instance of the <see cref="TextRendererBase"/> class.
         /// </summary>
         /// <param name="writer">The text writer to use</param>
+        /// <param name="rendererPipeline">The renderer pipeline to use</param>
         /// <param name="maxDepth">The max recursion depth for the renderer</param>
-        protected TextRendererBase(TextWriter writer, uint maxDepth)
+        protected TextRendererBase(TextWriter writer, TokenRendererPipeline rendererPipeline, uint maxDepth)
+            : base(rendererPipeline)
         {
             Writer = writer ?? throw new ArgumentNullException(nameof(writer));
 

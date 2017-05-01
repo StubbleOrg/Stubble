@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Stubble.Core.Classes;
 using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Dev.Imported;
 using Stubble.Core.Dev.Parser;
 using Stubble.Core.Helpers;
 using Stubble.Core.Interfaces;
@@ -23,6 +24,12 @@ namespace Stubble.Core.Dev.Settings
         private IStubbleLoader templateLoader = new StringLoader();
 
         private IStubbleLoader partialTemplateLoader;
+
+        /// <summary>
+        /// Gets the token renderer to be used by the renderer
+        /// </summary>
+        public OrderedList<ITokenRenderer> TokenRenderers { get; internal set; }
+            = new OrderedList<ITokenRenderer>(RendererSettingsDefaults.DefaultTokenRenderers());
 
         /// <summary>
         /// Gets the Template Loader
@@ -93,7 +100,8 @@ namespace Stubble.Core.Dev.Settings
                 RenderSettings ?? RenderSettings.GetDefaultRenderSettings(),
                 EnumerationConverters,
                 IgnoreCaseOnKeyLookup,
-                Parser ?? new CachedMustacheParser());
+                Parser ?? new CachedMustacheParser(),
+                new TokenRendererPipeline(TokenRenderers));
         }
 
         /// <summary>
