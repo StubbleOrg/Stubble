@@ -84,6 +84,13 @@ namespace Stubble.Core
         }
 
         /// <inheritdoc/>
+        public IStubbleBuilder<T> SetDefaultTags(Tags tags)
+        {
+            SettingsBuilder.DefaultTags = tags;
+            return this;
+        }
+
+        /// <inheritdoc/>
         public IStubbleBuilder<T> SetIgnoreCaseOnKeyLookup(bool ignoreCaseOnKeyLookup)
         {
             SettingsBuilder.SetIgnoreCaseOnKeyLookup(ignoreCaseOnKeyLookup);

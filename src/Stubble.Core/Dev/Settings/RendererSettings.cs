@@ -31,6 +31,7 @@ namespace Stubble.Core.Dev.Settings
         /// <param name="ignoreCaseOnLookup">Should case be ignored on lookup</param>
         /// <param name="parser">The mustache parser to use</param>
         /// <param name="rendererPipeline">The renderer pipeline to use</param>
+        /// <param name="defaultTags">The default tags to use during parsing</param>
         public RendererSettings(
             Dictionary<Type, Func<object, string, object>> valueGetters,
             IEnumerable<Func<object, bool?>> truthyChecks,
@@ -41,7 +42,8 @@ namespace Stubble.Core.Dev.Settings
             Dictionary<Type, Func<object, IEnumerable>> enumerationConverters,
             bool ignoreCaseOnLookup,
             IMustacheParser parser,
-            TokenRendererPipeline rendererPipeline)
+            TokenRendererPipeline rendererPipeline,
+            Classes.Tags defaultTags)
         {
             ValueGetters = valueGetters.ToImmutableDictionary();
             TruthyChecks = truthyChecks.ToImmutableArray();
@@ -53,6 +55,7 @@ namespace Stubble.Core.Dev.Settings
             IgnoreCaseOnKeyLookup = ignoreCaseOnLookup;
             Parser = parser;
             RendererPipeline = rendererPipeline;
+            DefaultTags = defaultTags;
         }
 
         /// <summary>
@@ -104,5 +107,10 @@ namespace Stubble.Core.Dev.Settings
         /// Gets the renderer pipeline to be used when rendering
         /// </summary>
         public TokenRendererPipeline RendererPipeline { get; }
+
+        /// <summary>
+        /// Gets the default tags to be used during parsing
+        /// </summary>
+        public Classes.Tags DefaultTags { get; }
     }
 }

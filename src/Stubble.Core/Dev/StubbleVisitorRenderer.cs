@@ -64,14 +64,14 @@ namespace Stubble.Core.Dev
         /// <inheritdoc/>
         public string Render(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
         {
-            var loadedTemplate = RendererSettings.TemplateLoader.Load(template);
+            var loadedTemplate = RendererSettings.TemplateLoader.Load(template);;
 
             if (loadedTemplate == null)
             {
                 throw new UnknownTemplateException("No template was found with the name '" + template + "'");
             }
 
-            var document = RendererSettings.Parser.Parse(loadedTemplate);
+            var document = RendererSettings.Parser.Parse(loadedTemplate, RendererSettings.DefaultTags);
 
             var textwriter = new StringWriter();
 

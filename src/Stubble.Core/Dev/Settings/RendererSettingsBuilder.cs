@@ -80,6 +80,11 @@ namespace Stubble.Core.Dev.Settings
         internal IMustacheParser Parser { get; set; }
 
         /// <summary>
+        /// Gets or sets the default tags to use during parsing
+        /// </summary>
+        internal Classes.Tags DefaultTags { get; set; }
+
+        /// <summary>
         /// Builds a RegistrySettings class with all the provided details
         /// </summary>
         /// <returns>The registry settings</returns>
@@ -101,7 +106,8 @@ namespace Stubble.Core.Dev.Settings
                 EnumerationConverters,
                 IgnoreCaseOnKeyLookup,
                 Parser ?? new CachedMustacheParser(),
-                new TokenRendererPipeline(TokenRenderers));
+                new TokenRendererPipeline(TokenRenderers),
+                DefaultTags ?? new Classes.Tags("{{", "}}"));
         }
 
         /// <summary>
@@ -217,6 +223,13 @@ namespace Stubble.Core.Dev.Settings
         public RendererSettingsBuilder SetMustacheParser(IMustacheParser parser)
         {
             Parser = parser;
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public RendererSettingsBuilder SetDefaultTags(Classes.Tags tags)
+        {
+            DefaultTags = tags;
             return this;
         }
 
