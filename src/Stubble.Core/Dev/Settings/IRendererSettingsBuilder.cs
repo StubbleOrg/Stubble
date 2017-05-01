@@ -21,7 +21,7 @@ namespace Stubble.Core.Dev.Settings
         /// </summary>
         /// <param name="type">The type to add an enumeration conversion function for</param>
         /// <param name="enumerationConversion">An enumeration conversion</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T AddEnumerationConversion(Type type, Func<object, IEnumerable> enumerationConversion);
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Stubble.Core.Dev.Settings
         /// combining the Partial Template Loader and loader parameter.
         /// </summary>
         /// <param name="loader">The loader to add to the Partial Template Loader</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T AddToPartialTemplateLoader(IStubbleLoader loader);
 
         /// <summary>
@@ -39,14 +39,14 @@ namespace Stubble.Core.Dev.Settings
         /// combining the Template Loader and loader parameter.
         /// </summary>
         /// <param name="loader">The loader to add to the Template Loader</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T AddToTemplateLoader(IStubbleLoader loader);
 
         /// <summary>
         /// Adds a truthy check
         /// </summary>
         /// <param name="truthyCheck">A truthy check</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T AddTruthyCheck(Func<object, bool?> truthyCheck);
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Stubble.Core.Dev.Settings
         /// </summary>
         /// <param name="type">The type to add the value getter function for</param>
         /// <param name="valueGetter">A value getter function</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T AddValueGetter(Type type, Func<object, string, object> valueGetter);
 
         /// <summary>
@@ -67,28 +67,35 @@ namespace Stubble.Core.Dev.Settings
         /// Sets if the case should be ignored when looking up keys in the context
         /// </summary>
         /// <param name="ignoreCaseOnKeyLookup">if the case should be ignored on key lookup</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T SetIgnoreCaseOnKeyLookup(bool ignoreCaseOnKeyLookup);
 
         /// <summary>
         /// Sets the Max Recursion Depth for recursive templates
         /// </summary>
         /// <param name="maxRecursionDepth">the max depth for the recursion</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T SetMaxRecursionDepth(uint maxRecursionDepth);
 
         /// <summary>
         /// Sets the Partial Template Loader to be the passed loader
         /// </summary>
         /// <param name="loader">The loader to set as the Partial Template Loader</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T SetPartialTemplateLoader(IStubbleLoader loader);
 
         /// <summary>
         /// Sets the Template Loader to be the passed loader
         /// </summary>
         /// <param name="loader">The loader to set as the Template Loader</param>
-        /// <returns>The IStubbleBuilder{T} for chaining</returns>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T SetTemplateLoader(IStubbleLoader loader);
+
+        /// <summary>
+        /// Sets the default tags to be used during parsing
+        /// </summary>
+        /// <param name="tags">The tags</param>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
+        T SetDefaultTags(Classes.Tags tags);
     }
 }
