@@ -11,6 +11,6 @@ namespace Stubble.Core.Dev.Tags
     public class MustacheTemplate : BlockTag
     {
         /// <inheritdoc/>
-        public override string Identifier => string.Empty;
+        public override string Identifier => "Root";
     }
 }
