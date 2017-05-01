@@ -16,7 +16,10 @@ namespace Stubble.Core.Classes.Loaders
     /// </summary>
     public sealed class CompositeLoader : IStubbleLoader
     {
-        private readonly List<IStubbleLoader> loaders;
+        /// <summary>
+        /// Gets the loaders the composite loader will try to load
+        /// </summary>
+        internal List<IStubbleLoader> Loaders { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompositeLoader"/> class
@@ -25,7 +28,7 @@ namespace Stubble.Core.Classes.Loaders
         /// <param name="loaders">A list of child loaders to initalise with</param>
         public CompositeLoader(params IStubbleLoader[] loaders)
         {
-            this.loaders = new List<IStubbleLoader>(loaders.Where(i => i != null));
+            Loaders = new List<IStubbleLoader>(loaders.Where(i => i != null));
         }
 
         /// <summary>
@@ -40,7 +43,7 @@ namespace Stubble.Core.Classes.Loaders
                 throw new ArgumentNullException(nameof(loader));
             }
 
-            loaders.Add(loader);
+            Loaders.Add(loader);
             return this;
         }
 
@@ -51,14 +54,14 @@ namespace Stubble.Core.Classes.Loaders
         /// <returns>The composite loader instance</returns>
         public CompositeLoader AddLoaders(params IStubbleLoader[] newLoaders)
         {
-            loaders.AddRange(newLoaders.Where(i => i != null));
+            Loaders.AddRange(newLoaders.Where(i => i != null));
             return this;
         }
 
         /// <inheritdoc/>
         public IStubbleLoader Clone()
         {
-            return new CompositeLoader(loaders.Select(i => i.Clone()).ToArray());
+            return new CompositeLoader(Loaders.Select(i => i.Clone()).ToArray());
         }
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace Stubble.Core.Classes.Loaders
         /// <returns>A Mustache Template</returns>
         public string Load(string name)
         {
-            foreach (var loader in loaders.AsEnumerable().Reverse())
+            foreach (var loader in Loaders.AsEnumerable().Reverse())
             {
                 var loadedTemplate = loader.Load(name);
                 if (loadedTemplate != null)
