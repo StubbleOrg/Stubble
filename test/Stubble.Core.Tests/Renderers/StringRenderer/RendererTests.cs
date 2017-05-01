@@ -23,13 +23,14 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         public void It_Can_Render_LiteralTags()
         {
             StringSlice content = new StringSlice("I'm a literal tag");
+            var settings = new RendererSettingsBuilder().BuildSettings();
 
             var context = new Context(
                 new { },
-                new RendererSettingsBuilder().BuildSettings(),
-                Classes.RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var rawTokenRenderer = new LiteralTokenRenderer();
             rawTokenRenderer.Write(
                 stringRenderer,
@@ -49,12 +50,14 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         public void It_Can_Render_InterpolationTag_SimpleValue()
         {
             const string result = "Bar";
+            var settings = new RendererSettingsBuilder().BuildSettings();
+
             var context = new Context(
                 new { foo = "Bar" },
-                new RendererSettingsBuilder().BuildSettings(),
-                Classes.RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var interpolationTokenRenderer = new InterpolationTokenRenderer();
             interpolationTokenRenderer.Write(
                 stringRenderer,
@@ -75,12 +78,14 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         public void It_Can_Render_InterpolationTag_Escaped_SimpleValue()
         {
             const string result = "A &amp; B";
+            var settings = new RendererSettingsBuilder().BuildSettings();
+
             var context = new Context(
                 new { foo = "A & B" },
-                new RendererSettingsBuilder().BuildSettings(),
-                Classes.RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var interpolationTokenRenderer = new InterpolationTokenRenderer();
             interpolationTokenRenderer.Write(
                 stringRenderer,
@@ -101,12 +106,14 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         public void It_Can_Render_InterpolationTag_Lambda_Simple()
         {
             const string result = "TestyTest";
+            var settings = new RendererSettingsBuilder().BuildSettings();
+
             var context = new Context(
                 new { foo = new Func<string>(() => "TestyTest") },
-                new RendererSettingsBuilder().BuildSettings(),
-                Classes.RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var interpolationTokenRenderer = new InterpolationTokenRenderer();
             interpolationTokenRenderer.Write(
                 stringRenderer,
@@ -127,12 +134,14 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         public void It_Can_Render_InterpolationTag_Lambda_Simple_Escaped()
         {
             const string result = "A &amp; B";
+            var settings = new RendererSettingsBuilder().BuildSettings();
+
             var context = new Context(
                 new { foo = new Func<string>(() => "A & B") },
-                new RendererSettingsBuilder().BuildSettings(),
-                Classes.RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var interpolationTokenRenderer = new InterpolationTokenRenderer();
             interpolationTokenRenderer.Write(
                 stringRenderer,
@@ -153,16 +162,18 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         public void It_Can_Render_InterpolationTag_Lambda_Tag()
         {
             const string result = "Bar";
+            var settings = new RendererSettingsBuilder().BuildSettings();
+
             var context = new Context(
                 new
                 {
                     foo = new Func<string>(() => "{{bar}}"),
                     bar = "Bar"
                 },
-                new RendererSettingsBuilder().BuildSettings(),
-                Classes.RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var interpolationTokenRenderer = new InterpolationTokenRenderer();
             interpolationTokenRenderer.Write(
                 stringRenderer,
@@ -189,16 +200,17 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             {
                 { "foo", "{{bar}}" }
             }));
+            var settings = setingsBuilder.BuildSettings();
 
             var context = new Context(
                 new
                 {
                     bar = "Bar"
                 },
-                setingsBuilder.BuildSettings(),
-                RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var partialTokenRenderer = new PartialTokenRenderer();
             partialTokenRenderer.Write(
                 stringRenderer,
@@ -224,16 +236,17 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             {
                 { "bar", "{{bar}}" }
             }));
+            var settings = setingsBuilder.BuildSettings();
 
             var context = new Context(
                 new
                 {
                     bar = "Bar"
                 },
-                setingsBuilder.BuildSettings(),
-                RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var partialTokenRenderer = new PartialTokenRenderer();
             partialTokenRenderer.Write(
                 stringRenderer,
@@ -252,17 +265,18 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         [Fact]
         public void It_Renders_Inverted_Tags_When_Falsey_Bool()
         {
-            const string result = "I'm false";;
+            const string result = "I'm false";
+            var settings = new RendererSettingsBuilder().BuildSettings();
 
             var context = new Context(
                 new
                 {
                     check = false
                 },
-                new RendererSettingsBuilder().BuildSettings(),
-                RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var sectionTokenRenderer = new InvertedSectionTokenRenderer();
 
             sectionTokenRenderer.Write(
@@ -288,16 +302,17 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         public void It_Renders_Inverted_Tags_When_Falsey_List()
         {
             const string result = "I'm also false";
+            var settings = new RendererSettingsBuilder().BuildSettings();
 
             var context = new Context(
                 new
                 {
                     list = new object[] { }
                 },
-                new RendererSettingsBuilder().BuildSettings(),
-                RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var sectionTokenRenderer = new InvertedSectionTokenRenderer();
 
             sectionTokenRenderer.Write(
@@ -328,16 +343,17 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         public void It_Renders_Inverted_Tags_When_Value_Doesnt_Exist()
         {
             const string result = "I'm also also false";
+            var settings = new RendererSettingsBuilder().BuildSettings();
 
             var context = new Context(
                 new
                 {
                     check = false
                 },
-                new RendererSettingsBuilder().BuildSettings(),
-                RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var sectionTokenRenderer = new InvertedSectionTokenRenderer();
 
             sectionTokenRenderer.Write(
@@ -368,16 +384,17 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         public void It_Doesnt_Render_Inverted_Tags_When_True()
         {
             const string result = "";
+            var settings = new RendererSettingsBuilder().BuildSettings();
 
             var context = new Context(
                 new
                 {
                     check = true
                 },
-                new RendererSettingsBuilder().BuildSettings(),
-                RenderSettings.GetDefaultRenderSettings());
+                settings,
+                settings.RenderSettings);
 
-            var stringRenderer = new StringRender(StreamWriter);
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
             var sectionTokenRenderer = new InvertedSectionTokenRenderer();
 
             sectionTokenRenderer.Write(

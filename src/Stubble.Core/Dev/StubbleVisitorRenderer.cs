@@ -75,7 +75,7 @@ namespace Stubble.Core.Dev
 
             var textwriter = new StringWriter();
 
-            var renderer = new StringRender(textwriter, RendererSettings.MaxRecursionDepth);
+            var renderer = new StringRender(textwriter, RendererSettings.RendererPipeline, RendererSettings.MaxRecursionDepth);
 
             var partialsLoader = RendererSettings.PartialTemplateLoader;
             if (partials != null && partials.Keys.Count > 0)

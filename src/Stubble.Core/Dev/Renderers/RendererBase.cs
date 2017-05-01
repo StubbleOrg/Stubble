@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Stubble.Core.Classes;
+using Stubble.Core.Dev.Settings;
 using Stubble.Core.Dev.Tags;
 
 namespace Stubble.Core.Dev.Renderers
@@ -15,21 +16,16 @@ namespace Stubble.Core.Dev.Renderers
     /// </summary>
     public abstract class RendererBase
     {
-        private readonly Dictionary<Type, ITokenRenderer> renderersPerType;
+        private readonly TokenRendererPipeline rendererPipeline;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RendererBase"/> class.
         /// </summary>
-        protected RendererBase()
+        /// <param name="rendererPipeline">The renderer pipeline to use for rendering</param>
+        protected RendererBase(TokenRendererPipeline rendererPipeline)
         {
-            TokenRenderers = new List<ITokenRenderer>();
-            renderersPerType = new Dictionary<Type, ITokenRenderer>();
+            this.rendererPipeline = rendererPipeline;
         }
-
-        /// <summary>
-        /// Gets the tag renderers
-        /// </summary>
-        public List<ITokenRenderer> TokenRenderers { get; }
 
         /// <summary>
         /// Renders a given tag
@@ -61,21 +57,7 @@ namespace Stubble.Core.Dev.Renderers
                 return;
             }
 
-            var objectType = obj.GetType();
-
-            ITokenRenderer renderer;
-            if (!renderersPerType.TryGetValue(objectType, out renderer))
-            {
-                for (int i = 0; i < TokenRenderers.Count; i++)
-                {
-                    var testRenderer = TokenRenderers[i];
-                    if (testRenderer.Accept(this, obj))
-                    {
-                        renderersPerType[objectType] = renderer = testRenderer;
-                        break;
-                    }
-                }
-            }
+            var renderer = rendererPipeline.TryGetTokenRenderer(this, obj);
 
             renderer?.Write(this, obj, context);
         }

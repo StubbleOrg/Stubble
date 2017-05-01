@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Stubble.Core.Dev.Imported;
+using Stubble.Core.Dev.Renderers.Token;
 
 namespace Stubble.Core.Dev.Settings
 {
@@ -78,6 +79,22 @@ namespace Stubble.Core.Dev.Settings
                 {
                     typeof(object), (value, key) => GetValueFromObjectByName(value, key, ignoreCase)
                 }
+            };
+        }
+
+        /// <summary>
+        /// Returns the default token renderers
+        /// </summary>
+        /// <returns>A list of the default token renderers</returns>
+        public static List<ITokenRenderer> DefaultTokenRenderers()
+        {
+            return new List<ITokenRenderer>
+            {
+                new SectionTokenRenderer(),
+                new LiteralTokenRenderer(),
+                new InterpolationTokenRenderer(),
+                new PartialTokenRenderer(),
+                new InvertedSectionTokenRenderer(),
             };
         }
 

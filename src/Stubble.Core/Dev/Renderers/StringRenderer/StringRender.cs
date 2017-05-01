@@ -6,6 +6,7 @@
 using System.IO;
 using Stubble.Core.Dev.Renderers.StringRenderer;
 using Stubble.Core.Dev.Renderers.Token;
+using Stubble.Core.Dev.Settings;
 
 namespace Stubble.Core.Dev.Renderers
 {
@@ -19,8 +20,9 @@ namespace Stubble.Core.Dev.Renderers
         /// with the provided text writer and the default depth
         /// </summary>
         /// <param name="writer">The writer to use</param>
-        public StringRender(TextWriter writer)
-            : this(writer, 256)
+        /// <param name="rendererPipeline">The renderer pipeline to use</param>
+        public StringRender(TextWriter writer, TokenRendererPipeline rendererPipeline)
+            : this(writer, rendererPipeline, 256)
         {
         }
 
@@ -29,15 +31,11 @@ namespace Stubble.Core.Dev.Renderers
         /// with the provided text writer and a given depth
         /// </summary>
         /// <param name="writer">The writer to use</param>
+        /// <param name="rendererPipeline">The renderer pipeline to use</param>
         /// <param name="maxDepth">The max recursion depth for the renderer</param>
-        public StringRender(TextWriter writer, uint maxDepth)
-            : base(writer, maxDepth)
+        public StringRender(TextWriter writer, TokenRendererPipeline rendererPipeline, uint maxDepth)
+            : base(writer, rendererPipeline, maxDepth)
         {
-            TokenRenderers.Add(new SectionTokenRenderer());
-            TokenRenderers.Add(new LiteralTokenRenderer());
-            TokenRenderers.Add(new InterpolationTokenRenderer());
-            TokenRenderers.Add(new PartialTokenRenderer());
-            TokenRenderers.Add(new InvertedSectionTokenRenderer());
         }
     }
 }
