@@ -20,12 +20,12 @@ namespace Stubble.Core.Tests.Spec
 
         public void It_Can_Pass_Spec_Tests(SpecTest data)
         {
-            OutputStream.WriteLine(data.Name);
+            OutputStream.WriteLine(data.name);
             var stubble = new StubbleVisitorRenderer();
-            var output = data.Partials != null ? stubble.Render(data.Template, data.Data, data.Partials) : stubble.Render(data.Template, data.Data);
+            var output = data.partials != null ? stubble.Render(data.template, data.data, data.partials) : stubble.Render(data.template, data.data);
 
-            OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.Expected, output);
-            Assert.Equal(data.Expected, output);
+            OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.expected, output);
+            Assert.Equal(data.expected, output);
         }
     }
 }

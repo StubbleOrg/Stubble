@@ -9,18 +9,18 @@ namespace Stubble.Core.Tests.Spec
 {
     public class SpecTest
     {
-        public string Name { get; set; }
+        public string name { get; set; }
 
-        public string Desc { get; set; }
+        public string desc { get; set; }
 
-        public object Data { get; set; }
+        public object data { get; set; }
 
-        public string Template { get; set; }
+        public string template { get; set; }
 
-        public string Expected { get; set; }
+        public string expected { get; set; }
 
-        public bool Skip { get; set; }
+        public bool skip { get; set; }
 
-        public IDictionary<string, string> Partials { get; set; }
+        public IDictionary<string, string> partials { get; set; }
     }
 }

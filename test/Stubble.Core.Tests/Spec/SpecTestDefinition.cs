@@ -9,8 +9,8 @@ namespace Stubble.Core.Tests.Spec
 {
     public class SpecTestDefinition
     {
-        public string Overview { get; set; }
+        public string overview { get; set; }
 
-        public List<SpecTest> Tests { get; set; }
+        public List<SpecTest> tests { get; set; }
     }
 }
