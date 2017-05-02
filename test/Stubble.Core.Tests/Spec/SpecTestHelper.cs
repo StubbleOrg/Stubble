@@ -10,6 +10,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Stubble.Core.Tests.Helpers;
+using SharpYaml.Serialization;
 
 namespace Stubble.Core.Tests.Spec
 {
@@ -33,22 +34,25 @@ namespace Stubble.Core.Tests.Spec
 
         public static IEnumerable<SpecTest> GetTests(string filename, bool skip)
         {
+            var settings = new SerializerSettings();
+
             var @base = System.AppContext.BaseDirectory;
-            var path = Path.Combine(@base, $"{filename}.json");
+            var path = Path.Combine(@base, $"{filename}.yml");
+
+            var yaml = new Serializer(settings);
 
             using (var reader = File.OpenText(path))
             {
                 var hasSkipTestsInFile = SkippedTests.ContainsKey(filename);
-                var data = JsonConvert.DeserializeObject<SpecTestDefinition>(reader.ReadToEnd());
-                foreach (var test in data.Tests)
+                var data = yaml.Deserialize<SpecTestDefinition>(reader);
+                foreach (var test in data.tests)
                 {
-                    if(skip && hasSkipTestsInFile && SkippedTests[filename].Contains(test.Name))
+                    if(skip && hasSkipTestsInFile && SkippedTests[filename].Contains(test.name))
                     {
                         continue;
                     }
 
-                    test.Skip = hasSkipTestsInFile && SkippedTests[filename].Contains(test.Name);
-                    test.Data = JsonHelper.ToObject((JToken)test.Data);
+                    test.skip = hasSkipTestsInFile && SkippedTests[filename].Contains(test.name);
 
                     yield return test;
                 }
