@@ -3,7 +3,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Stubble.Core.Interfaces;
 
 namespace Stubble.Core.Loaders
@@ -41,6 +43,16 @@ namespace Stubble.Core.Loaders
         public string Load(string name)
         {
             return TemplateCache.TryGetValue(name, out string outValue) ? outValue : null;
+        }
+
+        /// <summary>
+        /// Loads the template from a local dictionary cache
+        /// </summary>
+        /// <param name="name">The name of the template to load</param>
+        /// <returns>The template or null if not found</returns>
+        public ValueTask<string> LoadAsync(string name)
+        {
+            return new ValueTask<string>(Load(name));
         }
     }
 }

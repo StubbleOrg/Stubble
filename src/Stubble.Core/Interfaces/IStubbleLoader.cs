@@ -3,6 +3,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Threading.Tasks;
+
 namespace Stubble.Core.Interfaces
 {
     /// <summary>
@@ -18,6 +20,15 @@ namespace Stubble.Core.Interfaces
         /// <param name="name">The name of the template to load</param>
         /// <returns>A Mustache Template</returns>
         string Load(string name);
+
+        /// <summary>
+        /// Loads a template asynchronously with the given name.
+        ///
+        /// Returns null if the template is not found
+        /// </summary>
+        /// <param name="name">The name of the template to load</param>
+        /// <returns>The musatche template or null</returns>
+        ValueTask<string> LoadAsync(string name);
 
         /// <summary>
         /// Should return a new instance of the loader with the same internals

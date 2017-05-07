@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Stubble.Core.Exceptions;
 using Stubble.Core.Interfaces;
 
@@ -66,7 +67,6 @@ namespace Stubble.Core.Loaders
 
         /// <summary>
         /// Loads a template with the given name.
-        /// Returns null if the template is not found
         /// </summary>
         /// <param name="name">The name of the template to load</param>
         /// <exception cref="UnknownTemplateException">When a template is not found in the loader</exception>
@@ -76,6 +76,26 @@ namespace Stubble.Core.Loaders
             foreach (var loader in Loaders.AsEnumerable().Reverse())
             {
                 var loadedTemplate = loader.Load(name);
+                if (loadedTemplate != null)
+                {
+                    return loadedTemplate;
+                }
+            }
+
+            throw new UnknownTemplateException("No template was found with the name '" + name + "'");
+        }
+
+        /// <summary>
+        /// Loads a template asynchronously with the given name
+        /// </summary>
+        /// <param name="name">The name of the template to load</param>
+        /// <exception cref="UnknownTemplateException">When a template is not found in the loader</exception>
+        /// <returns>The mustache template with the given name</returns>
+        public async ValueTask<string> LoadAsync(string name)
+        {
+            foreach (var loader in Loaders.AsEnumerable().Reverse())
+            {
+                var loadedTemplate = await loader.LoadAsync(name);
                 if (loadedTemplate != null)
                 {
                     return loadedTemplate;
