@@ -7,7 +7,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 using Stubble.Core.Classes;
 using Xunit;
 
@@ -53,14 +52,14 @@ namespace Stubble.Core.Tests
             var list = new List<Type>
             {
                 typeof(IEnumerable),
-                typeof(JToken)
+                typeof(List<string>)
             };
             var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
 
             var enumerableIndex = orderedList.IndexOf(typeof(IEnumerable));
-            var jtokenIndex = orderedList.IndexOf(typeof(JToken));
+            var listIndex = orderedList.IndexOf(typeof(List<string>));
 
-            Assert.True(jtokenIndex < enumerableIndex);
+            Assert.True(listIndex < enumerableIndex);
         }
 
         [Fact]
@@ -68,15 +67,15 @@ namespace Stubble.Core.Tests
         {
             var list = new List<Type>
             {
-                typeof(JToken),
+                typeof(List<string>),
                 typeof(IEnumerable)
             };
             var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
 
             var enumerableIndex = orderedList.IndexOf(typeof(IEnumerable));
-            var jtokenIndex = orderedList.IndexOf(typeof(JToken));
+            var listIndex = orderedList.IndexOf(typeof(List<string>));
 
-            Assert.True(jtokenIndex < enumerableIndex);
+            Assert.True(listIndex < enumerableIndex);
         }
 
         [Fact]
