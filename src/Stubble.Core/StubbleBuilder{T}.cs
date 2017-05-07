@@ -5,9 +5,9 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Stubble.Core.Classes;
-using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Dev;
+using Stubble.Core.Dev.Imported;
 using Stubble.Core.Dev.Settings;
 using Stubble.Core.Interfaces;
 
@@ -19,6 +19,9 @@ namespace Stubble.Core
     /// <typeparam name="T">The renderer type to build</typeparam>
     public abstract class StubbleBuilder<T> : IStubbleBuilder<T>
     {
+        /// <inheritdoc/>
+        public OrderedList<ITokenRenderer> TokenRenderers => SettingsBuilder.TokenRenderers;
+
         /// <summary>
         /// Gets or sets the settings builder for stubble builder
         /// </summary>

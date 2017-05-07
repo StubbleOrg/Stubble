@@ -26,7 +26,7 @@ namespace Stubble.Core.Dev.Settings
         private IStubbleLoader partialTemplateLoader;
 
         /// <summary>
-        /// Gets the token renderer to be used by the renderer
+        /// Gets the token renderers to be used by the renderer
         /// </summary>
         public OrderedList<ITokenRenderer> TokenRenderers { get; internal set; }
             = new OrderedList<ITokenRenderer>(RendererSettingsDefaults.DefaultTokenRenderers());
