@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Stubble.Core.Exceptions;
 using Stubble.Core.Tokens;
 
@@ -75,6 +76,32 @@ namespace Stubble.Core.Renderers.StringRenderer
                 }
 
                 Write(tag, context);
+                currentDepth--;
+            }
+
+            return Writer;
+        }
+
+        /// <inheritdoc/>
+        public override async ValueTask<object> RenderAsync(MustacheToken token, Context context)
+        {
+            await WriteAsync(token, context);
+            return Writer;
+        }
+
+        /// <inheritdoc/>
+        public override async ValueTask<object> RenderAsync(BlockToken block, Context context)
+        {
+            foreach (var tag in block.Children)
+            {
+                currentDepth++;
+                if (currentDepth >= maxDepth)
+                {
+                    throw new StubbleException(
+                        $"You have reached the maximum recursion limit of {maxDepth}.");
+                }
+
+                await WriteAsync(tag, context);
                 currentDepth--;
             }
 

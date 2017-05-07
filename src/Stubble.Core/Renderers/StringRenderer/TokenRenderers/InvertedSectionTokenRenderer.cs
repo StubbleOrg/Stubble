@@ -3,6 +3,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Threading.Tasks;
+using Stubble.Core.Helpers;
 using Stubble.Core.Tokens;
 
 namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
@@ -20,6 +22,17 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
             if (!context.IsTruthyValue(value))
             {
                 renderer.Render(obj, context);
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override async Task WriteAsync(StringRender renderer, InvertedSectionToken obj, Context context)
+        {
+            var value = context.Lookup(obj.SectionName);
+
+            if (!context.IsTruthyValue(value))
+            {
+                await renderer.RenderAsync(obj, context);
             }
         }
     }

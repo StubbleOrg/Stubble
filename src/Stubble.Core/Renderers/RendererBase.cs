@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Threading.Tasks;
 using Stubble.Core.Tokens;
 
 namespace Stubble.Core.Renderers
@@ -40,6 +41,22 @@ namespace Stubble.Core.Renderers
         public abstract object Render(BlockToken token, Context context);
 
         /// <summary>
+        /// Renders a given tag
+        /// </summary>
+        /// <param name="token">The tag to render</param>
+        /// <param name="context">The context to write the tag with</param>
+        /// <returns>The current renderer</returns>
+        public abstract ValueTask<object> RenderAsync(MustacheToken token, Context context);
+
+        /// <summary>
+        /// Renders a block tag
+        /// </summary>
+        /// <param name="token">The block tag to render</param>
+        /// <param name="context">The context to write the tag with</param>
+        /// <returns>The current renderer</returns>
+        public abstract ValueTask<object> RenderAsync(BlockToken token, Context context);
+
+        /// <summary>
         /// Write the current tag to the renderer
         /// </summary>
         /// <typeparam name="T">The type of tag</typeparam>
@@ -56,6 +73,26 @@ namespace Stubble.Core.Renderers
             var renderer = rendererPipeline.TryGetTokenRenderer(this, obj);
 
             renderer?.Write(this, obj, context);
+        }
+
+        /// <summary>
+        /// Write the current tag to the renderer
+        /// </summary>
+        /// <typeparam name="T">The type of tag</typeparam>
+        /// <param name="obj">The tag to write</param>
+        /// <param name="context">The context to write the tag with</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task WriteAsync<T>(T obj, Context context)
+            where T : MustacheToken
+        {
+            if (obj == null)
+            {
+                return;
+            }
+
+            var renderer = rendererPipeline.TryGetTokenRenderer(this, obj);
+
+            await renderer?.WriteAsync(this, obj, context);
         }
     }
 }

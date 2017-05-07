@@ -3,8 +3,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Stubble.Core.Exceptions;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Loaders;
@@ -16,7 +18,7 @@ namespace Stubble.Core
     /// <summary>
     /// A renderer which renders a string using visitors
     /// </summary>
-    public class StubbleVisitorRenderer : IStubbleRenderer
+    public class StubbleVisitorRenderer : IStubbleRenderer, IAsyncStubbleRenderer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StubbleVisitorRenderer"/> class
@@ -83,6 +85,52 @@ namespace Stubble.Core
             }
 
             renderer.Render(document, new Context(view, RendererSettings, partialsLoader, settings ?? RendererSettings.RenderSettings));
+
+            renderer.Writer.Flush();
+            return ((StringWriter)renderer.Writer).ToString();
+        }
+
+        /// <inheritdoc/>
+        public ValueTask<string> RenderAsync(string template, object view)
+        {
+            return RenderAsync(template, view, null, null);
+        }
+
+        /// <inheritdoc/>
+        public ValueTask<string> RenderAsync(string template, object view, RenderSettings settings)
+        {
+            return RenderAsync(template, view, null, settings);
+        }
+
+        /// <inheritdoc/>
+        public ValueTask<string> RenderAsync(string template, object view, IDictionary<string, string> partials)
+        {
+            return RenderAsync(template, view, partials, null);
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask<string> RenderAsync(string template, object view, IDictionary<string, string> partials, RenderSettings settings)
+        {
+            var loadedTemplate = await RendererSettings.TemplateLoader.LoadAsync(template);
+
+            if (loadedTemplate == null)
+            {
+                throw new UnknownTemplateException("No template was found with the name '" + template + "'");
+            }
+
+            var document = RendererSettings.Parser.Parse(loadedTemplate, RendererSettings.DefaultTags, pipeline: RendererSettings.ParserPipeline);
+
+            var textwriter = new StringWriter();
+
+            var renderer = new StringRender(textwriter, RendererSettings.RendererPipeline, RendererSettings.MaxRecursionDepth);
+
+            var partialsLoader = RendererSettings.PartialTemplateLoader;
+            if (partials != null && partials.Keys.Count > 0)
+            {
+                partialsLoader = new CompositeLoader(new DictionaryLoader(partials), RendererSettings.PartialTemplateLoader);
+            }
+
+            await renderer.RenderAsync(document, new Context(view, RendererSettings, partialsLoader, settings ?? RendererSettings.RenderSettings));
 
             renderer.Writer.Flush();
             return ((StringWriter)renderer.Writer).ToString();

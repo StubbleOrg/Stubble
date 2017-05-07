@@ -5,6 +5,8 @@
 
 using System;
 using System.Net;
+using System.Threading.Tasks;
+using Stubble.Core.Helpers;
 using Stubble.Core.Tokens;
 
 namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
@@ -29,6 +31,40 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                 if (resultString.Contains("{{"))
                 {
                     renderer.Render(context.RendererSettings.Parser.Parse(resultString), context);
+                    return;
+                }
+
+                value = resultString;
+            }
+
+            if (obj.EscapeResult && value != null)
+            {
+                value = WebUtility.HtmlEncode(value.ToString());
+            }
+
+            if (obj.Indent > 0)
+            {
+                renderer.Write(' ', obj.Indent);
+            }
+
+            renderer.Write(value?.ToString());
+        }
+
+        /// <inheritdoc/>
+        protected override async Task WriteAsync(StringRender renderer, InterpolationToken obj, Context context)
+        {
+            var value = context.Lookup(obj.Content.ToString());
+
+            var functionValueDynamic = value as Func<dynamic, object>;
+            var functionValue = value as Func<object>;
+
+            if (functionValueDynamic != null || functionValue != null)
+            {
+                object functionResult = functionValueDynamic != null ? functionValueDynamic.Invoke(context.View) : functionValue.Invoke();
+                var resultString = functionResult.ToString();
+                if (resultString.Contains("{{"))
+                {
+                    await renderer.RenderAsync(context.RendererSettings.Parser.Parse(resultString), context);
                     return;
                 }
 
