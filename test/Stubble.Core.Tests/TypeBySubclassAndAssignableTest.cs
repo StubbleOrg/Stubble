@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using Stubble.Core.Classes;
-using Stubble.Core.Classes.Tokens;
 using Xunit;
 
 namespace Stubble.Core.Tests
@@ -21,13 +20,13 @@ namespace Stubble.Core.Tests
         {
             var list = new List<Type>
             {
-                typeof(ParserOutput),
-                typeof(RawValueToken)
+                typeof(A),
+                typeof(B)
             };
             var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
 
-            var rawTokenIndex = orderedList.IndexOf(typeof(RawValueToken));
-            var parserOutputIndex = orderedList.IndexOf(typeof(ParserOutput));
+            var rawTokenIndex = orderedList.IndexOf(typeof(B));
+            var parserOutputIndex = orderedList.IndexOf(typeof(A));
 
             Assert.True(rawTokenIndex < parserOutputIndex);
         }
@@ -37,13 +36,13 @@ namespace Stubble.Core.Tests
         {
             var list = new List<Type>
             {
-                typeof(RawValueToken),
-                typeof(ParserOutput)
+                typeof(B),
+                typeof(A)
             };
             var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
 
-            var rawTokenIndex = orderedList.IndexOf(typeof(RawValueToken));
-            var parserOutputIndex = orderedList.IndexOf(typeof(ParserOutput));
+            var rawTokenIndex = orderedList.IndexOf(typeof(B));
+            var parserOutputIndex = orderedList.IndexOf(typeof(A));
 
             Assert.True(rawTokenIndex < parserOutputIndex);
         }
@@ -87,6 +86,16 @@ namespace Stubble.Core.Tests
             Assert.Equal(0, comparer.Compare(null, null));
             Assert.Equal(1, comparer.Compare(null, typeof(string)));
             Assert.Equal(-1, comparer.Compare(typeof(string), null));
+        }
+
+        private class A
+        {
+            public string PropertyA { get; set; }
+        }
+
+        private class B : A
+        {
+            public string PropertyB { get; set; }
         }
     }
 }

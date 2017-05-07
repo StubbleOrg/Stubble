@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Stubble.Core.Classes;
 using Xunit;
-using Stubble.Core.Dev.Settings;
-using Stubble.Core.Classes.Loaders;
-using Stubble.Core.Dev.Parser;
-using Stubble.Core.Dev;
+using Stubble.Core.Settings;
+using Stubble.Core.Loaders;
+using Stubble.Core.Parser;
+using Stubble.Core.Builders;
 
 namespace Stubble.Core.Tests
 {

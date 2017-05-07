@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using Stubble.Core.Classes;
-using Stubble.Core.Classes.Exceptions;
-using Stubble.Core.Dev.Settings;
+using Stubble.Core.Exceptions;
+using Stubble.Core.Settings;
 using Stubble.Core.Tests.Fixtures;
 using Xunit;
 

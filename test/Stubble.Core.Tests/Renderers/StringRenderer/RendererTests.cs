@@ -7,12 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Stubble.Core.Classes;
-using Stubble.Core.Classes.Loaders;
-using Stubble.Core.Dev.Imported;
-using Stubble.Core.Dev.Renderers;
-using Stubble.Core.Dev.Renderers.Token;
-using Stubble.Core.Dev.Settings;
-using Stubble.Core.Dev.Tags;
+using Stubble.Core.Imported;
+using Stubble.Core.Loaders;
+using Stubble.Core.Renderers.StringRenderer;
+using Stubble.Core.Renderers.StringRenderer.TokenRenderers;
+using Stubble.Core.Settings;
+using Stubble.Core.Tokens;
 using Xunit;
 
 namespace Stubble.Core.Tests.Renderers.StringRenderer
@@ -34,7 +34,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             var rawTokenRenderer = new LiteralTokenRenderer();
             rawTokenRenderer.Write(
                 stringRenderer,
-                new LiteralTag()
+                new LiteralToken()
                 {
                     Content = new[] {content}
                 }, context);
@@ -61,7 +61,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             var interpolationTokenRenderer = new InterpolationTokenRenderer();
             interpolationTokenRenderer.Write(
                 stringRenderer,
-                new InterpolationTag
+                new InterpolationToken
                 {
                     Content = new StringSlice("foo"),
                     EscapeResult = false,
@@ -89,7 +89,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             var interpolationTokenRenderer = new InterpolationTokenRenderer();
             interpolationTokenRenderer.Write(
                 stringRenderer,
-                new InterpolationTag
+                new InterpolationToken
                 {
                     Content = new StringSlice("foo"),
                     EscapeResult = true,
@@ -117,7 +117,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             var interpolationTokenRenderer = new InterpolationTokenRenderer();
             interpolationTokenRenderer.Write(
                 stringRenderer,
-                new InterpolationTag
+                new InterpolationToken
                 {
                     Content = new StringSlice("foo"),
                     EscapeResult = true,
@@ -145,7 +145,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             var interpolationTokenRenderer = new InterpolationTokenRenderer();
             interpolationTokenRenderer.Write(
                 stringRenderer,
-                new InterpolationTag
+                new InterpolationToken
                 {
                     Content = new StringSlice("foo"),
                     EscapeResult = true,
@@ -177,7 +177,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             var interpolationTokenRenderer = new InterpolationTokenRenderer();
             interpolationTokenRenderer.Write(
                 stringRenderer,
-                new InterpolationTag
+                new InterpolationToken
                 {
                     Content = new StringSlice("foo"),
                     EscapeResult = true,
@@ -214,7 +214,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             var partialTokenRenderer = new PartialTokenRenderer();
             partialTokenRenderer.Write(
                 stringRenderer,
-                new PartialTag
+                new PartialToken
                 {
                     Content = new StringSlice("foo"),
                 }, context);
@@ -250,7 +250,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
             var partialTokenRenderer = new PartialTokenRenderer();
             partialTokenRenderer.Write(
                 stringRenderer,
-                new PartialTag
+                new PartialToken
                 {
                     Content = new StringSlice("foo"),
                 }, context);
@@ -281,12 +281,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new InvertedSectionTag
+                new InvertedSectionToken
                 {
                     SectionName = "check",
-                    Children = new List<MustacheTag>
+                    Children = new List<MustacheToken>
                     {
-                        new LiteralTag { Content = new[] { new StringSlice("I'm false") } }
+                        new LiteralToken { Content = new[] { new StringSlice("I'm false") } }
                     }
                 },
                 context);
@@ -317,12 +317,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new InvertedSectionTag
+                new InvertedSectionToken
                 {
                     SectionName = "list",
-                    Children = new List<MustacheTag>
+                    Children = new List<MustacheToken>
                     {
-                        new LiteralTag {
+                        new LiteralToken {
                             Content = new []
                             {
                                 new StringSlice("I'm also false")
@@ -358,12 +358,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new InvertedSectionTag
+                new InvertedSectionToken
                 {
                     SectionName = "notfound",
-                    Children = new List<MustacheTag>
+                    Children = new List<MustacheToken>
                     {
-                        new LiteralTag {
+                        new LiteralToken {
                             Content = new []
                             {
                                 new StringSlice("I'm also also false")
@@ -399,12 +399,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new InvertedSectionTag
+                new InvertedSectionToken
                 {
                     SectionName = "check",
-                    Children = new List<MustacheTag>
+                    Children = new List<MustacheToken>
                     {
-                        new LiteralTag
+                        new LiteralToken
                         {
                             Content = new []
                             {

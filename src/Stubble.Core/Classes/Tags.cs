@@ -4,8 +4,7 @@
 // </copyright>
 
 using System;
-using System.Collections.Generic;
-using Stubble.Core.Classes.Exceptions;
+using Stubble.Core.Exceptions;
 
 namespace Stubble.Core.Classes
 {
@@ -21,24 +20,31 @@ namespace Stubble.Core.Classes
         /// <param name="endTag">End tag</param>
         public Tags(string startTag, string endTag)
         {
-            // TODO: Check tags do not have spaces
-            StartTag = startTag;
-            EndTag = endTag;
-        }
+            var localStartTag = startTag ?? throw new ArgumentNullException(nameof(startTag));
+            var localEndTag = endTag ?? throw new ArgumentNullException(nameof(endTag));
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Tags"/> class.
-        /// </summary>
-        /// <param name="tags">Tag array</param>
-        public Tags(IReadOnlyList<string> tags)
-        {
-            if (tags.Count != 2)
+            if (localStartTag == string.Empty)
             {
-                throw new StubbleException("Invalid Tags");
+                throw new StubbleException("Start Tag cannot be empty");
             }
 
-            StartTag = tags[0];
-            EndTag = tags[1];
+            if (localEndTag == string.Empty)
+            {
+                throw new StubbleException("End Tag cannot be empty");
+            }
+
+            if (localStartTag.Contains(" "))
+            {
+                throw new StubbleException("Start Tag cannot contain spaces");
+            }
+
+            if (localEndTag.Contains(" "))
+            {
+                throw new StubbleException("End Tag cannot contain spaces");
+            }
+
+            StartTag = localStartTag;
+            EndTag = localEndTag;
         }
 
         /// <summary>

@@ -5,14 +5,14 @@ using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Validators;
 using Newtonsoft.Json;
 using Stubble.Core.Benchmark.TwitterPerf;
-using Stubble.Core.Classes.Loaders;
-using Stubble.Core.Dev;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BenchmarkDotNet.Attributes.Jobs;
 using BenchmarkDotNet.Jobs;
 using Nustache.Core;
+using Stubble.Core.Builders;
+using Stubble.Core.Loaders;
 
 namespace Stubble.Core.Benchmark
 {
@@ -30,7 +30,6 @@ namespace Stubble.Core.Benchmark
             }
         }
 
-        private StubbleStringRenderer Stubble;
         private StubbleVisitorRenderer StubbleVisitorRenderer;
         public readonly string EntitiesMustache = @"{{#url}}
     <div><a href=""{{url}}"">{{display_url}}</a></div>
@@ -88,11 +87,6 @@ namespace Stubble.Core.Benchmark
             Tweet = JsonConvert.DeserializeObject<Tweet>(TweetJson);
             Timeline = new Timeline { tweets = Enumerable.Range(0, 20).Select(i => Tweet).ToList() };
 
-            Stubble = new StubbleBuilder()
-                .SetTemplateLoader(loader)
-                .SetPartialTemplateLoader(loader)
-                .Build();
-
             StubbleVisitorRenderer = new StubbleBuilder()
                 .SetBuilderType<StubbleVisitorBuilder>()
                 .SetTemplateLoader(loader)
@@ -114,9 +108,6 @@ namespace Stubble.Core.Benchmark
 
         [Benchmark(Baseline = true)]
         public string TimelineBenchmark_Visitor() => StubbleVisitorRenderer.Render("timeline", Timeline);
-
-        [Benchmark]
-        public string TimelineBenchmark() => Stubble.Render("timeline", Timeline);
 
         [Benchmark]
         public string NustacheTimelineBenchmark()

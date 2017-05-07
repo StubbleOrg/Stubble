@@ -8,7 +8,6 @@ using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Exporters;
-using Stubble.Core.Dev;
 
 namespace Stubble.Core.Benchmark
 {
@@ -30,34 +29,16 @@ namespace Stubble.Core.Benchmark
         [Params(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)]
         public int Index { get; set; }
 
-        private StubbleStringRenderer Stubble;
         private StubbleVisitorRenderer StubbleVisitorRenderer;
 
         [Setup]
         public void SetupRenderers()
         {
-            Stubble = new StubbleStringRenderer();
             StubbleVisitorRenderer = new StubbleVisitorRenderer();
         }
 
         [Benchmark]
-        public string Stubble_NoCache()
-        {
-            var testCase = TestCaseParams.Params[Index - 1];
-            var str = Stubble.Render(testCase.Key, testCase.Value);
-            Stubble.ClearCache();
-            return str;
-        }
-
-        [Benchmark(Baseline = true)]
         public string Stubble_Benchmark()
-        {
-            var testCase = TestCaseParams.Params[Index - 1];
-            return Stubble.Render(testCase.Key, testCase.Value);
-        }
-
-        [Benchmark]
-        public string Stubble_VistorBenchmark()
         {
             var testCase = TestCaseParams.Params[Index - 1];
             return StubbleVisitorRenderer.Render(testCase.Key, testCase.Value);

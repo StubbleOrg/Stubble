@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using Stubble.Core.Classes;
+using Stubble.Core.Settings;
 
 namespace Stubble.Core.Interfaces
 {
