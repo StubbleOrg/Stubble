@@ -4,7 +4,7 @@
 // </copyright>
 
 using System.Collections.Generic;
-using Stubble.Core.Dev.Imported;
+using Stubble.Core.Imported;
 
 namespace Stubble.Core.Helpers
 {

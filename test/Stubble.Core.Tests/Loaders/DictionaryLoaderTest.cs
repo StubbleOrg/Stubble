@@ -4,7 +4,7 @@
 // </copyright>
 
 using System.Collections.Generic;
-using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Loaders;
 using Xunit;
 
 namespace Stubble.Core.Tests.Loaders

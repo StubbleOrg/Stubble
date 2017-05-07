@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Loaders;
 using Xunit;
 
 namespace Stubble.Core.Tests.Loaders

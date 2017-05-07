@@ -1,582 +1,598 @@
-﻿// <copyright file="ParserTest.cs" company="Stubble Authors">
+﻿// <copyright file="DevTest.cs" company="Stubble Authors">
 // Copyright (c) Stubble Authors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Stubble.Core.Classes;
-using Stubble.Core.Classes.Exceptions;
-using Stubble.Core.Tests.Fixtures;
+using Stubble.Core.Exceptions;
+using Stubble.Core.Imported;
+using Stubble.Core.Parser;
+using Stubble.Core.Tokens;
 using Xunit;
+using Xunit.Abstractions;
+using static Stubble.Core.Helpers.SliceHelpers;
 
 namespace Stubble.Core.Tests
 {
-    [CollectionDefinition("ParserCollection")]
-    public class ParserCollection : ICollectionFixture<ParserTestFixture> { }
-
-    [Collection("ParserCollection")]
     public class ParserTest
     {
-        internal Parser Parser;
+        internal readonly ITestOutputHelper OutputStream;
 
-        public ParserTest(ParserTestFixture fixture)
+        public ParserTest(ITestOutputHelper outputStream)
         {
-            Parser = fixture.Parser;
+            OutputStream = outputStream;
         }
 
         public static IEnumerable<object[]> TemplateParsingData()
         {
-            return new[]
+            return new TestData[]
             {
-                new { index = 1, name="", arguments = new List<ParserOutput> { } },
-                new
+                new TestData { Index = 1, Name="", Arguments = new List<MustacheToken>() },
+                new TestData
                 {
-                    index = 2, name="{{hi}}", arguments = new List<ParserOutput>
+                    Index = 2, Name="{{hi}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 0, End = 6,  },
+                        new InterpolationToken { TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 4, TagEndPosition = 6, EscapeResult = true, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 3, name="{{hi.world}}", arguments = new List<ParserOutput>
+                    Index = 3, Name="{{hi.world}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "name", Value = "hi.world", Start = 0, End = 12,  },
+                        new InterpolationToken { TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 10, TagEndPosition = 12, EscapeResult = true, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 4, name="{{hi . world}}", arguments = new List<ParserOutput>
+                    Index = 4, Name="{{hi . world}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "name", Value = "hi . world", Start = 0, End = 14,  },
+                        new InterpolationToken { TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 12, TagEndPosition = 14, EscapeResult = true, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 5, name="{{ hi}}", arguments = new List<ParserOutput>
+                    Index = 5, Name="{{ hi}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 0, End = 7,  },
+                        new InterpolationToken { TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = true, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 6, name="{{hi }}", arguments = new List<ParserOutput>
+                    Index = 6, Name="{{hi }}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 0, End = 7,  },
+                        new InterpolationToken { TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 4, TagEndPosition = 7, EscapeResult = true, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 7, name="{{ hi }}", arguments = new List<ParserOutput>
+                    Index = 7, Name="{{ hi }}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 0, End = 8,  },
+                        new InterpolationToken { TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 8, EscapeResult = true, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 8, name="{{{hi}}}", arguments = new List<ParserOutput>
+                    Index = 8, Name="{{{hi}}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "&", Value = "hi", Start = 0, End = 8,  },
+                        new InterpolationToken { TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 8, EscapeResult = false, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 9, name="{{!hi}}", arguments = new List<ParserOutput>
+                    Index = 9, Name="{{!hi}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "!", Value = "hi", Start = 0, End = 7,  },
+                        new CommentToken { TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 10, name="{{! hi}}", arguments = new List<ParserOutput>
+                    Index = 10, Name="{{! hi}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "!", Value = "hi", Start = 0, End = 8,  },
+                        new CommentToken { TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 6, TagEndPosition = 8, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 11, name="{{! hi }}", arguments = new List<ParserOutput>
+                    Index = 11, Name="{{! hi }}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "!", Value = "hi", Start = 0, End = 9,  },
+                        new CommentToken { TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 7, TagEndPosition = 9, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 12, name="{{ !hi}}", arguments = new List<ParserOutput>
+                    Index = 12, Name="{{ !hi}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "!", Value = "hi", Start = 0, End = 8,  },
+                        new CommentToken { TagStartPosition = 0, ContentStartPosition = 4, ContentEndPosition = 6, TagEndPosition = 8, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 13, name="{{ ! hi}}", arguments = new List<ParserOutput>
+                    Index = 13, Name="{{ ! hi}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "!", Value = "hi", Start = 0, End = 9,  },
+                        new CommentToken { TagStartPosition = 0, ContentStartPosition = 4, ContentEndPosition = 7, TagEndPosition = 9, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 14, name="{{ ! hi }}", arguments = new List<ParserOutput>
+                    Index = 14, Name="{{ ! hi }}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "!", Value = "hi", Start = 0, End = 10,  },
+                        new CommentToken { TagStartPosition = 0, ContentStartPosition = 4, ContentEndPosition = 8, TagEndPosition = 10, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 15, name="a\n b", arguments = new List<ParserOutput>
+                    Index = 15, Name="a\n b", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n b", Start = 0, End = 4,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 4, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 16, name="a{{hi}}", arguments = new List<ParserOutput>
+                    Index = 16, Name="a{{hi}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a", Start = 0, End = 1,  },
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 1, End = 7,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 1, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = true, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 17, name="a {{hi}}", arguments = new List<ParserOutput>
+                    Index = 17, Name="a {{hi}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a ", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 2, End = 8,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 2, ContentStartPosition = 4, ContentEndPosition = 6, TagEndPosition = 8, EscapeResult = true, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 18, name=" a{{hi}}", arguments = new List<ParserOutput>
+                    Index = 18, Name=" a{{hi}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = " a", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 2, End = 8,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 2, ContentStartPosition = 4, ContentEndPosition = 6, TagEndPosition = 8, EscapeResult = true, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 19, name=" a {{hi}}", arguments = new List<ParserOutput>
+                    Index = 19, Name=" a {{hi}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = " a ", Start = 0, End = 3,  },
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 3, End = 9,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 3, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 3, ContentStartPosition = 5, ContentEndPosition = 7, TagEndPosition = 9, EscapeResult = true, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 20, name="a{{hi}}b", arguments = new List<ParserOutput>
+                    Index = 20, Name="a{{hi}}b", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a", Start = 0, End = 1,  },
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 1, End = 7,  },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 7, End = 8,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 1, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = true, IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 7, ContentEndPosition = 8, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 21, name="a{{hi}} b", arguments = new List<ParserOutput>
+                    Index = 21, Name="a{{hi}} b", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a", Start = 0, End = 1,  },
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 1, End = 7,  },
-                        new ParserOutput { TokenType = "text", Value = " b", Start = 7, End = 9,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 1, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = true, IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 7, ContentEndPosition = 9, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 22, name="a{{hi}}b ", arguments = new List<ParserOutput>
+                    Index = 22, Name="a{{hi}}b ", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a", Start = 0, End = 1,  },
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 1, End = 7,  },
-                        new ParserOutput { TokenType = "text", Value = "b ", Start = 7, End = 9,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 1, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 1, ContentStartPosition = 3, ContentEndPosition = 5, TagEndPosition = 7, EscapeResult = true, IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 7, ContentEndPosition = 9, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 23, name="a\n{{hi}} b \n", arguments = new List<ParserOutput>
+                    Index = 23, Name="a\n{{hi}} b \n", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 2, End = 8,  },
-                        new ParserOutput { TokenType = "text", Value = " b \n", Start = 8, End = 12,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 2, ContentStartPosition = 4, ContentEndPosition = 6, TagEndPosition = 8, EscapeResult = true, IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 8, ContentEndPosition = 12, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 24, name="a\n {{hi}} \nb", arguments = new List<ParserOutput>
+                    Index = 24, Name="a\n {{hi}} \nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n ", Start = 0, End = 3,  },
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 3, End = 9,  },
-                        new ParserOutput { TokenType = "text", Value = " \nb", Start = 9, End = 12,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 3, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 3, ContentStartPosition = 5, ContentEndPosition = 7, TagEndPosition = 9, EscapeResult = true, IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 9, ContentEndPosition = 12, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 25, name="a\n {{!hi}} \nb", arguments = new List<ParserOutput>
+                    Index = 25, Name="a\n {{!hi}} \nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "!", Value = "hi", Start = 3, End = 10,  },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 12, End = 13,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new CommentToken { TagStartPosition = 3, ContentStartPosition = 6, ContentEndPosition = 8, TagEndPosition = 10, IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 12, ContentEndPosition = 13, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 26, name="a\n{{#a}}{{/a}}\nb", arguments = new List<ParserOutput>
+                    Index = 26, Name="a\n{{#a}}{{/a}}\nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "#", Value = "a", Start = 2, End = 8, ParentSectionEnd = 8, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 15, End = 16,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken { SectionName = "a", StartPosition = 2, EndPosition = 14, Children = new List<MustacheToken>(), IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 15, ContentEndPosition = 16, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 27, name="a\n {{#a}}{{/a}}\nb", arguments = new List<ParserOutput>
+                    Index = 27, Name="a\n {{#a}}{{/a}}\nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 9, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 16, End = 17,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken { SectionName = "a", StartPosition = 3, EndPosition = 15, Children = new List<MustacheToken>(), IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 16, ContentEndPosition = 17, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 28, name="a\n {{#a}}{{/a}} \nb", arguments = new List<ParserOutput>
+                    Index = 28, Name="a\n {{#a}}{{/a}} \nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 9, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 17, End = 18,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken { SectionName = "a", StartPosition = 3, EndPosition = 15, Children = new List<MustacheToken>(), IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 17, ContentEndPosition = 18, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 29, name="a\n{{#a}}\n{{/a}}\nb", arguments = new List<ParserOutput>
+                    Index = 29, Name="a\n{{#a}}\n{{/a}}\nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "#", Value = "a", Start = 2, End = 8, ParentSectionEnd = 9, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 16, End = 17,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken { SectionName = "a", StartPosition = 2, EndPosition = 15, Children = new List<MustacheToken>(), IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 16, ContentEndPosition = 17, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 30, name="a\n {{#a}}\n{{/a}}\nb", arguments = new List<ParserOutput>
+                    Index = 30, Name="a\n {{#a}}\n{{/a}}\nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 17, End = 18,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken { SectionName = "a", StartPosition = 3, EndPosition = 16, Children = new List<MustacheToken>(), IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 17, ContentEndPosition = 18, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 31, name="a\n {{#a}}\n{{/a}} \nb", arguments = new List<ParserOutput>
+                    Index = 31, Name="a\n {{#a}}\n{{/a}} \nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 18, End = 19,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken { SectionName = "a", StartPosition = 3, EndPosition = 16, Children = new List<MustacheToken>(), IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 18, ContentEndPosition = 19, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 32, name="a\n{{#a}}\n{{/a}}\n{{#b}}\n{{/b}}\nb", arguments = new List<ParserOutput>
+                    Index = 32, Name="a\n{{#a}}\n{{/a}}\n{{#b}}\n{{/b}}\nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "#", Value = "a", Start = 2, End = 8, ParentSectionEnd = 9, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "#", Value = "b", Start = 16, End = 22, ParentSectionEnd = 23, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 30, End = 31,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken { SectionName = "a", StartPosition = 2, EndPosition = 15, Children = new List<MustacheToken>(), IsClosed = true },
+                        new SectionToken { SectionName = "b", StartPosition = 16, EndPosition = 29, Children = new List<MustacheToken>(), IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 30, ContentEndPosition = 31, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 33, name="a\n {{#a}}\n{{/a}}\n{{#b}}\n{{/b}}\nb", arguments = new List<ParserOutput>
+                    Index = 33, Name="a\n {{#a}}\n{{/a}}\n{{#b}}\n{{/b}}\nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "#", Value = "b", Start = 17, End = 23, ParentSectionEnd = 24, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 31, End = 32,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken { SectionName = "a", StartPosition = 3, EndPosition = 16, Children = new List<MustacheToken>(), IsClosed = true },
+                        new SectionToken { SectionName = "b", StartPosition = 17, EndPosition = 30, Children = new List<MustacheToken>(), IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 31, ContentEndPosition = 32, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 34, name="a\n {{#a}}\n{{/a}}\n{{#b}}\n{{/b}} \nb", arguments = new List<ParserOutput>
+                    Index = 34, Name="a\n {{#a}}\n{{/a}}\n{{#b}}\n{{/b}} \nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput { TokenType = "#", Value = "a", Start = 3, End = 9, ParentSectionEnd = 10, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "#", Value = "b", Start = 17, End = 23, ParentSectionEnd = 24, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 32, End = 33,  },
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken { SectionName = "a", StartPosition = 3, EndPosition = 16, Children = new List<MustacheToken>(), IsClosed = true },
+                        new SectionToken { SectionName = "b", StartPosition = 17, EndPosition = 30, Children = new List<MustacheToken>(), IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 32, ContentEndPosition = 33, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 35, name="a\n{{#a}}\n{{#b}}\n{{/b}}\n{{/a}}\nb", arguments = new List<ParserOutput>
+                    Index = 35, Name="a\n{{#a}}\n{{#b}}\n{{/b}}\n{{/a}}\nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken
                         {
-                            TokenType = "#", Value = "a", Start = 2, End = 8, ChildTokens = new List<ParserOutput>
+                            SectionName = "a", StartPosition = 2, EndPosition = 29, IsClosed = true, Children = new List<MustacheToken>
                             {
-                                new ParserOutput { TokenType = "#", Value = "b", Start = 9, End = 15, ParentSectionEnd = 16, ChildTokens = new List<ParserOutput>() },
-                            }, ParentSectionEnd = 23,
+                                new SectionToken { SectionName = "b", StartPosition = 9, EndPosition = 22, Children = new List<MustacheToken>(), IsClosed = true },
+                            }
                         },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 30, End = 31,  },
+                        new LiteralToken { ContentStartPosition = 30, ContentEndPosition = 31, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 36, name="a\n {{#a}}\n{{#b}}\n{{/b}}\n{{/a}}\nb", arguments = new List<ParserOutput>
+                    Index = 36, Name="a\n {{#a}}\n{{#b}}\n{{/b}}\n{{/a}}\nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken
                         {
-                            TokenType = "#", Value = "a", Start = 3, End = 9, ChildTokens = new List<ParserOutput>
+                            SectionName = "a", StartPosition = 3, EndPosition = 30, IsClosed = true, Children = new List<MustacheToken>
                             {
-                                new ParserOutput { TokenType = "#", Value = "b", Start = 10, End = 16, ParentSectionEnd = 17, ChildTokens = new List<ParserOutput>() },
-                            }, ParentSectionEnd = 24,
+                                new SectionToken { SectionName = "b", StartPosition = 10, EndPosition = 23, Children = new List<MustacheToken>(), IsClosed = true },
+                            }
                         },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 31, End = 32,  },
+                        new LiteralToken { ContentStartPosition = 31, ContentEndPosition = 32, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 37, name="a\n {{#a}}\n{{#b}}\n{{/b}}\n{{/a}} \nb", arguments = new List<ParserOutput>
+                    Index = 37, Name="a\n {{#a}}\n{{#b}}\n{{/b}}\n{{/a}} \nb", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "text", Value = "a\n", Start = 0, End = 2,  },
-                        new ParserOutput
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 2, IsClosed = true },
+                        new SectionToken
                         {
-                            TokenType = "#", Value = "a", Start = 3, End = 9, ChildTokens = new List<ParserOutput>
+                            SectionName = "a", StartPosition = 3, EndPosition = 30, IsClosed = true, Children = new List<MustacheToken>
                             {
-                                new ParserOutput { TokenType = "#", Value = "b", Start = 10, End = 16, ParentSectionEnd = 17, ChildTokens = new List<ParserOutput>() },
-                            }, ParentSectionEnd = 24,
+                                new SectionToken { SectionName = "b", StartPosition = 10, EndPosition = 23, Children = new List<MustacheToken>(), IsClosed = true },
+                            }
                         },
-                        new ParserOutput { TokenType = "text", Value = "b", Start = 32, End = 33,  },
+                        new LiteralToken { ContentStartPosition = 32, ContentEndPosition = 33, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 38, name="{{>abc}}", arguments = new List<ParserOutput>
+                    Index = 38, Name="{{>abc}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = ">", Value = "abc", Start = 0, End = 8,  },
+                        new PartialToken { TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 6, TagEndPosition = 8, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 39, name="{{> abc }}", arguments = new List<ParserOutput>
+                    Index = 39, Name="{{> abc }}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = ">", Value = "abc", Start = 0, End = 10,  },
+                        new PartialToken { TagStartPosition = 0, ContentStartPosition = 4, ContentEndPosition = 7, TagEndPosition = 10, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 40, name="{{ > abc }}", arguments = new List<ParserOutput>
+                    Index = 40, Name="{{ > abc }}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = ">", Value = "abc", Start = 0, End = 11,  },
+                        new PartialToken { TagStartPosition = 0, ContentStartPosition = 5, ContentEndPosition = 8, TagEndPosition = 11, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 41, name="{{=<% %>=}}", arguments = new List<ParserOutput>
+                    Index = 41, Name="{{=<% %>=}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "=", Value = "<% %>", Start = 0, End = 11,  },
+                        new DelimiterToken { StartTag = "<%", EndTag = "%>", TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 8, TagEndPosition = 11, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 42, name="{{= <% %> =}}", arguments = new List<ParserOutput>
+                    Index = 42, Name="{{= <% %> =}}", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "=", Value = "<% %>", Start = 0, End = 13,  },
+                        new DelimiterToken { StartTag = "<%", EndTag = "%>", TagStartPosition = 0, ContentStartPosition = 4, ContentEndPosition = 9, TagEndPosition = 13, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 43, name="{{=<% %>=}}<%={{ }}=%>", arguments = new List<ParserOutput>
+                    Index = 43, Name="{{=<% %>=}}<%={{ }}=%>", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "=", Value = "<% %>", Start = 0, End = 11,  },
-                        new ParserOutput { TokenType = "=", Value = "{{ }}", Start = 11, End = 22,  },
+                        new DelimiterToken { StartTag = "<%", EndTag = "%>", TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 8, TagEndPosition = 11, IsClosed = true },
+                        new DelimiterToken { StartTag = "{{", EndTag = "}}", TagStartPosition = 11, ContentStartPosition = 14, ContentEndPosition = 19, TagEndPosition = 22, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 44, name="{{=<% %>=}}<%hi%>", arguments = new List<ParserOutput>
+                    Index = 44, Name="{{=<% %>=}}<%hi%>", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "=", Value = "<% %>", Start = 0, End = 11,  },
-                        new ParserOutput { TokenType = "name", Value = "hi", Start = 11, End = 17,  },
+                        new DelimiterToken { StartTag = "<%", EndTag = "%>", TagStartPosition = 0, ContentStartPosition = 3, ContentEndPosition = 8, TagEndPosition = 11, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 11, ContentStartPosition = 13, ContentEndPosition = 15, TagEndPosition = 17, EscapeResult = true, IsClosed = true }
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 45, name="{{#a}}{{/a}}hi{{#b}}{{/b}}\n", arguments = new List<ParserOutput>
+                    Index = 45, Name="{{#a}}{{/a}}hi{{#b}}{{/b}}\n", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "#", Value = "a", Start = 0, End = 6, ParentSectionEnd = 6, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "hi", Start = 12, End = 14,  },
-                        new ParserOutput { TokenType = "#", Value = "b", Start = 14, End = 20, ParentSectionEnd = 20, ChildTokens = new List<ParserOutput>() },
-                        new ParserOutput { TokenType = "text", Value = "\n", Start = 26, End = 27,  },
+                        new SectionToken { SectionName = "a", StartPosition = 0, EndPosition = 12, IsClosed = true, Children = new List<MustacheToken>() },
+                        new LiteralToken { ContentStartPosition = 12, ContentEndPosition = 14, IsClosed = true },
+                        new SectionToken { SectionName = "b", StartPosition = 14, EndPosition = 26, IsClosed = true, Children = new List<MustacheToken>() },
+                        new LiteralToken { ContentStartPosition = 26, ContentEndPosition = 27, IsClosed = true },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 46, name="{{a}}\n{{b}}\n\n{{#c}}\n{{/c}}\n", arguments = new List<ParserOutput>
+                    Index = 46, Name="{{a}}\n{{b}}\n\n{{#c}}\n{{/c}}\n", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput { TokenType = "name", Value = "a", Start = 0, End = 5,  },
-                        new ParserOutput { TokenType = "text", Value = "\n", Start = 5, End = 6,  },
-                        new ParserOutput { TokenType = "name", Value = "b", Start = 6, End = 11,  },
-                        new ParserOutput { TokenType = "text", Value = "\n\n", Start = 11, End = 13,  },
-                        new ParserOutput { TokenType = "#", Value = "c", Start = 13, End = 19, ParentSectionEnd = 20, ChildTokens = new List<ParserOutput>() },
+                        new InterpolationToken { TagStartPosition = 0, ContentStartPosition = 2, ContentEndPosition = 3, TagEndPosition = 5, EscapeResult = true, IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 5, ContentEndPosition = 6, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 6, ContentStartPosition = 8, ContentEndPosition = 9, TagEndPosition = 11, EscapeResult = true, IsClosed = true },
+                        new LiteralToken { ContentStartPosition = 11, ContentEndPosition = 13, IsClosed = true },
+                        new SectionToken { SectionName = "c", StartPosition = 13, EndPosition = 26, IsClosed = true, Children = new List<MustacheToken>() },
                     }
                 },
-                new
+                new TestData
                 {
-                    index = 47, name="{{#foo}}\n  {{#a}}\n    {{b}}\n  {{/a}}\n{{/foo}}\n", arguments = new List<ParserOutput>
+                    Index = 47, Name="{{#foo}}\n  {{#a}}\n    {{b}}\n  {{/a}}\n{{/foo}}\n", Arguments = new List<MustacheToken>
                     {
-                        new ParserOutput
+                        new SectionToken
                         {
-                            TokenType = "#", Value = "foo", Start = 0, End = 8, ChildTokens = new List<ParserOutput>
+                            SectionName = "foo", StartPosition = 0, EndPosition = 45, IsClosed = true, Children = new List<MustacheToken>
                             {
-                                new ParserOutput
+                                new SectionToken
                                 {
-                                    TokenType = "#", Value = "a", Start = 11, End = 17, ChildTokens = new List<ParserOutput>
+                                    SectionName = "a", StartPosition = 11, EndPosition = 36, IsClosed = true, Children = new List<MustacheToken>
                                     {
-                                        new ParserOutput { TokenType = "text", Value = "    ", Start = 18, End = 22,  },
-                                        new ParserOutput { TokenType = "name", Value = "b", Start = 22, End = 27,  },
-                                        new ParserOutput { TokenType = "text", Value = "\n", Start = 27, End = 28,  },
-                                    }, ParentSectionEnd = 30,
-                                },
-                            }, ParentSectionEnd = 37,
+                                        new LiteralToken { ContentStartPosition = 18, ContentEndPosition = 22, IsClosed = true },
+                                        new InterpolationToken { TagStartPosition = 22, ContentStartPosition = 24, ContentEndPosition = 25, TagEndPosition = 27, EscapeResult = true, IsClosed = true },
+                                        new LiteralToken { ContentStartPosition = 27, ContentEndPosition = 28, IsClosed = true },
+                                    }
+                                }
+                            }
                         },
                     }
                 },
-            }.Select(x => new object[] { x.name, x.arguments });
-        }
-
-        [Theory]
-        [MemberData(nameof(TemplateParsingData))]
-        public void It_Knows_How_To_Parse(string template, IList<ParserOutput> result)
-        {
-            var results = Parser.ParseTemplate(template);
-
-            for (var i = 0; i < results.Count; i++)
-            {
-                Assert.StrictEqual(result[i], results[i]);
+                new TestData
+                {
+                    Index = 48, Name="{{#foo}}\r\n  {{#a}}\r\n    {{b}}\r\n  {{/a}}\r\n{{/foo}}\r\n", Arguments = new List<MustacheToken>
+                    {
+                        new SectionToken
+                        {
+                            SectionName = "foo", StartPosition = 0, EndPosition = 49, IsClosed = true, Children = new List<MustacheToken>
+                            {
+                                new SectionToken
+                                {
+                                    SectionName = "a", StartPosition = 12, EndPosition = 39, IsClosed = true, Children = new List<MustacheToken>
+                                    {
+                                        new LiteralToken { ContentStartPosition = 20, ContentEndPosition = 24, IsClosed = true },
+                                        new InterpolationToken { TagStartPosition = 24, ContentStartPosition = 26, ContentEndPosition = 27, TagEndPosition = 29, EscapeResult = true, IsClosed = true },
+                                        new LiteralToken { ContentStartPosition = 29, ContentEndPosition = 31, IsClosed = true },
+                                    }
+                                }
+                            }
+                        },
+                    }
+                },
+                new TestData
+                {
+                    Index = 49, Name="{{#a}}a\n b{{/a}}", Arguments = new List<MustacheToken>
+                    {
+                        new SectionToken
+                        {
+                            SectionName = "a", StartPosition = 0, EndPosition = 16, IsClosed = true, Children = new List<MustacheToken>
+                            {
+                                new LiteralToken { ContentStartPosition = 6, ContentEndPosition = 10, IsClosed = true }
+                            }
+                        }
+                    }
+                },
+                new TestData
+                {
+                    Index = 50, Name="Sup {{😺}}", Arguments = new List<MustacheToken>
+                    {
+                        new LiteralToken { ContentStartPosition = 0, ContentEndPosition = 4, IsClosed = true },
+                        new InterpolationToken { TagStartPosition = 4, ContentStartPosition = 6, ContentEndPosition = 8, TagEndPosition = 10, EscapeResult = true, IsClosed = true }
+                    }
+                },
+                new TestData
+                {
+                    Index = 51, Name="{{^a}}a\n b{{/a}}", Arguments = new List<MustacheToken>
+                    {
+                        new InvertedSectionToken
+                        {
+                            SectionName = "a", StartPosition = 0, EndPosition = 16, IsClosed = true, Children = new List<MustacheToken>
+                            {
+                                new LiteralToken { ContentStartPosition = 6, ContentEndPosition = 10, IsClosed = true }
+                            }
+                        }
+                    }
+                }
             }
+            .Select(BuildTestCase).Select(x => new[] { x });
+        }
+
+        private static TestData BuildTestCase(TestData data)
+        {
+            foreach (var argument in data.Arguments)
+            {
+                ProcessTag(argument);
+            }
+
+            void ProcessTag(MustacheToken tag)
+            {
+                switch (tag)
+                {
+                    case InlineToken inline:
+                        inline.Content = new StringSlice(data.Name, inline.ContentStartPosition, inline.ContentEndPosition - 1);
+                        break;
+                    case LiteralToken literal:
+                        literal.Content = SplitSliceToLines(
+                            new StringSlice(
+                                data.Name,
+                                literal.ContentStartPosition,
+                                literal.ContentEndPosition - 1)).ToArray();
+                        break;
+                    case BlockToken blockTag:
+                        foreach (var child in blockTag.Children)
+                        {
+                            ProcessTag(child);
+                        }
+                        break;
+                }
+            }
+
+            return data;
         }
 
         [Theory]
         [MemberData(nameof(TemplateParsingData))]
-        public void It_Can_Handle_Parsing_And_Caching(string template, IList<ParserOutput> result)
+        public void It_Knows_How_To_Parse(TestData data)
         {
-            var results = Parser.Parse(template);
+            OutputStream.WriteLine($"Index: {data.Index}, Template: '{data.Name}'");
+            var results = MustacheParser.Parse(data.Name);
 
-            Assert.False(Parser.Cache.Count > 15);
-            for (var i = 0; i < results.Count; i++)
+            Assert.Equal("Root", results.Identifier);
+            Assert.Equal(data.Arguments.Count, results.Children.Count);
+
+            for (var i = 0; i < results.Children.Count; i++)
             {
-                Assert.StrictEqual(results[i], result[i]);
+                Assert.StrictEqual(data.Arguments[i], results.Children[i]);
             }
         }
 
         [Fact]
         public void It_Knows_When_There_Is_An_Unclosed_Tag()
         {
-            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("My name is {{name"); });
+            var ex = Assert.Throws<StubbleException>(() => { MustacheParser.Parse("My Name is {{Name"); });
             Assert.Equal("Unclosed Tag at 17", ex.Message);
         }
 
         [Fact]
         public void It_Knows_When_There_Is_An_Unclosed_Section()
         {
-            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("A list: {{#people}}{{name}}"); });
-            Assert.Equal("Unclosed Section 'people' at 27", ex.Message);
+            var ex = Assert.Throws<StubbleException>(() => { MustacheParser.Parse("A list: {{#people}}{{Name}}"); });
+            Assert.Equal("Unclosed Block 'people' at 27", ex.Message);
         }
 
         [Fact]
         public void It_Knows_When_There_Is_An_Unopened_Section()
         {
-            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("The end of the list! {{/people}}"); });
-            Assert.Equal("Unopened Section 'people' at 21", ex.Message);
-        }
-
-        [Fact]
-        public void It_Errors_When_Given_Invalid_Tags()
-        {
-            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("A template <% name %>", new Tags(new[] { "<%" })); });
-            Assert.Equal("Invalid Tags", ex.Message);
-        }
-
-        [Fact]
-        public void It_Errors_When_The_Template_Contains_Invalid_Tags()
-        {
-            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("A template {{=<%=}}", new Tags(new[] { "<%" })); });
-            Assert.Equal("Invalid Tags", ex.Message);
+            var ex = Assert.Throws<StubbleException>(() => { MustacheParser.Parse("The end of the list! {{/people}}"); });
+            Assert.Equal("Unopened Block 'people' at 21", ex.Message);
         }
 
         [Fact]
         public void It_Errors_When_You_Close_The_Wrong_Section()
         {
-            var ex = Assert.Throws<StubbleException>(delegate { Parser.ParseTemplate("{{#Section}}Herp De Derp{{/wrongSection}}"); });
-            Assert.Equal("Unclosed Section 'Section' at 24", ex.Message);
+            var ex = Assert.Throws<StubbleException>(() => { MustacheParser.Parse("{{#Section}}Herp De Derp{{/WrongSection}}"); });
+            Assert.Equal("Cannot close Block 'WrongSection' at 24. There is already an unclosed Block 'Section'", ex.Message);
         }
 
         [Fact]
-        public void It_Only_Cache_Four_Regex_Tags()
+        public void Instance_Parser_Just_Passes_Through()
         {
-            Parser.ParserStatic.RegexCacheSize = 4;
-            Parser.ParserStatic.TagRegexCache.Clear();
-            Parser.ParseTemplate("Test 1 {{=<% %>=}}");
-            Assert.Equal(2, Parser.ParserStatic.TagRegexCache.Count);
-            Parser.ParseTemplate("Test 2 {{={| |}=}}");
-            Assert.Equal(3, Parser.ParserStatic.TagRegexCache.Count);
-            Parser.ParseTemplate("Test 3 {{=<: :>=}}");
-            Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
-            Parser.ParseTemplate("Test 4 {{=|# #|=}}");
-            Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
+            var instance = new InstanceMustacheParser();
+            var tags = instance.Parse("{{foo}}");
+            Assert.NotNull(tags);
+            Assert.Equal("Root", tags.Identifier);
+            Assert.NotEmpty(tags.Children);
         }
+    }
 
-        [Fact(Skip = "Test results are flakey to check with multiple cache hits at the same time")]
-        public void It_Can_Change_Cache_Size_At_Runtime()
+    public class TestData
+    {
+        public int Index { get; set; }
+
+        public string Name { get; set; }
+
+        public List<MustacheToken> Arguments { get; set; }
+
+        public override string ToString()
         {
-            Parser.ParserStatic.RegexCacheSize = 4;
-            Assert.Equal(4, Parser.ParserStatic.RegexCacheSize);
-            Parser.ParserStatic.TagRegexCache.Clear();
-            Parser.ParseTemplate("Test 1 {{=<% %>=}}");
-            Assert.Equal(2, Parser.ParserStatic.TagRegexCache.Count);
-            Parser.ParseTemplate("Test 2 {{={| |}=}}");
-            Assert.Equal(3, Parser.ParserStatic.TagRegexCache.Count);
-            Parser.ParseTemplate("Test 3 {{=<: :>=}}");
-            Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
-            Parser.ParseTemplate("Test 4 {{=|# #|=}}");
-            Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
-            Parser.ParseTemplate("Test 5 {{=|# #|=}}");
-
-            Assert.Equal(4, Parser.ParserStatic.TagRegexCache.Count);
-
-            Parser.ParserStatic.RegexCacheSize = 2;
-            Assert.Equal(2, Parser.ParserStatic.RegexCacheSize);
-            Assert.Equal(2, Parser.ParserStatic.TagRegexCache.Count);
-        }
-
-        /// <summary>
-        /// This is testing for a possible thread race condition. There should never be two
-        /// different tag regexes for the same key as they're built from the key.
-        /// </summary>
-        [Fact]
-        public void It_Should_Override_Existing_Regex_Cache_Entries()
-        {
-            var tagsA = new Tags("<|", "|>");
-            var tagsB = new Tags("<||", "||>");
-            var tagRegexA = new Parser.TagRegexes(
-                new Regex(Parser.EscapeRegexExpression(tagsA.StartTag) + @"\s*"),
-                new Regex(@"\s*" + Parser.EscapeRegexExpression(tagsA.EndTag)),
-                new Regex(@"\s*" + Parser.EscapeRegexExpression("}" + tagsA.EndTag)));
-            var tagRegexB = new Parser.TagRegexes(
-                new Regex(Parser.EscapeRegexExpression(tagsB.StartTag) + @"\s*"),
-                new Regex(@"\s*" + Parser.EscapeRegexExpression(tagsB.EndTag)),
-                new Regex(@"\s*" + Parser.EscapeRegexExpression("}" + tagsB.EndTag)));
-
-            Parser.ParserStatic.AddToRegexCache("<| |>", tagRegexA);
-            Parser.ParserStatic.AddToRegexCache("<| |>", tagRegexB);
-
-            Assert.Equal(tagRegexB, Parser.ParserStatic.TagRegexCache["<| |>"]);
-        }
-
-        [Fact]
-        public void You_Can_Access_Cache_By_KeyLookup()
-        {
-            Parser.Cache.Clear();
-            var output = Parser.Parse("{{foo}}");
-            Assert.Equal(1, Parser.Cache.Count);
-            var cacheValue = Parser.Cache["{{foo}}"];
-            Assert.Equal(output, cacheValue);
+            return $"ID #{Index} : {Name}";
         }
     }
 }

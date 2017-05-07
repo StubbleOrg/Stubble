@@ -2,11 +2,11 @@
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Validators;
 using Stubble.Core.Classes;
-using Stubble.Core.Dev.Parser;
 using BenchmarkDotNet.Diagnosers;
 using System.Linq;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Exporters;
+using Stubble.Core.Parser;
 
 namespace Stubble.Core.Benchmark
 {
@@ -25,13 +25,6 @@ namespace Stubble.Core.Benchmark
         }
 
         public const string template = "{{#foo}}\r\n  {{#a}}\r\n    {{b}}\r\n  {{/a}}\r\n{{/foo}}\r\n";
-
-        [Benchmark(Baseline = true)]
-        public void RegexParser()
-        {
-            var registry = new Registry();
-            new Parser(registry.TokenMatchRegex, registry.TokenGetters).ParseTemplate(template);
-        }
 
         [Benchmark]
         public void NonRegexParser()

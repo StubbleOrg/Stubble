@@ -4,8 +4,9 @@
 // </copyright>
 
 using System.Collections.Generic;
-using Stubble.Core.Classes.Exceptions;
-using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Builders;
+using Stubble.Core.Exceptions;
+using Stubble.Core.Loaders;
 using Xunit;
 
 namespace Stubble.Core.Tests

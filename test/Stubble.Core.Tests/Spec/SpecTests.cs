@@ -28,17 +28,10 @@ namespace Stubble.Core.Tests.Spec
         }
 
         [Theory]
-        [MemberData("Spec_Comments", true)]
+        [MemberData(nameof(Spec_Comments), true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
-        }
-
-        [Theory]
-        [MemberData("Spec_Comments", false)]
-        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
-        {
-            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -56,17 +49,10 @@ namespace Stubble.Core.Tests.Spec
         }
 
         [Theory]
-        [MemberData("Spec_Delimiters", true)]
+        [MemberData(nameof(Spec_Delimiters), true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
-        }
-
-        [Theory]
-        [MemberData("Spec_Delimiters", false)]
-        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
-        {
-            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -84,17 +70,10 @@ namespace Stubble.Core.Tests.Spec
         }
 
         [Theory]
-        [MemberData("Spec_Interpolation", true)]
+        [MemberData(nameof(Spec_Interpolation), true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
-        }
-
-        [Theory]
-        [MemberData("Spec_Interpolation", false)]
-        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
-        {
-            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -112,17 +91,10 @@ namespace Stubble.Core.Tests.Spec
         }
 
         [Theory]
-        [MemberData("Spec_Inverted", true)]
+        [MemberData(nameof(Spec_Inverted), true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
-        }
-
-        [Theory]
-        [MemberData("Spec_Inverted", false)]
-        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
-        {
-            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -140,17 +112,10 @@ namespace Stubble.Core.Tests.Spec
         }
 
         [Theory]
-        [MemberData("Spec_Partials", true)]
+        [MemberData(nameof(Spec_Partials), true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
-        }
-
-        [Theory]
-        [MemberData("Spec_Partials", false)]
-        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
-        {
-            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -168,17 +133,10 @@ namespace Stubble.Core.Tests.Spec
         }
 
         [Theory]
-        [MemberData("Spec_Sections", true)]
+        [MemberData(nameof(Spec_Sections), true)]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
-        }
-
-        [Theory]
-        [MemberData("Spec_Sections", false)]
-        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
-        {
-            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 
@@ -316,17 +274,10 @@ namespace Stubble.Core.Tests.Spec
         }
 
         [Theory]
-        [MemberData("Spec_Lambdas")]
+        [MemberData(nameof(Spec_Lambdas))]
         public new void It_Can_Pass_Spec_Tests(SpecTest data)
         {
             base.It_Can_Pass_Spec_Tests(data);
-        }
-
-        [Theory]
-        [MemberData("Spec_Lambdas")]
-        public new void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
-        {
-            base.It_Can_Pass_Spec_Tests_Visitor(data);
         }
     }
 }

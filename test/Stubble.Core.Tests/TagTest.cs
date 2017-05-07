@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Stubble.Core.Classes;
 using Xunit;
-using Stubble.Core.Classes.Exceptions;
+using Stubble.Core.Exceptions;
 
 namespace Stubble.Core.Tests
 {

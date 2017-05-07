@@ -4,7 +4,7 @@
 // </copyright>
 
 using System;
-using Stubble.Core.Classes.Exceptions;
+using Stubble.Core.Exceptions;
 using Xunit;
 
 namespace Stubble.Core.Tests

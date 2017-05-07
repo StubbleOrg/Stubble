@@ -5,8 +5,9 @@
 
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Builders;
 using Stubble.Core.Interfaces;
+using Stubble.Core.Loaders;
 using Xunit;
 
 namespace Stubble.Core.Tests
@@ -29,16 +30,6 @@ namespace Stubble.Core.Tests
 
             Assert.Contains(typeof(string), builder.SettingsBuilder.ValueGetters.Keys);
             Assert.Null(builder.SettingsBuilder.ValueGetters[typeof(string)](null, null));
-        }
-
-        [Fact]
-        public void It_Can_Add_Token_Getters()
-        {
-            var builder = (StubbleBuilder)new StubbleBuilder()
-                            .AddTokenGetter("MyToken", (s, tags) => null);
-
-            Assert.Contains("MyToken", builder.TokenGetters.Keys);
-            Assert.Null(builder.TokenGetters["MyToken"](null, null));
         }
 
         [Fact]

@@ -4,7 +4,7 @@
 // </copyright>
 
 using Stubble.Core.Classes;
-using Stubble.Core.Dev.Settings;
+using Stubble.Core.Settings;
 
 namespace Stubble.Core.Interfaces
 {

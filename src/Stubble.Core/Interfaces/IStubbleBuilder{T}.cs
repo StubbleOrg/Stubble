@@ -3,12 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Stubble.Core.Classes;
-using Stubble.Core.Classes.Loaders;
-using Stubble.Core.Dev.Settings;
+using Stubble.Core.Settings;
 
 namespace Stubble.Core.Interfaces
 {
@@ -19,9 +14,9 @@ namespace Stubble.Core.Interfaces
     public interface IStubbleBuilder<out T> : IStubbleBuilder, IRendererSettingsBuilder<IStubbleBuilder<T>>
     {
         /// <summary>
-        /// Builds a <see cref="StubbleStringRenderer"/> instance with the initalised settings
+        /// Builds a <see cref="IStubbleBuilder"/> instance with the initalised settings
         /// </summary>
-        /// <returns>Returns a <see cref="StubbleStringRenderer"/> with the initalised settings</returns>
+        /// <returns>Returns a <see cref="IStubbleBuilder"/> with the initalised settings</returns>
         T Build();
 
         /// <summary>

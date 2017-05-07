@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Stubble.Core.Classes;
-using Stubble.Core.Classes.Exceptions;
-using Stubble.Core.Dev.Settings;
+using Stubble.Core.Exceptions;
 using Stubble.Core.Interfaces;
+using Stubble.Core.Settings;
 
 namespace Stubble.Core
 {

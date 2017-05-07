@@ -7,11 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Stubble.Core.Classes;
-using Stubble.Core.Dev.Imported;
-using Stubble.Core.Dev.Renderers;
-using Stubble.Core.Dev.Renderers.Token;
-using Stubble.Core.Dev.Settings;
-using Stubble.Core.Dev.Tags;
+using Stubble.Core.Imported;
+using Stubble.Core.Renderers.StringRenderer;
+using Stubble.Core.Renderers.StringRenderer.TokenRenderers;
+using Stubble.Core.Settings;
+using Stubble.Core.Tokens;
 using Xunit;
 
 namespace Stubble.Core.Tests.Renderers.StringRenderer
@@ -38,12 +38,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new SectionTag
+                new SectionToken
                 {
                     SectionName = "condition",
-                    Children = new List<MustacheTag>
+                    Children = new List<MustacheToken>
                     {
-                        new InterpolationTag { Content = new StringSlice("bar") }
+                        new InterpolationToken { Content = new StringSlice("bar") }
                     }
                 },
                 context);
@@ -75,12 +75,12 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new SectionTag
+                new SectionToken
                 {
                     SectionName = "condition",
-                    Children = new List<MustacheTag>
+                    Children = new List<MustacheToken>
                     {
-                        new InterpolationTag { Content = new StringSlice("bar") }
+                        new InterpolationToken { Content = new StringSlice("bar") }
                     }
                 },
                 context);
@@ -118,15 +118,15 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new SectionTag
+                new SectionToken
                 {
                     SectionName = "list",
-                    Children = new List<MustacheTag>
+                    Children = new List<MustacheToken>
                     {
-                        new InterpolationTag { Content = new StringSlice("a") },
-                        new LiteralTag { Content = new [] { new StringSlice(" ") } },
-                        new InterpolationTag { Content = new StringSlice("bar") },
-                        new LiteralTag { Content = new [] { new StringSlice("\n") } },
+                        new InterpolationToken { Content = new StringSlice("a") },
+                        new LiteralToken { Content = new [] { new StringSlice(" ") } },
+                        new InterpolationToken { Content = new StringSlice("bar") },
+                        new LiteralToken { Content = new [] { new StringSlice("\n") } },
                     }
                 },
                 context);
@@ -162,13 +162,13 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new SectionTag
+                new SectionToken
                 {
                     SectionName = "list",
-                    Children = new List<MustacheTag>
+                    Children = new List<MustacheToken>
                     {
-                        new InterpolationTag { Content = new StringSlice(".") },
-                        new LiteralTag { Content = new [] { new StringSlice(" ") } },
+                        new InterpolationToken { Content = new StringSlice(".") },
+                        new LiteralToken { Content = new [] { new StringSlice(" ") } },
                     }
                 },
                 context);
@@ -200,13 +200,13 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new SectionTag
+                new SectionToken
                 {
                     SectionName = "lambda",
-                    Children = new List<MustacheTag>
+                    Children = new List<MustacheToken>
                     {
-                        new InterpolationTag { Content = new StringSlice(".") },
-                        new LiteralTag { Content = new [] { new StringSlice(" ") } },
+                        new InterpolationToken { Content = new StringSlice(".") },
+                        new LiteralToken { Content = new [] { new StringSlice(" ") } },
                     }
                 },
                 context);
@@ -238,10 +238,10 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new SectionTag
+                new SectionToken
                 {
                     SectionName = "lambda",
-                    Children = new List<MustacheTag>
+                    Children = new List<MustacheToken>
                     {
                     }
                 },
@@ -274,7 +274,7 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
 
             sectionTokenRenderer.Write(
                 stringRenderer,
-                new SectionTag
+                new SectionToken
                 {
                     SectionName = "lambda",
                     SectionContent = new StringSlice("a b c {{bar}} d e f")

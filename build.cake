@@ -90,7 +90,7 @@ Task("Test")
         CreateDirectory("./coverage-results/");
         OpenCover(
             testAction,
-            new FilePath("./coverage-results/results.xml"),
+            new FilePath(string.Format("./coverage-results/results.xml", DateTime.UtcNow)),
             new OpenCoverSettings {
                 Register = "user",
                 SkipAutoProps = true,
@@ -154,7 +154,7 @@ Task("CoverageReport")
     .IsDependentOn("Test")
     .Does(() =>
 {
-    ReportGenerator("./coverage-results/results.xml", "./coverage-report/");
+    ReportGenerator("./coverage-results/*.xml", "./coverage-report/");
 });
 
 Task("AppVeyor")

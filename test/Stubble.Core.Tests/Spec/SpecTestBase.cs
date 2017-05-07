@@ -6,7 +6,6 @@
 using System.Collections;
 using Xunit;
 using Xunit.Abstractions;
-using Stubble.Core.Dev;
 
 namespace Stubble.Core.Tests.Spec
 {
@@ -20,15 +19,6 @@ namespace Stubble.Core.Tests.Spec
         }
 
         public void It_Can_Pass_Spec_Tests(SpecTest data)
-        {
-            var stubble = new StubbleStringRenderer();
-            var output = data.Partials != null ? stubble.Render(data.Template, data.Data, data.Partials) : stubble.Render(data.Template, data.Data);
-
-            OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.Expected, output);
-            Assert.Equal(data.Expected, output);
-        }
-
-        public void It_Can_Pass_Spec_Tests_Visitor(SpecTest data)
         {
             OutputStream.WriteLine(data.Name);
             var stubble = new StubbleVisitorRenderer();
