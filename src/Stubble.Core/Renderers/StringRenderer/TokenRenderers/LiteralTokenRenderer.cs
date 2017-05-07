@@ -3,6 +3,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Threading.Tasks;
+using Stubble.Core.Helpers;
 using Stubble.Core.Tokens;
 
 namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
@@ -25,6 +27,13 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
 
                 renderer.Write(ref item);
             }
+        }
+
+        /// <inheritdoc/>
+        protected override Task WriteAsync(StringRender renderer, LiteralToken obj, Context context)
+        {
+            Write(renderer, obj, context);
+            return TaskHelpers.CompletedTask;
         }
     }
 }

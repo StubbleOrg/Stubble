@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Threading.Tasks;
 using Stubble.Core.Tokens;
 
 namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
@@ -25,6 +26,22 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
             if (template != null)
             {
                 renderer.Render(context.RendererSettings.Parser.Parse(template, lineIndent: obj.LineIndent), context);
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override async Task WriteAsync(StringRender renderer, PartialToken obj, Context context)
+        {
+            var partialName = obj.Content;
+            string template = null;
+            if (context.PartialLoader != null)
+            {
+                template = await context.PartialLoader.LoadAsync(partialName.ToString());
+            }
+
+            if (template != null)
+            {
+                await renderer.RenderAsync(context.RendererSettings.Parser.Parse(template, lineIndent: obj.LineIndent), context);
             }
         }
     }

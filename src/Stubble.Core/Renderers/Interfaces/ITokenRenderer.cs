@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Threading.Tasks;
 using Stubble.Core.Tokens;
 
 namespace Stubble.Core.Renderers.Interfaces
@@ -27,5 +28,14 @@ namespace Stubble.Core.Renderers.Interfaces
         /// <param name="objectToRender">The tag to write</param>
         /// <param name="context">The context to write the token</param>
         void Write(RendererBase renderer, MustacheToken objectToRender, Context context);
+
+        /// <summary>
+        /// Writes the tag using the renderer
+        /// </summary>
+        /// <param name="renderer">The renderer to write with</param>
+        /// <param name="objectToRender">The tag to write</param>
+        /// <param name="context">The context to write the token</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        Task WriteAsync(RendererBase renderer, MustacheToken objectToRender, Context context);
     }
 }
