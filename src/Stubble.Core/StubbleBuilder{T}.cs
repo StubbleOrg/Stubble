@@ -134,5 +134,12 @@ namespace Stubble.Core
             SettingsBuilder.SetTemplateLoader(loader);
             return this;
         }
+
+        /// <inheritdoc/>
+        public IStubbleBuilder<T> SetParserPipeline(ParserPipeline pipeline)
+        {
+            SettingsBuilder.SetParserPipeline(pipeline);
+            return this;
+        }
     }
 }

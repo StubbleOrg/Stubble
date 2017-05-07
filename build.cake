@@ -100,6 +100,8 @@ Task("Test")
             }
             .WithFilter("-[Stubble.Core.Tests]*")
             .WithFilter("+[Stubble.*]*")
+            .WithFilter("-[Stubble.Core]*.Imported.*")
+            .WithFilter("-[Stubble.Core]Stubble.Core.Helpers.*")
         );
 
         if (AppVeyor.IsRunningOnAppVeyor)
