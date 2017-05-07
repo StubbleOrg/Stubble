@@ -6,6 +6,7 @@
 using System;
 using System.Collections;
 using Stubble.Core.Classes.Loaders;
+using Stubble.Core.Dev.Imported;
 using Stubble.Core.Interfaces;
 
 namespace Stubble.Core.Dev.Settings
@@ -16,6 +17,11 @@ namespace Stubble.Core.Dev.Settings
     /// <typeparam name="T">The type of the builder</typeparam>
     public interface IRendererSettingsBuilder<out T>
     {
+        /// <summary>
+        /// Gets the token renderers to be used by the renderer
+        /// </summary>
+        OrderedList<ITokenRenderer> TokenRenderers { get; }
+
         /// <summary>
         /// Adds a enumeration conversion to the Enumeration Convertions
         /// </summary>
