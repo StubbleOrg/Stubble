@@ -14,19 +14,13 @@ namespace Stubble.Core.Classes.Loaders
     public sealed class StringLoader : IStubbleLoader
     {
         /// <inheritdoc/>
-        public IStubbleLoader Clone()
-        {
-            return new StringLoader();
-        }
+        public IStubbleLoader Clone() => new StringLoader();
 
         /// <summary>
         /// Returns the passed string the parse as a template
         /// </summary>
         /// <param name="name">The name of the template to load</param>
         /// <returns>A Mustache Template</returns>
-        public string Load(string name)
-        {
-            return name;
-        }
+        public string Load(string name) => name;
     }
 }
