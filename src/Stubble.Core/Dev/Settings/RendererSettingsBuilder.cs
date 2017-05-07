@@ -80,6 +80,11 @@ namespace Stubble.Core.Dev.Settings
         internal IMustacheParser Parser { get; set; }
 
         /// <summary>
+        /// Gets or sets the mustache parser pipeline to use during parsing
+        /// </summary>
+        internal ParserPipeline ParserPipeline { get; set; }
+
+        /// <summary>
         /// Gets or sets the default tags to use during parsing
         /// </summary>
         internal Classes.Tags DefaultTags { get; set; }
@@ -107,7 +112,8 @@ namespace Stubble.Core.Dev.Settings
                 IgnoreCaseOnKeyLookup,
                 Parser ?? new CachedMustacheParser(),
                 new TokenRendererPipeline(TokenRenderers),
-                DefaultTags ?? new Classes.Tags("{{", "}}"));
+                DefaultTags ?? new Classes.Tags("{{", "}}"),
+                ParserPipeline ?? new ParserPipelineBuilder().Build());
         }
 
         /// <summary>
@@ -230,6 +236,13 @@ namespace Stubble.Core.Dev.Settings
         public RendererSettingsBuilder SetDefaultTags(Classes.Tags tags)
         {
             DefaultTags = tags;
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public RendererSettingsBuilder SetParserPipeline(ParserPipeline pipeline)
+        {
+            ParserPipeline = pipeline;
             return this;
         }
 

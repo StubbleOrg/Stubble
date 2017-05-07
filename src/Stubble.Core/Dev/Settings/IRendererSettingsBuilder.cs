@@ -111,5 +111,12 @@ namespace Stubble.Core.Dev.Settings
         /// <param name="tags">The tags</param>
         /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T SetDefaultTags(Classes.Tags tags);
+
+        /// <summary>
+        /// Sets the parser pipeline to be used during parsing
+        /// </summary>
+        /// <param name="pipeline">The pipeline to use</param>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
+        T SetParserPipeline(ParserPipeline pipeline);
     }
 }

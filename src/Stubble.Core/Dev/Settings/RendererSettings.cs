@@ -32,6 +32,7 @@ namespace Stubble.Core.Dev.Settings
         /// <param name="parser">The mustache parser to use</param>
         /// <param name="rendererPipeline">The renderer pipeline to use</param>
         /// <param name="defaultTags">The default tags to use during parsing</param>
+        /// <param name="parserPipeline">The parser pipeline to use during parsing</param>
         public RendererSettings(
             Dictionary<Type, Func<object, string, object>> valueGetters,
             IEnumerable<Func<object, bool?>> truthyChecks,
@@ -43,7 +44,8 @@ namespace Stubble.Core.Dev.Settings
             bool ignoreCaseOnLookup,
             IMustacheParser parser,
             TokenRendererPipeline rendererPipeline,
-            Classes.Tags defaultTags)
+            Classes.Tags defaultTags,
+            ParserPipeline parserPipeline)
         {
             ValueGetters = valueGetters.ToImmutableDictionary();
             TruthyChecks = truthyChecks.ToImmutableArray();
@@ -56,6 +58,7 @@ namespace Stubble.Core.Dev.Settings
             Parser = parser;
             RendererPipeline = rendererPipeline;
             DefaultTags = defaultTags;
+            ParserPipeline = parserPipeline;
         }
 
         /// <summary>
@@ -107,6 +110,11 @@ namespace Stubble.Core.Dev.Settings
         /// Gets the renderer pipeline to be used when rendering
         /// </summary>
         public TokenRendererPipeline RendererPipeline { get; }
+
+        /// <summary>
+        /// Gets the parser pipeline to be used when parsing
+        /// </summary>
+        public ParserPipeline ParserPipeline { get; }
 
         /// <summary>
         /// Gets the default tags to be used during parsing
