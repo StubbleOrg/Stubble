@@ -8,6 +8,7 @@ using System.Collections;
 using Stubble.Core.Classes;
 using Stubble.Core.Dev;
 using Stubble.Core.Dev.Imported;
+using Stubble.Core.Dev.Parser;
 using Stubble.Core.Dev.Settings;
 using Stubble.Core.Interfaces;
 
@@ -84,6 +85,13 @@ namespace Stubble.Core
             builder.SetRendererSettings(SettingsBuilder);
 
             return builder;
+        }
+
+        /// <inheritdoc/>
+        public IStubbleBuilder<T> SetMustacheParser(IMustacheParser parser)
+        {
+            SettingsBuilder.Parser = parser;
+            return this;
         }
 
         /// <inheritdoc/>

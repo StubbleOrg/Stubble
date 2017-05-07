@@ -8,6 +8,7 @@ using System.Collections;
 using Stubble.Core.Classes.Loaders;
 using Stubble.Core.Dev.Imported;
 using Stubble.Core.Interfaces;
+using Stubble.Core.Dev.Parser;
 
 namespace Stubble.Core.Dev.Settings
 {
@@ -96,6 +97,13 @@ namespace Stubble.Core.Dev.Settings
         /// <param name="loader">The loader to set as the Template Loader</param>
         /// <returns>The IRendererSettingsBuilder for chaining</returns>
         T SetTemplateLoader(IStubbleLoader loader);
+
+        /// <summary>
+        /// Sets the mustache parser to use for the renderer settings
+        /// </summary>
+        /// <param name="parser">The parser to use</param>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
+        T SetMustacheParser(IMustacheParser parser);
 
         /// <summary>
         /// Sets the default tags to be used during parsing
