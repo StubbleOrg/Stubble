@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Stubble.Core.Exceptions;
@@ -579,6 +580,64 @@ namespace Stubble.Core.Tests
             Assert.NotNull(tags);
             Assert.Equal("Root", tags.Identifier);
             Assert.NotEmpty(tags.Children);
+        }
+
+        [Fact]
+        public void Cached_Parser_Should_Cache_Template()
+        {
+            var instance = new CachedMustacheParser();
+            var tags = instance.Parse("{{foo}}");
+            Assert.NotNull(tags);
+            Assert.Equal("Root", tags.Identifier);
+            Assert.NotEmpty(tags.Children);
+
+            var tags2 = instance.Parse("{{foo}}");
+            Assert.NotNull(tags2);
+            Assert.Equal("Root", tags2.Identifier);
+            Assert.NotEmpty(tags2.Children);
+
+            Assert.Equal(1, instance.Cache.Count);
+        }
+
+        [Fact]
+        public void Cached_Parser_Should_Cache_Template_IncludingTags()
+        {
+            var instance = new CachedMustacheParser();
+            var tags = instance.Parse("{{foo}}");
+            Assert.NotNull(tags);
+            Assert.Equal("Root", tags.Identifier);
+            Assert.NotEmpty(tags.Children);
+            Assert.IsType<InterpolationToken>(tags.Children[0]);
+
+            var tags2 = instance.Parse("{{foo}}", new Classes.Tags("|{", "}|"));
+            Assert.NotNull(tags2);
+            Assert.Equal("Root", tags2.Identifier);
+            Assert.NotEmpty(tags2.Children);
+            Assert.IsType<LiteralToken>(tags2.Children[0]);
+
+            Assert.Equal(2, instance.Cache.Count);
+        }
+
+        [Fact]
+        public void Cached_Parser_Should_Throw_On_Null()
+        {
+            var instance = new CachedMustacheParser();
+            Assert.Throws<ArgumentNullException>(() => instance.Parse(null));
+        }
+
+        [Fact]
+        public void TemplateKey_Equality_Works()
+        {
+            var key = new CachedMustacheParser.TemplateKey("abc", null, 0);
+            var key2 = new CachedMustacheParser.TemplateKey("abc", null, 0);
+            Assert.False(key.Equals(null));
+            Assert.Equal(key, key2);
+        }
+
+        [Fact]
+        public void Static_MustacheParser_Throws_On_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => MustacheParser.Parse(null));
         }
     }
 
