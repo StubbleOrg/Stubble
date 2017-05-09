@@ -135,7 +135,7 @@ Task("Coveralls")
     .IsDependentOn("Pack")
     .Does(() =>
 {
-    if (!AppVeyor.IsRunningOnAppVeyor) return;
+    if (!AppVeyor.IsRunningOnAppVeyor || BuildSystem.AppVeyor.Environment.PullRequest.IsPullRequest) return;
 
     var token = EnvironmentVariable("COVERALLS_REPO_TOKEN");
 
