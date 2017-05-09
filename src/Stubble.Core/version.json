@@ -1,6 +1,8 @@
 ﻿{
     "version": "1.0-alpha16",
-    "assemblyVersion": "1.0",
+    "publicReleaseRefSpec": [
+        "^refs/tags/v\\d\\.\\d" // we also release tags starting with vN.N
+    ],
     "cloudBuild": {
         "buildNumber": {
             "enabled": true
