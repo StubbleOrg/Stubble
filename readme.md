@@ -1,10 +1,8 @@
-# Stubble
+# Stubble [![Build Status](https://img.shields.io/appveyor/ci/Romanx/stubble-ceybe/master.svg?style=flat-square)](https://ci.appveyor.com/project/Romanx/stubble-ceybe/branch/master) [![Build Status](https://travis-ci.org/StubbleOrg/Stubble.svg?branch=master)](https://travis-ci.org/StubbleOrg/Stubble) [![Coverage Status](https://img.shields.io/coveralls/StubbleOrg/Stubble.svg?style=flat-square)](https://coveralls.io/github/StubbleOrg/Stubble) [![Pre-release Build Nuget](https://img.shields.io/nuget/vpre/Stubble.Core.svg?style=flat-square&label=nuget%20pre)](https://www.nuget.org/packages/Stubble.Core/) [![Stable Nuget](https://img.shields.io/nuget/v/Stubble.Core.svg?style=flat-square)](https://www.nuget.org/packages/Stubble.Core/)
+
+<img align="right" width="160px" height="160px" src="assets/logo-256.png">
+
 ### Trimmed down {{mustache}} templates in .NET
-[![Build Status](https://img.shields.io/appveyor/ci/Romanx/stubble-ceybe/master.svg?style=flat-square)](https://ci.appveyor.com/project/Romanx/stubble-ceybe/branch/master)
-[![Build Status](https://travis-ci.org/StubbleOrg/Stubble.svg?branch=master)](https://travis-ci.org/StubbleOrg/Stubble)
-[![Coverage Status](https://img.shields.io/coveralls/StubbleOrg/Stubble.svg?style=flat-square)](https://coveralls.io/github/StubbleOrg/Stubble)
-[![Pre-release Build Nuget](https://img.shields.io/nuget/vpre/Stubble.Core.svg?style=flat-square&label=nuget%20pre)](https://www.nuget.org/packages/Stubble.Core/)
-[![Stable Nuget](https://img.shields.io/nuget/v/Stubble.Core.svg?style=flat-square)](https://www.nuget.org/packages/Stubble.Core/)
 
 Stubble is an implementation of the [Mustache](http://mustache.github.com/) template system in C# (but is usable from any .NET language).
 
@@ -54,3 +52,7 @@ For more detail on template loading please see the [template loading docs here.]
 If Stubble doesn't do what you need then you should use Nustache! It's a great tool and provides the same base functionality as Stubble provides for the default Mustache spec *(I know because I'm a contributor and current maintainer of that project!)*.
 
 However it does provide lots of extra features, such as a variety of input types, helpers and compilation which increases its complexity and some which are extensions to the Mustache spec (such as helpers). If you need any of those pieces of functionality I'd highly recommend you use Nustache... at least until there are Extensions for Stubble which provide the functionality your after!
+
+## Credits
+
+Straight Razor by Vectors Market from the Noun Project
