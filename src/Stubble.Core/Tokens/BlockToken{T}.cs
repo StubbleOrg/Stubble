@@ -36,7 +36,7 @@ namespace Stubble.Core.Tokens
         /// Gets the hashcode for the block
         /// </summary>
         /// <returns>The hash code</returns>
-        public new virtual int GetHashCode()
+        public override int GetHashCode()
         {
             unchecked
             {
