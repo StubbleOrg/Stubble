@@ -1,11 +1,11 @@
 ﻿{
-    "version": "1.0-alpha17",
-    "publicReleaseRefSpec": [
-        "^refs/tags/v\\d\\.\\d" // we also release tags starting with vN.N
-    ],
-    "cloudBuild": {
-        "buildNumber": {
-            "enabled": true
-        }
+  "version": "1.0-alpha17",
+  "publicReleaseRefSpec": [
+    "^refs/tags/v\\d\\.\\d" // we also release tags starting with vN.N
+  ],
+  "cloudBuild": {
+    "buildNumber": {
+      "enabled": true
     }
+  }
 }
