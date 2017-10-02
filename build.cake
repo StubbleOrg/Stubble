@@ -1,8 +1,7 @@
 #tool "nuget:?package=coveralls.net"
-#tool "nuget:https://nuget.org/api/v2/?package=ReportGenerator"
+#tool "nuget:?package=ReportGenerator"
 
-#addin "nuget:https://nuget.org/api/v2/?package=Cake.Coveralls"
-#addin "nuget:https://nuget.org/api/v2/?package=Cake.Incubator"
+#addin "nuget:?package=Cake.Coveralls"
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
@@ -74,7 +73,7 @@ Task("Test")
         tool.DotNetCoreTest("./test/Stubble.Core.Tests/Stubble.Core.Tests.csproj", new DotNetCoreTestSettings {
             Configuration = configuration,
             NoBuild = true,
-            Verbose = false,
+            Verbosity = DotNetCoreVerbosity.Quiet,
             Framework = testFramework,
             ArgumentCustomization = args =>
                 args.Append("--logger:trx")
