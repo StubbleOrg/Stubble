@@ -5,6 +5,8 @@ platform: Any CPU
 environment:
   COVERALLS_REPO_TOKEN:
     secure: VyyiHIJv/p8KuVZ+2RWsU/NqCHxNM7hcLupLOzhtKf0gRygNzr7ZInC28MQjs/fA
+  api_key:
+    secure: EMoHTW3rc1OUCEnrICn6gxCbaT8a3HSkedN6mbHqOzo1KHQodR13frz6FZwQuweE
 install:
 - cmd: git submodule update --init --recursive
 - ps: >-
@@ -15,9 +17,12 @@ artifacts:
 - path: .\artifacts\*.nupkg
 - path: .\coverage-results\*
 test: off
-deploy:
-- provider: NuGet
-  api_key:
-    secure: EMoHTW3rc1OUCEnrICn6gxCbaT8a3HSkedN6mbHqOzo1KHQodR13frz6FZwQuweE
-  on:
-    APPVEYOR_REPO_TAG: true
+deploy_script:
+  - appveyor DownloadFile https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+  - ps: ($artifacts.values | Where-Object {($_.path -like '*.nupkg') -and  !($_.path -like '*.symbols.nupkg')}) | foreach-object {nuget.exe push $_.path -Source https://www.nuget.org/api/v2/package -ApiKey $env:api_key; if ($lastexitcode -ne 0) {throw}}
+# deploy:
+# - provider: NuGet
+#   api_key:
+#     secure: EMoHTW3rc1OUCEnrICn6gxCbaT8a3HSkedN6mbHqOzo1KHQodR13frz6FZwQuweE
+#   on:
+#     APPVEYOR_REPO_TAG: true
