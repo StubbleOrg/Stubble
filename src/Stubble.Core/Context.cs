@@ -6,10 +6,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using Stubble.Core.Classes;
+using System.Runtime.CompilerServices;
 using Stubble.Core.Exceptions;
+using Stubble.Core.Imported;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Settings;
 
@@ -134,10 +134,16 @@ namespace Stubble.Core
                             }
                             else if (i > 0)
                             {
+                                if (RenderSettings.ThrowOnDataMiss)
+                                {
+                                    ThrowDataMissException(name, RenderSettings.SkipRecursiveLookup);
+                                }
+
                                 return null;
                             }
                             else
                             {
+                                value = null;
                                 break;
                             }
                         }
@@ -169,10 +175,8 @@ namespace Stubble.Core
                 return value;
             }
 
-            var ex = new StubbleDataMissException($"'{name}' is undefined.");
-            ex.Data["Name"] = name;
-            ex.Data["SkipRecursiveLookup"] = RenderSettings.SkipRecursiveLookup;
-            throw ex;
+            ThrowDataMissException(name, RenderSettings.SkipRecursiveLookup);
+            return null;
         }
 
         /// <summary>
@@ -247,6 +251,15 @@ namespace Stubble.Core
         public Context Push(object newView)
         {
             return new Context(newView, RendererSettings, PartialLoader, this, RenderSettings);
+        }
+
+        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+        private static void ThrowDataMissException(string name, bool skipRecursiveLookup)
+        {
+            var ex = new StubbleDataMissException($"'{name}' is undefined.");
+            ex.Data["Name"] = name;
+            ex.Data["SkipRecursiveLookup"] = skipRecursiveLookup;
+            throw ex;
         }
 
         /// <summary>

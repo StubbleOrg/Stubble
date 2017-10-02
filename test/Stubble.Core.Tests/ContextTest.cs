@@ -381,6 +381,32 @@ namespace Stubble.Core.Tests
             Assert.NotNull(ex.Data["Name"]);
             Assert.NotNull(ex.Data["SkipRecursiveLookup"]);
         }
+
+        [Fact]
+        public void It_Should_Throw_On_Data_Miss_With_Dotted_Lookup_Based_On_RenderSettings()
+        {
+            var context = new Context(
+                new
+                {
+                    Foo = "Foo"
+                },
+                new RendererSettingsBuilder().BuildSettings(),
+                new RenderSettings { ThrowOnDataMiss = true });
+
+            var ex = Assert.Throws<StubbleDataMissException>(() => context.Lookup("Foo.Bar"));
+            Assert.Equal("'Foo.Bar' is undefined.", ex.Message);
+            Assert.NotNull(ex.Data["Name"]);
+            Assert.NotNull(ex.Data["SkipRecursiveLookup"]);
+        }
+
+        [Fact]
+        public void It_Should_Return_Empty_On_Empty_Dictionary_Key()
+        {
+            var context = new Context(new Dictionary<string, object>(), new RendererSettingsBuilder().BuildSettings(), RenderSettings.GetDefaultRenderSettings());
+
+            Assert.Equal(null, context.Lookup("Foo"));
+            Assert.Equal(null, context.Lookup("Foo.Value"));
+        }
     }
 
     [Collection("ChildContextCollection")]

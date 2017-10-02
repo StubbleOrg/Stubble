@@ -316,5 +316,14 @@ namespace Stubble.Core.Tests
                 Assert.NotNull(stubble.Render("{{Foo}}", new { Foo = 1 }));
             }
         }
+
+        [Fact]
+        public void It_Should_Handle_Dictionaries_With_Empty_Keys()
+        {
+            var stubble = new StubbleBuilder().Build();
+
+            Dictionary<string, object> dataHash = new Dictionary<string, object>();
+            Assert.Equal("", stubble.Render("{{Foo.Value}}", dataHash));
+        }
     }
 }
