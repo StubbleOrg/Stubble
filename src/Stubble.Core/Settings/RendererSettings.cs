@@ -17,7 +17,7 @@ namespace Stubble.Core.Settings
     /// <summary>
     /// Contains all of the immutable settings for the renderer
     /// </summary>
-    public class RendererSettings
+    public class RendererSettings : BaseSettings
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RendererSettings"/> class.
@@ -47,19 +47,20 @@ namespace Stubble.Core.Settings
             TokenRendererPipeline rendererPipeline,
             Classes.Tags defaultTags,
             ParserPipeline parserPipeline)
+            : base(
+                  templateLoader,
+                  partialLoader,
+                  maxRecursionDepth,
+                  ignoreCaseOnLookup,
+                  parser,
+                  defaultTags,
+                  parserPipeline)
         {
             ValueGetters = valueGetters.ToImmutableDictionary();
             TruthyChecks = truthyChecks.ToImmutableArray();
-            TemplateLoader = templateLoader;
-            PartialTemplateLoader = partialLoader;
-            MaxRecursionDepth = maxRecursionDepth;
             RenderSettings = renderSettings;
             EnumerationConverters = enumerationConverters.ToImmutableDictionary();
-            IgnoreCaseOnKeyLookup = ignoreCaseOnLookup;
-            Parser = parser;
             RendererPipeline = rendererPipeline;
-            DefaultTags = defaultTags;
-            ParserPipeline = parserPipeline;
         }
 
         /// <summary>
@@ -73,21 +74,6 @@ namespace Stubble.Core.Settings
         public ImmutableArray<Func<object, bool?>> TruthyChecks { get; }
 
         /// <summary>
-        /// Gets the primary Template loader
-        /// </summary>
-        public IStubbleLoader TemplateLoader { get; }
-
-        /// <summary>
-        /// Gets the partial Template Loader
-        /// </summary>
-        public IStubbleLoader PartialTemplateLoader { get; }
-
-        /// <summary>
-        /// Gets the MaxRecursionDepth
-        /// </summary>
-        public uint MaxRecursionDepth { get; }
-
-        /// <summary>
         /// Gets the RenderSettings
         /// </summary>
         public RenderSettings RenderSettings { get; }
@@ -98,28 +84,8 @@ namespace Stubble.Core.Settings
         public ImmutableDictionary<Type, Func<object, IEnumerable>> EnumerationConverters { get; }
 
         /// <summary>
-        /// Gets a value indicating whether keys should be looked up with case sensitivity
-        /// </summary>
-        public bool IgnoreCaseOnKeyLookup { get; }
-
-        /// <summary>
-        /// Gets the parser for mustache templates
-        /// </summary>
-        public IMustacheParser Parser { get; }
-
-        /// <summary>
         /// Gets the renderer pipeline to be used when rendering
         /// </summary>
         public TokenRendererPipeline RendererPipeline { get; }
-
-        /// <summary>
-        /// Gets the parser pipeline to be used when parsing
-        /// </summary>
-        public ParserPipeline ParserPipeline { get; }
-
-        /// <summary>
-        /// Gets the default tags to be used during parsing
-        /// </summary>
-        public Classes.Tags DefaultTags { get; }
     }
 }
