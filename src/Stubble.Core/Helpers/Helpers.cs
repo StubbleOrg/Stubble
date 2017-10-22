@@ -11,7 +11,7 @@ namespace Stubble.Core.Helpers
     /// <summary>
     /// A class of static extension methods
     /// </summary>
-    internal static class Helpers
+    public static class Helpers
     {
         /// <summary>
         /// A way to merge IDictionaries together with the right most keys overriding the left keys.
@@ -22,7 +22,7 @@ namespace Stubble.Core.Helpers
         /// <param name="me">The left dictionry to merge in to</param>
         /// <param name="others">The other dictionaries to merge left</param>
         /// <returns>Returns a new dictionary with all the dictionaries keys merged left-wise.</returns>
-        internal static Dictionary<TK, TV> MergeLeft<TK, TV>(this IDictionary<TK, TV> me, params IDictionary<TK, TV>[] others)
+        public static Dictionary<TK, TV> MergeLeft<TK, TV>(this IDictionary<TK, TV> me, params IDictionary<TK, TV>[] others)
         {
             var newMap = new Dictionary<TK, TV>(me);
             foreach (var p in new List<IDictionary<TK, TV>> { me }.Concat(others).SelectMany(src => src))
