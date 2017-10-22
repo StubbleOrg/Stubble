@@ -12,7 +12,9 @@ namespace Stubble.Core.Renderers.Interfaces
     /// <summary>
     /// An interface representing a TokenRenderer
     /// </summary>
-    public interface ITokenRenderer
+    /// <typeparam name="TContext">The context type for the TokenRenderer</typeparam>
+    public interface ITokenRenderer<TContext>
+        where TContext : BaseContext<TContext>
     {
         /// <summary>
         /// Does the renderer accept the current tag
@@ -20,7 +22,7 @@ namespace Stubble.Core.Renderers.Interfaces
         /// <param name="renderer">The renderer</param>
         /// <param name="obj">The current tag</param>
         /// <returns>If the renderer accepts the tag</returns>
-        bool Accept(RendererBase renderer, MustacheToken obj);
+        bool Accept(RendererBase<TContext> renderer, MustacheToken obj);
 
         /// <summary>
         /// Writes the tag using the renderer
@@ -28,7 +30,7 @@ namespace Stubble.Core.Renderers.Interfaces
         /// <param name="renderer">The renderer to write with</param>
         /// <param name="objectToRender">The tag to write</param>
         /// <param name="context">The context to write the token</param>
-        void Write(RendererBase renderer, MustacheToken objectToRender, Context context);
+        void Write(RendererBase<TContext> renderer, MustacheToken objectToRender, TContext context);
 
         /// <summary>
         /// Writes the tag using the renderer
@@ -37,6 +39,6 @@ namespace Stubble.Core.Renderers.Interfaces
         /// <param name="objectToRender">The tag to write</param>
         /// <param name="context">The context to write the token</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        Task WriteAsync(RendererBase renderer, MustacheToken objectToRender, Context context);
+        Task WriteAsync(RendererBase<TContext> renderer, MustacheToken objectToRender, TContext context);
     }
 }

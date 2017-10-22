@@ -5,6 +5,7 @@
 
 using System.IO;
 using System.Runtime.CompilerServices;
+using Stubble.Core.Contexts;
 using Stubble.Core.Imported;
 
 namespace Stubble.Core.Renderers.StringRenderer
@@ -24,7 +25,7 @@ namespace Stubble.Core.Renderers.StringRenderer
         /// <param name="writer">The writer to initalize with</param>
         /// <param name="rendererPipeline">The renderer pipeline to use</param>
         /// <param name="maxDepth">The max recursion depth for the renderer</param>
-        protected TextRendererBase(TextWriter writer, TokenRendererPipeline rendererPipeline, uint maxDepth)
+        protected TextRendererBase(TextWriter writer, TokenRendererPipeline<Context> rendererPipeline, uint maxDepth)
             : base(writer, rendererPipeline, maxDepth)
         {
             buffer = new char[1024];

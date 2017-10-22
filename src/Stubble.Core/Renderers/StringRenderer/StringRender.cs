@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.IO;
+using Stubble.Core.Contexts;
 
 namespace Stubble.Core.Renderers.StringRenderer
 {
@@ -18,7 +19,7 @@ namespace Stubble.Core.Renderers.StringRenderer
         /// </summary>
         /// <param name="writer">The writer to use</param>
         /// <param name="rendererPipeline">The renderer pipeline to use</param>
-        public StringRender(TextWriter writer, TokenRendererPipeline rendererPipeline)
+        public StringRender(TextWriter writer, TokenRendererPipeline<Context> rendererPipeline)
             : this(writer, rendererPipeline, 256)
         {
         }
@@ -30,7 +31,7 @@ namespace Stubble.Core.Renderers.StringRenderer
         /// <param name="writer">The writer to use</param>
         /// <param name="rendererPipeline">The renderer pipeline to use</param>
         /// <param name="maxDepth">The max recursion depth for the renderer</param>
-        public StringRender(TextWriter writer, TokenRendererPipeline rendererPipeline, uint maxDepth)
+        public StringRender(TextWriter writer, TokenRendererPipeline<Context> rendererPipeline, uint maxDepth)
             : base(writer, rendererPipeline, maxDepth)
         {
         }
