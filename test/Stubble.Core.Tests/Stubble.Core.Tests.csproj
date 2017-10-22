@@ -24,9 +24,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\spec\specs\*.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="App.config" />
   </ItemGroup>
 
@@ -40,7 +37,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
-    <PackageReference Include="SharpYaml" Version="1.6.1" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
     <PackageReference Include="System.Collections.Specialized" Version="4.0.1" />
@@ -59,5 +55,9 @@
     <None Update="xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Spec\" />
   </ItemGroup>
 </Project>
