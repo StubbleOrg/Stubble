@@ -4,6 +4,7 @@
 // </copyright>
 
 using System.Threading.Tasks;
+using Stubble.Core.Contexts;
 using Stubble.Core.Helpers;
 using Stubble.Core.Tokens;
 

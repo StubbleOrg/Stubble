@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Stubble.Core.Helpers;
+using Stubble.Core.Contexts;
 using Stubble.Core.Tokens;
 
 namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers

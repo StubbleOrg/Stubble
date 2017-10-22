@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Stubble.Core.Contexts;
 using Stubble.Core.Exceptions;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Loaders;

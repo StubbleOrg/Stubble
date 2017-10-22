@@ -14,6 +14,7 @@ using Stubble.Core.Renderers.StringRenderer.TokenRenderers;
 using Stubble.Core.Settings;
 using Stubble.Core.Tokens;
 using Xunit;
+using Stubble.Core.Contexts;
 
 namespace Stubble.Core.Tests.Renderers.StringRenderer
 {
