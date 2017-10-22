@@ -1,12 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Trimmed down {{mustache}} templates in .NET</Description>
+    <Description>In memory compilation for trimmed down {{mustache}} templates in .NET</Description>
     <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyName>Stubble.Core</AssemblyName>
-    <PackageId>Stubble.Core</PackageId>
-    <PackageTags>template;mustache;text;generation;fast</PackageTags>
+    <AssemblyName>Stubble.Conpulation</AssemblyName>
+    <PackageId>Stubble.Compulation</PackageId>
+    <PackageTags>template;mustache;text;generation;fast;compilation</PackageTags>
     <RepositoryType>git</RepositoryType>
     <Company>Alex McAuliffe</Company>
     <Authors>Alex McAuliffe</Authors>
@@ -20,10 +20,6 @@
     <PackageProjectUrl>https://github.com/stubbleorg/stubble</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/StubbleOrg/Stubble/blob/master/licence.md</PackageLicenseUrl>
     <Platform>Any CPU</Platform>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,10 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.3.0" />
     <PackageReference Include="Nerdbank.GitVersioning" Version="1.6.30" PrivateAssets="All" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" PrivateAssets="All" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
   </ItemGroup>
 
 </Project>
