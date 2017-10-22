@@ -7,10 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using Stubble.Core.Imported;
+using Stubble.Core.Helpers;
 using Stubble.Core.Renderers.Interfaces;
 using Stubble.Core.Renderers.StringRenderer.TokenRenderers;
 
@@ -105,7 +102,7 @@ namespace Stubble.Core.Settings
             Tuple<Dictionary<string, Lazy<Func<object, object>>>, Dictionary<string, Lazy<Func<object, object>>>> typeLookup;
             if (!GettersCache.TryGetValue(objectType, out typeLookup))
             {
-                var memberLookup = GetMemberLookup(objectType);
+                var memberLookup = ReflectionHelper.GetMemberFunctionLookup(objectType);
                 var noCase =
                     new Dictionary<string, Lazy<Func<object, object>>>(memberLookup, StringComparer.OrdinalIgnoreCase);
                 typeLookup = Tuple.Create(memberLookup, noCase);
@@ -116,73 +113,6 @@ namespace Stubble.Core.Settings
             var lookup = ignoreCase ? typeLookup.Item2 : typeLookup.Item1;
 
             return lookup.TryGetValue(key, out Lazy<Func<object, object>> outValue) ? outValue.Value(value) : null;
-        }
-
-        private static Dictionary<string, Lazy<Func<object, object>>> GetMemberLookup(Type objectType)
-        {
-            var members = objectType.GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
-                                                BindingFlags.FlattenHierarchy);
-
-            var dict = new Dictionary<string, Lazy<Func<object, object>>>(members.Length);
-            var param = Expression.Parameter(typeof(object));
-            var cast = Expression.Convert(param, objectType);
-
-            foreach (var m in members)
-            {
-                var ex = GetExpressionFromMemberInfo(m, cast);
-
-                if (ex == null)
-                {
-                    continue;
-                }
-
-                var func = new Lazy<Func<object, object>>(() => Expression
-                    .Lambda<Func<object, object>>(Expression.Convert(ex, typeof(object)), param)
-                    .Compile());
-
-                dict.Add(m.Name, func);
-            }
-
-            return dict;
-        }
-
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
-        private static Expression GetExpressionFromMemberInfo(MemberInfo m, UnaryExpression cast)
-        {
-            Expression ex = null;
-            switch (m)
-            {
-                case FieldInfo fi:
-                    ex = fi.IsStatic ? Expression.Field(null, fi) : Expression.Field(cast, fi);
-                    break;
-                case PropertyInfo pi:
-                    var getter = pi.GetGetMethod();
-                    if (getter != null && IsZeroArityGetterMethod(getter))
-                    {
-                        ex = getter.IsStatic ? Expression.Call(getter) : Expression.Call(cast, getter);
-                    }
-                    else if (pi.GetIndexParameters().Length == 0)
-                    {
-                        ex = Expression.Property(cast, pi);
-                    }
-
-                    break;
-                case MethodInfo mi:
-                    if (IsZeroArityGetterMethod(mi))
-                    {
-                        ex = mi.IsStatic ? Expression.Call(mi) : Expression.Call(cast, mi);
-                    }
-
-                    break;
-            }
-
-            return ex;
-        }
-
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
-        private static bool IsZeroArityGetterMethod(MethodInfo mi)
-        {
-            return mi.GetParameters().Length == 0 && !mi.IsGenericMethod && mi.ReturnType != typeof(void);
         }
     }
 }
