@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{129DB9C9-21F8-4218-AD2C-2A8970876FDB}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.nuget\packages.config = .nuget\packages.config
 		readme.mdown = readme.mdown
 		stylecop.json = stylecop.json
+		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{954BAA8A-FA49-4952-A841-4C57B0A10869}"
@@ -25,6 +26,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stubble.Core.Tests", "test\Stubble.Core.Tests\Stubble.Core.Tests.csproj", "{032FDC3C-A86B-4F55-B4AD-24E4E9E05B40}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stubble.Core.Benchmark", "test\Stubble.Core.Benchmark\Stubble.Core.Benchmark.csproj", "{2961D4EC-FCF2-4E77-8DC9-B9E284EFB3F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stubble.Compilation", "src\Stubble.Compilation\Stubble.Compilation.csproj", "{C64E32A6-82DB-4FF5-A025-17460177B540}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stubble.Compilation.Tests", "test\Stubble.Compilation.Tests\Stubble.Compilation.Tests.csproj", "{DFDA975C-0FB9-410D-B26B-34384BA49BA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +49,14 @@ Global
 		{2961D4EC-FCF2-4E77-8DC9-B9E284EFB3F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2961D4EC-FCF2-4E77-8DC9-B9E284EFB3F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2961D4EC-FCF2-4E77-8DC9-B9E284EFB3F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C64E32A6-82DB-4FF5-A025-17460177B540}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C64E32A6-82DB-4FF5-A025-17460177B540}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C64E32A6-82DB-4FF5-A025-17460177B540}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C64E32A6-82DB-4FF5-A025-17460177B540}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFDA975C-0FB9-410D-B26B-34384BA49BA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFDA975C-0FB9-410D-B26B-34384BA49BA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFDA975C-0FB9-410D-B26B-34384BA49BA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFDA975C-0FB9-410D-B26B-34384BA49BA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,5 +65,10 @@ Global
 		{6A2A280D-0E0C-4B1C-AF10-3291E9E41E02} = {954BAA8A-FA49-4952-A841-4C57B0A10869}
 		{032FDC3C-A86B-4F55-B4AD-24E4E9E05B40} = {A02DCD25-5393-49B8-BFD2-1C49845CFEE1}
 		{2961D4EC-FCF2-4E77-8DC9-B9E284EFB3F2} = {A02DCD25-5393-49B8-BFD2-1C49845CFEE1}
+		{C64E32A6-82DB-4FF5-A025-17460177B540} = {954BAA8A-FA49-4952-A841-4C57B0A10869}
+		{DFDA975C-0FB9-410D-B26B-34384BA49BA3} = {A02DCD25-5393-49B8-BFD2-1C49845CFEE1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7B100624-E754-491C-8CFC-DB341FC2825A}
 	EndGlobalSection
 EndGlobal
