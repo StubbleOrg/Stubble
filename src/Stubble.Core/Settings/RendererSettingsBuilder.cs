@@ -23,7 +23,7 @@ namespace Stubble.Core.Settings
     /// <summary>
     /// A builder class for creating a <see cref="RendererSettings"/> instance
     /// </summary>
-    public class RendererSettingsBuilder : IRendererSettingsBuilder<RendererSettingsBuilder>
+    public class RendererSettingsBuilder
     {
         private IStubbleLoader templateLoader = new StringLoader();
 
@@ -236,14 +236,22 @@ namespace Stubble.Core.Settings
             return this;
         }
 
-        /// <inheritdoc/>
-        public RendererSettingsBuilder SetDefaultTags(Classes.Tags tags)
+        /// <summary>
+        /// Sets the default tags to be used during parsing
+        /// </summary>
+        /// <param name="tags">The tags</param>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
+        public RendererSettingsBuilder SetDefaultTags(Tags tags)
         {
             DefaultTags = tags;
             return this;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Sets the parser pipeline to be used during parsing
+        /// </summary>
+        /// <param name="pipeline">The pipeline to use</param>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
         public RendererSettingsBuilder SetParserPipeline(ParserPipeline pipeline)
         {
             ParserPipeline = pipeline;
