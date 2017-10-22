@@ -15,7 +15,7 @@ namespace Stubble.Core.Renderers.StringRenderer
     /// <summary>
     /// A base class for a text renderer
     /// </summary>
-    public class TextRendererBase : RendererBase
+    public class TextRendererBase : RendererBase<Context>
     {
         private readonly uint maxDepth;
         private TextWriter writer;
@@ -27,7 +27,7 @@ namespace Stubble.Core.Renderers.StringRenderer
         /// <param name="writer">The text writer to use</param>
         /// <param name="rendererPipeline">The renderer pipeline to use</param>
         /// <param name="maxDepth">The max recursion depth for the renderer</param>
-        protected TextRendererBase(TextWriter writer, TokenRendererPipeline rendererPipeline, uint maxDepth)
+        protected TextRendererBase(TextWriter writer, TokenRendererPipeline<Context> rendererPipeline, uint maxDepth)
             : base(rendererPipeline)
         {
             Writer = writer ?? throw new ArgumentNullException(nameof(writer));

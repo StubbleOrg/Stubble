@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Stubble.Core.Builders;
 using Stubble.Core.Classes;
+using Stubble.Core.Contexts;
 using Stubble.Core.Helpers;
 using Stubble.Core.Imported;
 using Stubble.Core.Parser;
@@ -25,8 +26,8 @@ namespace Stubble.Core.Settings
         /// <summary>
         /// Gets the token renderers to be used by the renderer
         /// </summary>
-        public OrderedList<ITokenRenderer> TokenRenderers { get; internal set; }
-            = new OrderedList<ITokenRenderer>(RendererSettingsDefaults.DefaultTokenRenderers());
+        public OrderedList<ITokenRenderer<Context>> TokenRenderers { get; internal set; }
+            = new OrderedList<ITokenRenderer<Context>>(RendererSettingsDefaults.DefaultTokenRenderers());
 
         /// <summary>
         /// Gets or sets a map of Types to Value getter functions
@@ -73,7 +74,7 @@ namespace Stubble.Core.Settings
                 EnumerationConverters,
                 IgnoreCaseOnKeyLookup,
                 Parser ?? new CachedMustacheParser(),
-                new TokenRendererPipeline(TokenRenderers),
+                new TokenRendererPipeline<Context>(TokenRenderers),
                 DefaultTags ?? new Tags("{{", "}}"),
                 ParserPipeline ?? new ParserPipelineBuilder().Build());
         }

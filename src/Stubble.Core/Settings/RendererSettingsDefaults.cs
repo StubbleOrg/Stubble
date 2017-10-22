@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Stubble.Core.Contexts;
 using Stubble.Core.Helpers;
 using Stubble.Core.Renderers.Interfaces;
 using Stubble.Core.Renderers.StringRenderer.TokenRenderers;
@@ -84,9 +85,9 @@ namespace Stubble.Core.Settings
         /// Returns the default token renderers
         /// </summary>
         /// <returns>A list of the default token renderers</returns>
-        public static List<ITokenRenderer> DefaultTokenRenderers()
+        public static List<ITokenRenderer<Context>> DefaultTokenRenderers()
         {
-            return new List<ITokenRenderer>
+            return new List<ITokenRenderer<Context>>
             {
                 new SectionTokenRenderer(),
                 new LiteralTokenRenderer(),
