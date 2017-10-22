@@ -4,6 +4,7 @@
 // </copyright>
 
 using Stubble.Core.Classes;
+using Stubble.Core.Contexts;
 using Stubble.Core.Settings;
 
 namespace Stubble.Core.Tests.Fixtures

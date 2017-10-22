@@ -13,12 +13,12 @@ using Stubble.Core.Imported;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Settings;
 
-namespace Stubble.Core
+namespace Stubble.Core.Contexts
 {
     /// <summary>
     /// Represents the context for a template
     /// </summary>
-    public sealed class Context
+    public sealed class Context : BaseContext<Context>
     {
         private readonly object view;
 
@@ -54,11 +54,10 @@ namespace Stubble.Core
         /// <param name="parentContext">The parent context for the new context</param>
         /// <param name="settings">The render settings </param>
         public Context(object view, RendererSettings rendererSettings, IStubbleLoader partialLoader, Context parentContext, RenderSettings settings)
+            : base(partialLoader, parentContext)
         {
             this.view = view;
             View = this.view;
-            ParentContext = parentContext;
-            PartialLoader = partialLoader;
             RendererSettings = rendererSettings;
             RenderSettings = settings;
             Cache = new Dictionary<string, object>()
@@ -66,11 +65,6 @@ namespace Stubble.Core
                 { ".", TryEnumerationConversionIfRequired(this.view) }
             };
         }
-
-        /// <summary>
-        /// Gets the parent context of the current context
-        /// </summary>
-        public Context ParentContext { get; }
 
         /// <summary>
         /// Gets the data view of the context
@@ -86,11 +80,6 @@ namespace Stubble.Core
         /// Gets the registry for the context
         /// </summary>
         internal RendererSettings RendererSettings { get; }
-
-        /// <summary>
-        /// Gets the partial loader for the context
-        /// </summary>
-        internal IStubbleLoader PartialLoader { get; }
 
         /// <summary>
         /// Gets the value cache to avoid multiple lookups
@@ -205,8 +194,7 @@ namespace Stubble.Core
                 return (bool)value;
             }
 
-            var strValue = value as string;
-            if (strValue != null)
+            if (value is string strValue)
             {
                 var trimmed = strValue.Trim();
 
@@ -233,8 +221,7 @@ namespace Stubble.Core
                 return !string.IsNullOrEmpty(trimmed);
             }
 
-            var enumerableValue = value as IEnumerable;
-            if (enumerableValue != null)
+            if (value is IEnumerable enumerableValue)
             {
                 return enumerableValue.GetEnumerator().MoveNext();
             }
@@ -248,7 +235,7 @@ namespace Stubble.Core
         /// </summary>
         /// <param name="newView">The data view to create the new context with</param>
         /// <returns>A new child data context of the current context</returns>
-        public Context Push(object newView)
+        public override Context Push(object newView)
         {
             return new Context(newView, RendererSettings, PartialLoader, this, RenderSettings);
         }

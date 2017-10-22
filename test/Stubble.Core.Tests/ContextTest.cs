@@ -11,6 +11,7 @@ using Stubble.Core.Exceptions;
 using Stubble.Core.Settings;
 using Stubble.Core.Tests.Fixtures;
 using Xunit;
+using Stubble.Core.Contexts;
 
 namespace Stubble.Core.Tests
 {

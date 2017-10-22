@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Stubble.Core.Contexts;
 using Stubble.Core.Exceptions;
 using Stubble.Core.Tokens;
 
