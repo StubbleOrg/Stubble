@@ -8,7 +8,6 @@ using Stubble.Core.Benchmark.TwitterPerf;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using BenchmarkDotNet.Attributes.Jobs;
 using BenchmarkDotNet.Jobs;
 using Nustache.Core;
 using Stubble.Core.Builders;
@@ -88,9 +87,11 @@ namespace Stubble.Core.Benchmark
             Timeline = new Timeline { tweets = Enumerable.Range(0, 20).Select(i => Tweet).ToList() };
 
             StubbleVisitorRenderer = new StubbleBuilder()
-                .SetBuilderType<StubbleVisitorBuilder>()
-                .SetTemplateLoader(loader)
-                .SetPartialTemplateLoader(loader)
+                .Configure(b =>
+                {
+                    b.SetTemplateLoader(loader)
+                     .SetPartialTemplateLoader(loader);
+                })
                 .Build();
 
             TweetTemplate = new Template();

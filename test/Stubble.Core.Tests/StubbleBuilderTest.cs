@@ -9,97 +9,131 @@ using Stubble.Core.Builders;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Loaders;
 using Xunit;
+using Stubble.Core.Settings;
 
 namespace Stubble.Core.Tests
 {
-    public static class CustomBuilderExtensions
-    {
-        public static CustomBuilder SetCustomBuilder<T>(this IStubbleBuilder<T> builder)
-        {
-            return builder.SetBuilderType<CustomBuilder>();
-        }
-    }
-
     public class StubbleBuilderTest
     {
         [Fact]
         public void It_Can_Add_Add_Value_Getters()
         {
-            var builder = (StubbleBuilder)new StubbleBuilder()
-                                .AddValueGetter(typeof(string), (o, s) => null);
+            var builder = new StubbleBuilder()
+                .Configure(b =>
+                {
+                    b.AddValueGetter(typeof(string), (o, s) => null);
+                });
 
-            Assert.Contains(typeof(string), builder.SettingsBuilder.ValueGetters.Keys);
-            Assert.Null(builder.SettingsBuilder.ValueGetters[typeof(string)](null, null));
+            var settingsBuilder = new RendererSettingsBuilder();
+            builder.ConfigureSettings(settingsBuilder);
+
+            Assert.Contains(typeof(string), settingsBuilder.ValueGetters.Keys);
+            Assert.Null(settingsBuilder.ValueGetters[typeof(string)](null, null));
         }
 
         [Fact]
         public void It_Can_Add_Enumeration_Converters()
         {
-            var builder = (StubbleBuilder)new StubbleBuilder()
-                            .AddEnumerationConversion(typeof(NameValueCollection), (obj) => null);
+            var builder = new StubbleBuilder()
+                .Configure(b =>
+                {
+                    b.AddEnumerationConversion(typeof(NameValueCollection), (obj) => null);
+                });
 
-            Assert.Contains(typeof(NameValueCollection), builder.SettingsBuilder.EnumerationConverters.Keys);
-            Assert.Null(builder.SettingsBuilder.EnumerationConverters[typeof(NameValueCollection)](null));
+            var settingsBuilder = new RendererSettingsBuilder();
+            builder.ConfigureSettings(settingsBuilder);
+
+            Assert.Contains(typeof(NameValueCollection), settingsBuilder.EnumerationConverters.Keys);
+            Assert.Null(settingsBuilder.EnumerationConverters[typeof(NameValueCollection)](null));
         }
 
         [Fact]
         public void It_Can_Add_Truthy_Checks()
         {
-            var builder = (StubbleBuilder)new StubbleBuilder()
-                .AddTruthyCheck((val) =>
+            var builder = new StubbleBuilder()
+                .Configure(b =>
                 {
-                    if (val is string)
+                    b.AddTruthyCheck((val) =>
                     {
-                        return val.Equals("Foo");
-                    }
-                    return null;
+                        if (val is string)
+                        {
+                            return val.Equals("Foo");
+                        }
+                        return null;
+                    });
                 });
 
-            Assert.Equal(1, builder.SettingsBuilder.TruthyChecks.Count);
-            Assert.True(builder.SettingsBuilder.TruthyChecks[0]("Foo"));
-            Assert.False(builder.SettingsBuilder.TruthyChecks[0]("Bar"));
-            Assert.Null(builder.SettingsBuilder.TruthyChecks[0](null));
+            var settingsBuilder = new RendererSettingsBuilder();
+            builder.ConfigureSettings(settingsBuilder);
+
+            Assert.Equal(1, settingsBuilder.TruthyChecks.Count);
+            Assert.True(settingsBuilder.TruthyChecks[0]("Foo"));
+            Assert.False(settingsBuilder.TruthyChecks[0]("Bar"));
+            Assert.Null(settingsBuilder.TruthyChecks[0](null));
         }
 
         [Fact]
         public void It_Can_Set_Template_Loader()
         {
-            var builder = (StubbleBuilder)new StubbleBuilder()
-                .SetTemplateLoader(new DictionaryLoader(new Dictionary<string, string> { { "test", "{{foo}}" } }));
+            var builder = new StubbleBuilder()
+                .Configure(b =>
+                {
+                    b.SetTemplateLoader(new DictionaryLoader(new Dictionary<string, string> { { "test", "{{foo}}" } }));
+                });
 
-            Assert.NotNull(builder.SettingsBuilder.TemplateLoader);
-            Assert.True(builder.SettingsBuilder.TemplateLoader is DictionaryLoader);
+            var settingsBuilder = new RendererSettingsBuilder();
+            builder.ConfigureSettings(settingsBuilder);
+
+            Assert.NotNull(settingsBuilder.TemplateLoader);
+            Assert.True(settingsBuilder.TemplateLoader is DictionaryLoader);
         }
 
         [Fact]
         public void It_Can_Set_A_Partial_Template_Loader()
         {
-            var builder = (StubbleBuilder)new StubbleBuilder()
-                   .SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string> { { "test", "{{foo}}" } }));
+            var builder = new StubbleBuilder()
+                   .Configure(b =>
+                   {
+                       b.SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string> { { "test", "{{foo}}" } }));
+                   });
 
-            Assert.NotNull(builder.SettingsBuilder.PartialTemplateLoader);
-            Assert.True(builder.SettingsBuilder.PartialTemplateLoader is DictionaryLoader);
+            var settingsBuilder = new RendererSettingsBuilder();
+            builder.ConfigureSettings(settingsBuilder);
+
+            Assert.NotNull(settingsBuilder.PartialTemplateLoader);
+            Assert.True(settingsBuilder.PartialTemplateLoader is DictionaryLoader);
         }
 
         [Fact]
         public void It_Adds_To_Composite_Loader_If_One_Is_Defined()
         {
-            var builder = (StubbleBuilder)new StubbleBuilder()
-                .SetTemplateLoader(new CompositeLoader(new DictionaryLoader(new Dictionary<string, string> { { "test", "{{foo}}" } })));
+            var builder = new StubbleBuilder()
+                .Configure(b =>
+                {
+                    b.SetTemplateLoader(new CompositeLoader(new DictionaryLoader(new Dictionary<string, string> { { "test", "{{foo}}" } })))
+                     .AddToTemplateLoader(new DictionaryLoader(new Dictionary<string, string> { { "test2", "{{bar}}" } }));
+                });
 
-            builder.AddToTemplateLoader(new DictionaryLoader(new Dictionary<string, string> { { "test2", "{{bar}}" } }));
+            var settingsBuilder = new RendererSettingsBuilder();
+            builder.ConfigureSettings(settingsBuilder);
 
-            Assert.NotNull(builder.SettingsBuilder.TemplateLoader);
-            Assert.True(builder.SettingsBuilder.TemplateLoader is CompositeLoader);
+            Assert.NotNull(settingsBuilder.TemplateLoader);
+            Assert.True(settingsBuilder.TemplateLoader is CompositeLoader);
         }
 
         [Fact]
         public void It_Should_Be_Able_To_Set_Ignore_Case_On_Key_Lookup()
         {
-            var builder = (StubbleBuilder)new StubbleBuilder()
-               .SetIgnoreCaseOnKeyLookup(true);
+            var builder = new StubbleBuilder()
+               .Configure(b =>
+               {
+                   b.SetIgnoreCaseOnKeyLookup(true);
+               });
 
-            Assert.True(builder.SettingsBuilder.IgnoreCaseOnKeyLookup);
+            var settingsBuilder = new RendererSettingsBuilder();
+            builder.ConfigureSettings(settingsBuilder);
+
+            Assert.True(settingsBuilder.IgnoreCaseOnKeyLookup);
         }
 
         [Fact]
@@ -128,7 +162,7 @@ namespace Stubble.Core.Tests
         public void It_Can_ConvertOneBuilderToAnother()
         {
             var stubble = new StubbleBuilder()
-                            .SetBuilderType<CustomBuilder>()
+                            .UseCustomBuilder()
                             .Build();
             Assert.IsType<string>(stubble);
         }
@@ -137,17 +171,25 @@ namespace Stubble.Core.Tests
         public void It_Can_Override_InAn_ExtensionMethod()
         {
             var stubble = new StubbleBuilder()
-                            .SetCustomBuilder()
+                            .UseCustomBuilder()
                             .Build();
             Assert.IsType<string>(stubble);
         }
     }
 
-    public class CustomBuilder : StubbleBuilder<string>
+    public class CustomBuilder : IStubbleBuilder<string>
     {
-        public override string Build()
+        public string Build()
         {
             return "";
+        }
+    }
+
+    public static class CustomBuilderExtensions
+    {
+        public static CustomBuilder UseCustomBuilder(this StubbleBuilder builder)
+        {
+            return new CustomBuilder();
         }
     }
 }
