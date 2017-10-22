@@ -24,10 +24,12 @@ namespace Stubble.Core.Tests
         public async Task It_Can_Render_WithPartials_FromLoader_Async()
         {
             var stubble = new StubbleBuilder()
-                .SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
-                {
-                    { "foo", "{{Foo}} this" }
-                })).Build();
+                .Configure(builder => {
+                    builder.SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
+                    {
+                        { "foo", "{{Foo}} this" }
+                    }));
+                }).Build();
 
             var output = await stubble.RenderAsync("{{> foo}}", new { Foo = "Bar" });
             Assert.Equal("Bar this", output);

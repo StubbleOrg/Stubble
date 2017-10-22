@@ -32,12 +32,17 @@ namespace Stubble.Core.Tests
             var parser = new CachedMustacheParser(15);
 
             var stubble = new StubbleBuilder()
-                .SetMustacheParser(parser)
+
+                .Configure(b => b.SetMustacheParser(parser))
                 .Build();
 
             var stubbleTags = new StubbleBuilder()
-                .SetDefaultTags(new Tags("%[", "]%"))
-                .SetMustacheParser(parser)
+
+                .Configure(b =>
+                {
+                    b.SetDefaultTags(new Tags("%[", "]%"))
+                     .SetMustacheParser(parser);
+                })
                 .Build();
 
             stubble.Render("Test {{Foo}} Test 1", null);
@@ -70,10 +75,12 @@ namespace Stubble.Core.Tests
         public void It_Can_Render_WithPartials_FromLoader()
         {
             var stubble = new StubbleBuilder()
-                .SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
+
+                .Configure(b => b.SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
                 {
                     { "foo", "{{Foo}} this" }
-                })).Build();
+                })))
+                .Build();
 
             var output = stubble.Render("{{> foo}}", new { Foo = "Bar" });
             Assert.Equal("Bar this", output);
@@ -83,10 +90,12 @@ namespace Stubble.Core.Tests
         public void It_Should_Not_Render_If_Partial_Doesnt_Exist_In_Loader()
         {
             var stubble = new StubbleBuilder()
-                  .SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
+
+                .Configure(b => b.SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
                 {
                     { "foo", "{{Foo}} this" }
-                })).Build();
+                })))
+                .Build();
 
             var output = stubble.Render("{{> foo2}}", new { Foo = "Bar" });
             Assert.Equal("", output);
@@ -248,7 +257,7 @@ namespace Stubble.Core.Tests
                 }
             };
 
-            var stubble = new StubbleBuilder().SetMaxRecursionDepth(128).Build();
+            var stubble = new StubbleBuilder().Configure(b => b.SetMaxRecursionDepth(128)).Build();
             var ex =
                 Assert.Throws<StubbleException>(() => stubble.Render(rowTemplate, treeData, new Dictionary<string, string>
                 {
@@ -309,7 +318,7 @@ namespace Stubble.Core.Tests
         [Fact]
         public void It_Should_Have_Fresh_Depth_On_Each_Render()
         {
-            var stubble = new StubbleBuilder().SetMaxRecursionDepth(128).Build();
+            var stubble = new StubbleBuilder().Configure(b => b.SetMaxRecursionDepth(128)).Build();
 
             for (var i = 0; i < 256; i++)
             {
