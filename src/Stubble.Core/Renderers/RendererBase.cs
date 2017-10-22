@@ -12,15 +12,17 @@ namespace Stubble.Core.Renderers
     /// <summary>
     /// A base class representing a StubbleRenderer
     /// </summary>
-    public abstract class RendererBase
+    /// <typeparam name="TContext">The type of the context for the renderer</typeparam>
+    public abstract class RendererBase<TContext>
+        where TContext : BaseContext<TContext>
     {
-        private readonly TokenRendererPipeline rendererPipeline;
+        private readonly TokenRendererPipeline<TContext> rendererPipeline;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RendererBase"/> class.
+        /// Initializes a new instance of the <see cref="RendererBase{TContext}"/> class.
         /// </summary>
         /// <param name="rendererPipeline">The renderer pipeline to use for rendering</param>
-        protected RendererBase(TokenRendererPipeline rendererPipeline)
+        protected RendererBase(TokenRendererPipeline<TContext> rendererPipeline)
         {
             this.rendererPipeline = rendererPipeline;
         }
@@ -31,7 +33,7 @@ namespace Stubble.Core.Renderers
         /// <param name="token">The tag to render</param>
         /// <param name="context">The context to write the tag with</param>
         /// <returns>The current renderer</returns>
-        public abstract object Render(MustacheToken token, Context context);
+        public abstract object Render(MustacheToken token, TContext context);
 
         /// <summary>
         /// Renders a block tag
@@ -39,7 +41,7 @@ namespace Stubble.Core.Renderers
         /// <param name="token">The block tag to render</param>
         /// <param name="context">The context to write the tag with</param>
         /// <returns>The current renderer</returns>
-        public abstract object Render(BlockToken token, Context context);
+        public abstract object Render(BlockToken token, TContext context);
 
         /// <summary>
         /// Renders a given tag
@@ -47,7 +49,7 @@ namespace Stubble.Core.Renderers
         /// <param name="token">The tag to render</param>
         /// <param name="context">The context to write the tag with</param>
         /// <returns>The current renderer</returns>
-        public abstract ValueTask<object> RenderAsync(MustacheToken token, Context context);
+        public abstract ValueTask<object> RenderAsync(MustacheToken token, TContext context);
 
         /// <summary>
         /// Renders a block tag
@@ -55,7 +57,7 @@ namespace Stubble.Core.Renderers
         /// <param name="token">The block tag to render</param>
         /// <param name="context">The context to write the tag with</param>
         /// <returns>The current renderer</returns>
-        public abstract ValueTask<object> RenderAsync(BlockToken token, Context context);
+        public abstract ValueTask<object> RenderAsync(BlockToken token, TContext context);
 
         /// <summary>
         /// Write the current tag to the renderer
@@ -63,7 +65,7 @@ namespace Stubble.Core.Renderers
         /// <typeparam name="T">The type of tag</typeparam>
         /// <param name="obj">The tag to write</param>
         /// <param name="context">The context to write the tag with</param>
-        public void Write<T>(T obj, Context context)
+        public void Write<T>(T obj, TContext context)
             where T : MustacheToken
         {
             if (obj == null)
@@ -83,7 +85,7 @@ namespace Stubble.Core.Renderers
         /// <param name="obj">The tag to write</param>
         /// <param name="context">The context to write the tag with</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task WriteAsync<T>(T obj, Context context)
+        public async Task WriteAsync<T>(T obj, TContext context)
             where T : MustacheToken
         {
             if (obj == null)

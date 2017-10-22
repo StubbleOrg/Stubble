@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Stubble.Core.Contexts;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Parser;
 using Stubble.Core.Parser.Interfaces;
@@ -44,7 +45,7 @@ namespace Stubble.Core.Settings
             Dictionary<Type, Func<object, IEnumerable>> enumerationConverters,
             bool ignoreCaseOnLookup,
             IMustacheParser parser,
-            TokenRendererPipeline rendererPipeline,
+            TokenRendererPipeline<Context> rendererPipeline,
             Classes.Tags defaultTags,
             ParserPipeline parserPipeline)
             : base(
@@ -86,6 +87,6 @@ namespace Stubble.Core.Settings
         /// <summary>
         /// Gets the renderer pipeline to be used when rendering
         /// </summary>
-        public TokenRendererPipeline RendererPipeline { get; }
+        public TokenRendererPipeline<Context> RendererPipeline { get; }
     }
 }
