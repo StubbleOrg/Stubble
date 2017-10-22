@@ -59,11 +59,14 @@ namespace Stubble.Core.Tests
         public void Auto_Cascase_Loaders_On_Add()
         {
             var stubble = new StubbleBuilder()
-                .AddToTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
+                .Configure(builder =>
                 {
-                    { "Foo", "I'm Foo" },
-                    { "Bar", "I'm Bar" }
-                })).Build();
+                    builder.AddToTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
+                    {
+                        { "Foo", "I'm Foo" },
+                        { "Bar", "I'm Bar" }
+                    }));
+                }).Build();
             Assert.Equal("I'm Foo", stubble.Render("Foo", new { foo = "bar" }));
             Assert.Equal("bar", stubble.Render("{{foo}}", new { foo = "bar" }));
         }
@@ -72,11 +75,15 @@ namespace Stubble.Core.Tests
         public void Auto_Cascase_Partial_Loaders_On_Add()
         {
             var stubble = new StubbleBuilder()
-                .AddToPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
+                .Configure(builder =>
                 {
-                    { "Foo", "I'm Foo" },
-                    { "Bar", "I'm Bar" }
-                })).Build();
+                    builder.AddToPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
+                    {
+                        { "Foo", "I'm Foo" },
+                        { "Bar", "I'm Bar" }
+                    }));
+                })
+                .Build();
             Assert.Equal("I'm Foo", stubble.Render("{{> Foo}}", new { foo = "blah" }));
             Assert.Equal("bar", stubble.Render("{{foo}}", new { foo = "bar" }));
         }
