@@ -6,10 +6,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Stubble.Compilation.Contexts;
+using Stubble.Compilation.Renderers.TokenRenderers;
 using Stubble.Core.Helpers;
 using Stubble.Core.Renderers.Interfaces;
 
@@ -97,7 +97,14 @@ namespace Stubble.Compilation.Settings
         /// <returns>Default token renderers</returns>
         internal static IEnumerable<ITokenRenderer<CompilerContext>> DefaultTokenRenderers()
         {
-            return Enumerable.Empty<ITokenRenderer<CompilerContext>>();
+            return new List<ITokenRenderer<CompilerContext>>
+             {
+                new SectionTokenRenderer(),
+                new LiteralTokenRenderer(),
+                new InterpolationTokenRenderer(),
+                new PartialTokenRenderer(),
+                new InvertedSectionTokenRenderer(),
+             };
         }
     }
 }
