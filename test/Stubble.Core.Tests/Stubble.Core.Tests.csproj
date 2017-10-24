@@ -3,9 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>net46;netcoreapp1.1</TargetFrameworks>
     <AssemblyName>Stubble.Core.Tests</AssemblyName>
-    <AssemblyOriginatorKeyFile>Stubble.Tests.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageId>Stubble.Core.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
