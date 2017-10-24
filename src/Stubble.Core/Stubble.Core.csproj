@@ -5,9 +5,6 @@
     <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Stubble.Core</AssemblyName>
-    <AssemblyOriginatorKeyFile>Stubble.Core.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageId>Stubble.Core</PackageId>
     <PackageTags>template;mustache;text;generation;fast</PackageTags>
     <RepositoryType>git</RepositoryType>
