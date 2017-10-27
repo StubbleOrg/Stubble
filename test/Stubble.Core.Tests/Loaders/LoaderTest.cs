@@ -32,7 +32,7 @@ namespace Stubble.Core.Tests.Loaders
         {
             var composite = new CompositeLoader();
             composite.AddLoaders(new StringLoader(), null);
-            Assert.Equal(1, composite.Loaders.Count);
+            Assert.Single(composite.Loaders);
         }
     }
 }

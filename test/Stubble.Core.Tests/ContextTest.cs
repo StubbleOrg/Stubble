@@ -405,8 +405,8 @@ namespace Stubble.Core.Tests
         {
             var context = new Context(new Dictionary<string, object>(), new RendererSettingsBuilder().BuildSettings(), RenderSettings.GetDefaultRenderSettings());
 
-            Assert.Equal(null, context.Lookup("Foo"));
-            Assert.Equal(null, context.Lookup("Foo.Value"));
+            Assert.Null(context.Lookup("Foo"));
+            Assert.Null(context.Lookup("Foo.Value"));
         }
     }
 
