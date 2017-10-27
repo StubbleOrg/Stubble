@@ -1,16 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp1.1;net46</TargetFrameworks>
+    <TargetFrameworks>net46;netcoreapp1.1</TargetFrameworks>
+    <AssemblyName>Stubble.Compilation.Tests</AssemblyName>
+    <Platform>Any CPU</Platform>
   </PropertyGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Stubble.Core\Stubble.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,5 +21,17 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\xunit.runner.json" Link="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Stubble.Compilation\Stubble.Compilation.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\Stubble.Test.Shared\Stubble.Test.Shared.projitems" Label="Shared" />
 
 </Project>

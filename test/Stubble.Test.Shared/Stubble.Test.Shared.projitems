@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>9cf6fb53-3aff-4547-9925-6141ec057ecb</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Stubble.Test.Shared2</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Spec\Spec.Comments.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Spec\Spec.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Spec\Spec.Delimiters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Spec\Spec.Interpolation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Spec\Spec.Inverted.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Spec\Spec.Partials.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Spec\Spec.Sections.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Spec\SpecTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Spec\SpecTestDefinition.cs" />
+  </ItemGroup>
+</Project>

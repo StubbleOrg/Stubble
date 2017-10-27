@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Stubble.Core.Tests.Data
+namespace Stubble.Test.Shared.Spec
 {
     public static partial class Specs
     {
