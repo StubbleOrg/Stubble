@@ -1,4 +1,4 @@
-﻿using Stubble.Core.Tests.Data;
+﻿using Stubble.Test.Shared.Spec;
 using Xunit;
 using Xunit.Abstractions;
 
