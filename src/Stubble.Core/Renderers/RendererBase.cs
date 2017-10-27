@@ -95,7 +95,12 @@ namespace Stubble.Core.Renderers
 
             var renderer = rendererPipeline.TryGetTokenRenderer(this, obj);
 
-            await renderer?.WriteAsync(this, obj, context);
+            var task = renderer?.WriteAsync(this, obj, context);
+
+            if (task != null)
+            {
+                await task;
+            }
         }
     }
 }
