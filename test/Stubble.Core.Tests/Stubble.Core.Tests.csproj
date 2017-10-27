@@ -26,6 +26,9 @@
 
   <ItemGroup>
     <AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json" />
+    <None Include="..\xunit.runner.json" Link="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -54,7 +57,5 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Spec\" />
-  </ItemGroup>
+  <Import Project="..\Stubble.Test.Shared\Stubble.Test.Shared.projitems" Label="Shared" />
 </Project>

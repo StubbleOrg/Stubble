@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 
-namespace Stubble.Core.Tests.Data
+namespace Stubble.Test.Shared.Spec
 {
     public class SpecTest
     {

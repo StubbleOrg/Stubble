@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		readme.mdown = readme.mdown
 		stylecop.json = stylecop.json
 		version.json = version.json
+		test\xunit.runner.json = test\xunit.runner.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{954BAA8A-FA49-4952-A841-4C57B0A10869}"
@@ -31,7 +32,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stubble.Compilation", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stubble.Compilation.Tests", "test\Stubble.Compilation.Tests\Stubble.Compilation.Tests.csproj", "{DFDA975C-0FB9-410D-B26B-34384BA49BA3}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Stubble.Test.Shared", "test\Stubble.Test.Shared\Stubble.Test.Shared.shproj", "{9CF6FB53-3AFF-4547-9925-6141EC057ECB}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		test\Stubble.Test.Shared\Stubble.Test.Shared.projitems*{9cf6fb53-3aff-4547-9925-6141ec057ecb}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -67,6 +73,7 @@ Global
 		{2961D4EC-FCF2-4E77-8DC9-B9E284EFB3F2} = {A02DCD25-5393-49B8-BFD2-1C49845CFEE1}
 		{C64E32A6-82DB-4FF5-A025-17460177B540} = {954BAA8A-FA49-4952-A841-4C57B0A10869}
 		{DFDA975C-0FB9-410D-B26B-34384BA49BA3} = {A02DCD25-5393-49B8-BFD2-1C49845CFEE1}
+		{9CF6FB53-3AFF-4547-9925-6141EC057ECB} = {A02DCD25-5393-49B8-BFD2-1C49845CFEE1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7B100624-E754-491C-8CFC-DB341FC2825A}
