@@ -51,8 +51,8 @@ namespace Stubble.Core.Tests
             Assert.True(tagA.Equals((object)tagA));
 
             Assert.NotEqual(tagA, tagB);
-            Assert.NotEqual(null, tagA);
-            Assert.NotEqual(tagC, null);
+            Assert.NotNull(tagA);
+            Assert.NotNull(tagC);
 
             Assert.False(tagA != tagC);
             Assert.False(tagA.Equals(null));

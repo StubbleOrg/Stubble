@@ -50,7 +50,7 @@ namespace Stubble.Core.Tests
             var cachingParser = stubble.RendererSettings.Parser as CachedMustacheParser;
             Assert.NotNull(cachingParser);
 
-            Assert.Equal(1, cachingParser.Cache.Count);
+            Assert.Single(cachingParser.Cache);
             stubbleTags.Render("Test %[Foo]% Test 3", null);
             Assert.Equal(2, cachingParser.Cache.Count);
         }
