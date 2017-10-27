@@ -66,10 +66,10 @@ namespace Stubble.Core.Tests
             var settingsBuilder = new RendererSettingsBuilder();
             builder.ConfigureSettings(settingsBuilder);
 
-            Assert.Equal(1, settingsBuilder.TruthyChecks.Count);
-            Assert.True(settingsBuilder.TruthyChecks[0]("Foo"));
-            Assert.False(settingsBuilder.TruthyChecks[0]("Bar"));
-            Assert.Null(settingsBuilder.TruthyChecks[0](null));
+            var check = Assert.Single(settingsBuilder.TruthyChecks);
+            Assert.True(check("Foo"));
+            Assert.False(check("Bar"));
+            Assert.Null(check(null));
         }
 
         [Fact]
@@ -143,7 +143,6 @@ namespace Stubble.Core.Tests
 
             Assert.NotNull(stubble);
             Assert.NotNull(stubble.RendererSettings.ValueGetters);
-            Assert.NotNull(stubble.RendererSettings.TruthyChecks);
             Assert.True(stubble.RendererSettings.TemplateLoader is StringLoader);
             Assert.False(stubble.RendererSettings.IgnoreCaseOnKeyLookup);
             Assert.Null(stubble.RendererSettings.PartialTemplateLoader);

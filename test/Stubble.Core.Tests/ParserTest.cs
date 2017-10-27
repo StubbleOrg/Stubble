@@ -596,7 +596,7 @@ namespace Stubble.Core.Tests
             Assert.Equal("Root", tags2.Identifier);
             Assert.NotEmpty(tags2.Children);
 
-            Assert.Equal(1, instance.Cache.Count);
+            Assert.Single(instance.Cache);
         }
 
         [Fact]
