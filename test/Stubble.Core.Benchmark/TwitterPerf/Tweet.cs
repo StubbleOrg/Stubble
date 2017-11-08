@@ -18,8 +18,8 @@ namespace Stubble.Core.Benchmark.TwitterPerf
 
     public class UserEntities
     {
-        public List<object> urls { get; set; }
-        public List<object> hashtags { get; set; }
+        public List<string> urls { get; set; }
+        public List<string> hashtags { get; set; }
         public List<UserMention> user_mentions { get; set; }
     }
 
@@ -33,7 +33,7 @@ namespace Stubble.Core.Benchmark.TwitterPerf
         public bool notifications { get; set; }
         public string profile_text_color { get; set; }
         public string name { get; set; }
-        public object expanded_url { get; set; }
+        public string expanded_url { get; set; }
         public bool default_profile_image { get; set; }
         public bool following { get; set; }
         public bool verified { get; set; }
@@ -52,8 +52,8 @@ namespace Stubble.Core.Benchmark.TwitterPerf
         public int friends_count { get; set; }
         public string profile_background_color { get; set; }
         public bool profile_background_tile { get; set; }
-        public object url { get; set; }
-        public object display_url { get; set; }
+        public string url { get; set; }
+        public string display_url { get; set; }
         public string profile_sidebar_fill_color { get; set; }
         public int followers_count { get; set; }
         public string profile_image_url_https { get; set; }
@@ -120,34 +120,34 @@ namespace Stubble.Core.Benchmark.TwitterPerf
 
     public class TweetEntities
     {
-        public List<object> urls { get; set; }
-        public List<object> hashtags { get; set; }
+        public List<string> urls { get; set; }
+        public List<string> hashtags { get; set; }
         public List<Medium> media { get; set; }
-        public List<object> user_mentions { get; set; }
+        public List<UserMention> user_mentions { get; set; }
     }
 
     public class Tweet
     {
-        public object in_reply_to_status_id { get; set; }
+        public int? in_reply_to_status_id { get; set; }
         public bool possibly_sensitive { get; set; }
-        public object in_reply_to_user_id_str { get; set; }
-        public object contributors { get; set; }
+        public string in_reply_to_user_id_str { get; set; }
+        public string contributors { get; set; }
         public bool truncated { get; set; }
         public string id_str { get; set; }
         public User user { get; set; }
         public int retweet_count { get; set; }
-        public object in_reply_to_user_id { get; set; }
+        public string in_reply_to_user_id { get; set; }
         public bool favorited { get; set; }
-        public object geo { get; set; }
-        public object in_reply_to_screen_name { get; set; }
+        public string geo { get; set; }
+        public string in_reply_to_screen_name { get; set; }
         public TweetEntities entities { get; set; }
-        public object coordinates { get; set; }
+        public string coordinates { get; set; }
         public string source { get; set; }
-        public object place { get; set; }
+        public string place { get; set; }
         public bool retweeted { get; set; }
         public long id { get; set; }
-        public object in_reply_to_status_id_str { get; set; }
-        public object annotations { get; set; }
+        public string in_reply_to_status_id_str { get; set; }
+        public string annotations { get; set; }
         public string text { get; set; }
         public string created_at { get; set; }
     }
