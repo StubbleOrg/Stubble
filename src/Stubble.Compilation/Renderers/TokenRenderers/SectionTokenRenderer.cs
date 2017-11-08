@@ -54,16 +54,25 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
             }
             else if (typeof(IDictionary).IsAssignableFrom(value.Type) || value != null)
             {
-                var sectionContent = renderer.Render(obj, context.Push(value.Type, value)) as List<Expression>;
+                var param = Expression.Parameter(value.Type);
+                var assignment = Expression.Assign(param, value);
+
+                var sectionContent = renderer.Render(obj, context.Push(value.Type, param)) as List<Expression>;
                 if (sectionContent.Count > 0)
                 {
-                    expression = Expression.Block(sectionContent);
+                    expression = Expression.Block(new[] { param }, new[] { assignment }.Concat(sectionContent));
                 }
             }
 
             if (expression != null)
             {
-                renderer.AddExpressionToScope(Expression.IfThen(context.GetTruthyExpression(value), expression));
+                var truthy = context.GetTruthyExpression(value);
+
+                var ex = truthy != null
+                    ? Expression.IfThen(truthy, expression)
+                    : expression;
+
+                renderer.AddExpressionToScope(ex);
             }
         }
 
@@ -83,26 +92,45 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
             {
                 var innerType = value.Type.GetElementTypeOfIEnumerable();
                 var param = Expression.Parameter(innerType);
-                expression = WriteIEnumerable(value, param, innerType, (await renderer.RenderAsync(obj, context.Push(innerType, param))) as List<Expression>);
+                var sectionContent = (await renderer.RenderAsync(obj, context.Push(innerType, param))) as List<Expression>;
+
+                if (sectionContent.Count > 0)
+                {
+                    expression = WriteIEnumerable(value, param, innerType, sectionContent);
+                }
             }
             else if (typeof(IEnumerator).IsAssignableFrom(value.Type))
             {
                 var innerType = value.Type.GetElementTypeOfIEnumerable() ?? typeof(object);
                 var param = Expression.Parameter(innerType);
-                expression = WriteIEnumerator(value, param, innerType, (await renderer.RenderAsync(obj, context.Push(innerType, param))) as List<Expression>);
+                var sectionContent = (await renderer.RenderAsync(obj, context.Push(innerType, param))) as List<Expression>;
+
+                if (sectionContent.Count > 0)
+                {
+                    expression = WriteIEnumerator(value, param, innerType, sectionContent);
+                }
             }
             else if (typeof(IDictionary).IsAssignableFrom(value.Type) || value != null)
             {
-                var sectionContent = (await renderer.RenderAsync(obj, context.Push(value.Type, value))) as List<Expression>;
+                var param = Expression.Parameter(value.Type);
+                var assignment = Expression.Assign(param, value);
+
+                var sectionContent = await renderer.RenderAsync(obj, context.Push(value.Type, param)) as List<Expression>;
                 if (sectionContent.Count > 0)
                 {
-                    expression = Expression.Block(sectionContent);
+                    expression = Expression.Block(new[] { param }, new[] { assignment }.Concat(sectionContent));
                 }
             }
 
             if (expression != null)
             {
-                renderer.AddExpressionToScope(Expression.IfThen(context.GetTruthyExpression(value), expression));
+                var truthy = context.GetTruthyExpression(value);
+
+                var ex = truthy != null
+                    ? Expression.IfThen(truthy, expression)
+                    : expression;
+
+                renderer.AddExpressionToScope(ex);
             }
         }
 
