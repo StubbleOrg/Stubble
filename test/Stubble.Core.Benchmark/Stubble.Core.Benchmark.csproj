@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Stubble.Compilation\Stubble.Compilation.csproj" />
     <ProjectReference Include="..\..\src\Stubble.Core\Stubble.Core.csproj" />
   </ItemGroup>
 

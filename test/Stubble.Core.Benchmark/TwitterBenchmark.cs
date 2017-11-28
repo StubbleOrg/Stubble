@@ -12,6 +12,9 @@ using BenchmarkDotNet.Jobs;
 using Nustache.Core;
 using Stubble.Core.Builders;
 using Stubble.Core.Loaders;
+using Stubble.Compilation;
+using Stubble.Compilation.Settings;
+using System;
 
 namespace Stubble.Core.Benchmark
 {
@@ -30,6 +33,9 @@ namespace Stubble.Core.Benchmark
         }
 
         private StubbleVisitorRenderer StubbleVisitorRenderer;
+
+        private StubbleCompilationRenderer StubbleCompilationRenderer;
+
         public readonly string EntitiesMustache = @"{{#url}}
     <div><a href=""{{url}}"">{{display_url}}</a></div>
 {{/url}}
@@ -73,6 +79,8 @@ namespace Stubble.Core.Benchmark
         public Template TweetTemplate;
         public Template EntitiesTemplate;
 
+        public Func<Timeline, string> TimelineCompiled;
+
         [Setup]
         public void SetupBenchmark()
         {
@@ -94,6 +102,15 @@ namespace Stubble.Core.Benchmark
                 })
                 .Build();
 
+            var settings = new CompilerSettingsBuilder()
+                .SetTemplateLoader(loader)
+                .SetPartialTemplateLoader(loader)
+                .BuildSettings();
+
+            StubbleCompilationRenderer = new StubbleCompilationRenderer(settings);
+
+            TimelineCompiled = StubbleCompilationRenderer.Compile("timeline", Timeline);
+
             TweetTemplate = new Template();
             TweetTemplate.Load(new StringReader(TweetMustache));
 
@@ -112,7 +129,6 @@ namespace Stubble.Core.Benchmark
 
         [Benchmark]
         public string NustacheTimelineBenchmark()
-
         {
             var res = Render.StringToString(TimelineMustache, Timeline, partial =>
             {
@@ -128,6 +144,9 @@ namespace Stubble.Core.Benchmark
             });
             return res;
         }
+
+        [Benchmark]
+        public string TimelineBenchmark_Compiled() => TimelineCompiled(Timeline);
     }
 
     public class Timeline
