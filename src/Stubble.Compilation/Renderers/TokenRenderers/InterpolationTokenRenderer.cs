@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Stubble.Compilation.Contexts;
+using Stubble.Compilation.Helpers;
 using Stubble.Compilation.Renderers;
 using Stubble.Core.Helpers;
 using Stubble.Core.Tokens;
@@ -30,9 +31,13 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
 
             if (obj.EscapeResult && expression != null)
             {
+                var isValueType = expression.Type.GetIsValueType();
+
                 var stringExpression = expression.Type == typeof(string)
                     ? expression
-                    : Expression.Call(expression, expression.Type.GetMethod("ToString", Type.EmptyTypes));
+                    : Expression.Call(
+                        isValueType ? expression : Expression.Coalesce(expression, Expression.Constant(string.Empty)),
+                        expression.Type.GetMethod("ToString", Type.EmptyTypes));
 
                 expression = Expression.Call(null, typeof(WebUtility).GetMethod(nameof(WebUtility.HtmlEncode), new[] { typeof(string) }), stringExpression);
             }
