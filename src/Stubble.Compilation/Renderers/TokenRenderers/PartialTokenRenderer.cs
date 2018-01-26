@@ -9,6 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Stubble.Compilation.Contexts;
+using Stubble.Core.Exceptions;
 using Stubble.Core.Tokens;
 
 namespace Stubble.Compilation.Renderers.TokenRenderers
@@ -42,7 +43,14 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
                     return;
                 }
 
-                var actionType = Expression.GetActionType(sourceDatas.Select(s => s.Type).ToArray());
+                var sourceData = sourceDatas.Select(s => s.Type).ToArray();
+
+                if (sourceData.Length > 16)
+                {
+                    throw new StubbleException("Cannot call a partial with more than 16 parameters.\nThis is likely due to a large amount of section scopes");
+                }
+
+                var actionType = Expression.GetActionType(sourceData);
 
                 var definition = new PartialLambdaExpressionDefinition
                 {
@@ -79,7 +87,14 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
                     return;
                 }
 
-                var actionType = Expression.GetActionType(sourceDatas.Select(s => s.Type).ToArray());
+                var sourceData = sourceDatas.Select(s => s.Type).ToArray();
+
+                if (sourceData.Length > 16)
+                {
+                    throw new StubbleException("Cannot call a partial with more than 16 parameters.\nThis is likely due to a large amount of section scopes");
+                }
+
+                var actionType = Expression.GetActionType(sourceData);
 
                 var definition = new PartialLambdaExpressionDefinition
                 {
