@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Stubble.Compilation.Helpers;
 using Stubble.Compilation.Settings;
 using Stubble.Core.Contexts;
 using Stubble.Core.Exceptions;
@@ -193,12 +194,15 @@ namespace Stubble.Compilation.Contexts
         /// <returns>An expression checking for truthyness</returns>
         public Expression GetTruthyExpression(Expression value)
         {
+            if (CompilerSettings.TruthyChecks.TryGetValue(value.Type, out var lambda))
+            {
+                return Expression.Invoke(lambda, value);
+            }
+
             if (value.Type == typeof(bool))
             {
                 return value;
             }
-
-            var nullExpression = Expression.Equal(value, Expression.Constant(null));
 
             if (value.Type == typeof(string))
             {
@@ -218,6 +222,11 @@ namespace Stubble.Compilation.Contexts
             if (typeof(IEnumerable).IsAssignableFrom(value.Type))
             {
                 return Expression.Call(Expression.Call(value, typeof(IEnumerable).GetMethod("GetEnumerator")), typeof(IEnumerator).GetMethod("MoveNext"));
+            }
+
+            if (value.Type.GetIsValueType())
+            {
+                return null;
             }
 
             return Expression.NotEqual(value, Expression.Constant(null));
