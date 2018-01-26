@@ -1,4 +1,5 @@
 ﻿using Stubble.Compilation.Settings;
+using Stubble.Core.Exceptions;
 using Stubble.Test.Shared.Spec;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +11,30 @@ namespace Stubble.Compilation.Tests
     {
         [Theory]
         [MemberData(nameof(Data))]
-        public void CompilationRendererSpecTest(SpecTest data)
+        public void CompilationRenderer_SpecialTests(SpecTest data)
         {
             var builder = new CompilerSettingsBuilder();
 
             var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
-            var output = data.Partials != null ? stubble.Compile(data.Template, data.Data, data.Partials) : stubble.Compile(data.Template, data.Data);
 
-            var outputResult = output(data.Data);
+            if (data.ExpectedException != null)
+            {
+                var ex = Assert.Throws(data.ExpectedException.GetType(), () =>
+                {
+                    var output = data.Partials != null ? stubble.Compile(data.Template, data.Data, data.Partials) : stubble.Compile(data.Template, data.Data);
 
-            Assert.Equal(data.Expected, outputResult);
+                    var outputResult = output(data.Data);
+                });
+
+                Assert.Equal(data.ExpectedException.Message, ex.Message);
+            }
+            else
+            {
+                var output = data.Partials != null ? stubble.Compile(data.Template, data.Data, data.Partials) : stubble.Compile(data.Template, data.Data);
+                var outputResult = output(data.Data);
+
+                Assert.Equal(data.Expected, outputResult);
+            }
         }
 
         public static IEnumerable<object[]> Data => new List<SpecTest>
@@ -70,6 +85,7 @@ namespace Stubble.Compilation.Tests
                 Partials = new Dictionary<string, string> {
                     { @"display-data", "{{earlyData}} | {{data}}" }
                 },
+                ExpectedException = new StubbleException("Cannot call a partial with more than 16 parameters.\nThis is likely due to a large amount of section scopes"),
                 Expected = @"Not Too Deeply Nested Data | Very Nested Data == Not Too Deeply Nested Data | Very Nested Data"
             }
         }.Select(s => new[] { s });

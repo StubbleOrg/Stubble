@@ -4,12 +4,13 @@
 // </copyright>
 
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using Xunit.Abstractions;
 
 namespace Stubble.Test.Shared.Spec
 {
-    public class SpecTest : IXunitSerializable
+    public class SpecTest
     {
         public string Name { get; set; }
 
@@ -25,31 +26,6 @@ namespace Stubble.Test.Shared.Spec
 
         public IDictionary<string, string> Partials { get; set; }
 
-        private static JsonSerializerSettings serializerSettings = new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        };
-
-        public void Deserialize(IXunitSerializationInfo info)
-        {
-            Name = info.GetValue<string>(nameof(Name));
-            Desc = info.GetValue<string>(nameof(Desc));
-            Data = JsonConvert.DeserializeObject(info.GetValue<string>(nameof(Data)), serializerSettings);
-            Template = info.GetValue<string>(nameof(Template));
-            Expected = info.GetValue<string>(nameof(Expected));
-            Partials = JsonConvert.DeserializeObject<Dictionary<string, string>>(info.GetValue<string>(nameof(Partials)));
-            Skip = info.GetValue<bool>(nameof(Skip));
-        }
-
-        public void Serialize(IXunitSerializationInfo info)
-        {
-            info.AddValue(nameof(Name), Name);
-            info.AddValue(nameof(Desc), Desc);
-            info.AddValue(nameof(Data), JsonConvert.SerializeObject(Data, serializerSettings));
-            info.AddValue(nameof(Partials), JsonConvert.SerializeObject(Partials, serializerSettings));
-            info.AddValue(nameof(Template), Template);
-            info.AddValue(nameof(Expected), Expected);
-            info.AddValue(nameof(Skip), Skip);
-        }
+        public Exception ExpectedException { get; set; }
     }
 }
