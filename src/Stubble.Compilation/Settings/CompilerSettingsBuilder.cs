@@ -39,8 +39,8 @@ namespace Stubble.Compilation.Settings
         /// <summary>
         /// Gets or sets a readonly list of TruthyChecks
         /// </summary>
-        protected internal List<Expression<Func<object, bool?>>> TruthyChecks { get; set; }
-            = new List<Expression<Func<object, bool?>>>();
+        protected internal Dictionary<Type, LambdaExpression> TruthyChecks { get; set; }
+            = new Dictionary<Type, LambdaExpression>();
 
         /// <summary>
         /// Gets or sets a map of Types to Enumeration convert functions
@@ -85,6 +85,19 @@ namespace Stubble.Compilation.Settings
                 DefaultTags ?? new Core.Classes.Tags("{{", "}}"),
                 ParserPipeline ?? new ParserPipelineBuilder().Build(),
                 CompilationSettings ?? CompilationSettings.GetDefaultRenderSettings());
+        }
+
+        /// <summary>
+        /// Adds a truthy check for a specific type to determine if the value can be considered 'Truthy'
+        /// </summary>
+        /// <typeparam name="T">The type to evaluate</typeparam>
+        /// <param name="expr">How to evaluate the value</param>
+        /// <returns>The builder for chaining calls</returns>
+        public CompilerSettingsBuilder AddTruthyCheck<T>(Expression<Func<T, bool>> expr)
+        {
+            TruthyChecks.Add(typeof(T), expr);
+
+            return this;
         }
     }
 }

@@ -39,5 +39,19 @@ namespace Stubble.Compilation.Helpers
                 .Select(s => s.GetGenericArguments()[0])
                 .FirstOrDefault();
         }
+
+        /// <summary>
+        /// Returns if the type is a value type or not
+        /// </summary>
+        /// <param name="type">The type to evaluate</param>
+        /// <returns>If the type is a value type or not</returns>
+        public static bool GetIsValueType(this Type type)
+        {
+#if NETSTANDARD1_3
+            return type.GetTypeInfo().IsValueType;
+#else
+            return type.IsValueType;
+#endif
+        }
     }
 }
