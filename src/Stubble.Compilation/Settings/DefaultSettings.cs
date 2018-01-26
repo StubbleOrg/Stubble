@@ -34,14 +34,12 @@ namespace Stubble.Compilation.Settings
                     typeof(IList),
                     (type, instance, key) =>
                     {
-                        var castValue = type as IList;
-
                         if (int.TryParse(key, out int intVal))
                         {
                             var index = Expression.Constant(intVal);
 
                             return Expression.Condition(
-                                Expression.LessThan(index, Expression.Property(instance, "Count")),
+                                Expression.LessThan(index, Expression.Property(instance, typeof(ICollection), "Count")),
                                 Expression.MakeIndex(instance, typeof(IList).GetProperty("Item"), new[] { index }),
                                 Expression.Constant(null));
                         }
