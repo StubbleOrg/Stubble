@@ -37,6 +37,41 @@ namespace Stubble.Compilation.Tests
             }
         }
 
+        [Fact]
+        public void CompilationRenderer_IgnoreCaseShouldIgnoreCase()
+        {
+            var builder = new CompilerSettingsBuilder()
+                .SetIgnoreCaseOnKeyLookup(true);
+
+            var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
+
+            var arg = new
+            {
+                Foo = "Bar"
+            };
+
+            var ignoreCase = stubble.Compile("{{foo}}", arg);
+
+            Assert.Equal("Bar", ignoreCase(arg));
+        }
+
+        [Fact]
+        public void CompilationRenderer_ShouldBeCaseSensitiveByDefault()
+        {
+            var builder = new CompilerSettingsBuilder();
+
+            var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
+
+            var arg = new
+            {
+                Foo = "Bar"
+            };
+
+            var func = stubble.Compile("{{foo}}", arg);
+
+            Assert.Equal("", func(arg));
+        }
+
         public static IEnumerable<object[]> Data => new List<SpecTest>
         {
             new SpecTest
