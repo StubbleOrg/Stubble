@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Stubble.Compilation.Helpers
 {
@@ -45,6 +46,7 @@ namespace Stubble.Compilation.Helpers
         /// </summary>
         /// <param name="type">The type to evaluate</param>
         /// <returns>If the type is a value type or not</returns>
+        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
         public static bool GetIsValueType(this Type type)
         {
 #if NETSTANDARD1_3

@@ -79,7 +79,13 @@ namespace Stubble.Compilation.Settings
 
                         if (member.Length > 0)
                         {
-                            var expression = ReflectionHelper.GetExpressionFromMemberInfo(member[0], instance);
+                            var info = member[0];
+                            if (!ignoreCase && !info.Name.Equals(key, StringComparison.Ordinal))
+                            {
+                                return null;
+                            }
+
+                            var expression = ReflectionHelper.GetExpressionFromMemberInfo(info, instance);
                             return expression;
                         }
 
