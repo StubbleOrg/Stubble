@@ -264,7 +264,7 @@ namespace Stubble.Core.Contexts
                     continue;
                 }
 
-                var outputVal = entry.Value(value, key);
+                var outputVal = entry.Value(value, key, RendererSettings.IgnoreCaseOnKeyLookup);
                 if (outputVal != null)
                 {
                     return outputVal;

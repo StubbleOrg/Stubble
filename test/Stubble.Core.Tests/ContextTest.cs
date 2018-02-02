@@ -328,19 +328,6 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
-        public void It_Should_Lookup_In_Dictionaries_Case_Insenstively()
-        {
-            var input = new
-            {
-                List = new Dictionary<string, object> { { "Foo", "Bar" } }
-            };
-
-            var context = new Context(input, new RendererSettingsBuilder().SetIgnoreCaseOnKeyLookup(true).BuildSettings(), RenderSettings.GetDefaultRenderSettings());
-            var output = context.Lookup("List.foo");
-            Assert.Equal("Bar", output);
-        }
-
-        [Fact]
         public void It_Should_Lookup_In_Classes_Case_Insenstively()
         {
             var input = new

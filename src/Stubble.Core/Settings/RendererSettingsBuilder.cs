@@ -15,6 +15,7 @@ using Stubble.Core.Imported;
 using Stubble.Core.Parser;
 using Stubble.Core.Renderers;
 using Stubble.Core.Renderers.Interfaces;
+using static Stubble.Core.Settings.RendererSettingsDefaults;
 
 namespace Stubble.Core.Settings
 {
@@ -32,8 +33,8 @@ namespace Stubble.Core.Settings
         /// <summary>
         /// Gets or sets a map of Types to Value getter functions
         /// </summary>
-        internal Dictionary<Type, Func<object, string, object>> ValueGetters { get; set; }
-            = new Dictionary<Type, Func<object, string, object>>();
+        internal Dictionary<Type, ValueGetterDelegate> ValueGetters { get; set; }
+            = new Dictionary<Type, ValueGetterDelegate>();
 
         /// <summary>
         /// Gets or sets a readonly list of TruthyChecks
@@ -58,7 +59,7 @@ namespace Stubble.Core.Settings
         /// <returns>The registry settings</returns>
         public override RendererSettings BuildSettings()
         {
-            var mergedGetters = RendererSettingsDefaults.DefaultValueGetters(IgnoreCaseOnKeyLookup).MergeLeft(ValueGetters);
+            var mergedGetters = RendererSettingsDefaults.DefaultValueGetters().MergeLeft(ValueGetters);
 
             mergedGetters = mergedGetters
                 .OrderBy(x => x.Key, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable())
@@ -85,7 +86,7 @@ namespace Stubble.Core.Settings
         /// <param name="type">The type to add the value getter function for</param>
         /// <param name="valueGetter">A value getter function</param>
         /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
-        public RendererSettingsBuilder AddValueGetter(Type type, Func<object, string, object> valueGetter)
+        public RendererSettingsBuilder AddValueGetter(Type type, ValueGetterDelegate valueGetter)
         {
             ValueGetters.Add(type, valueGetter);
             return this;
