@@ -4,7 +4,7 @@
     <Description>In memory compilation for trimmed down {{mustache}} templates in .NET</Description>
     <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyName>Stubble.Conpulation</AssemblyName>
+    <AssemblyName>Stubble.Compilation</AssemblyName>
     <PackageId>Stubble.Compulation</PackageId>
     <PackageTags>template;mustache;text;generation;fast;compilation</PackageTags>
     <RepositoryType>git</RepositoryType>
@@ -20,6 +20,7 @@
     <PackageProjectUrl>https://github.com/stubbleorg/stubble</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/StubbleOrg/Stubble/blob/master/licence.md</PackageLicenseUrl>
     <Platform>Any CPU</Platform>
+    <RootNamespace>Stubble.Compilation</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
