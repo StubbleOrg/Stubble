@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Dynamic;
 using Stubble.Core.Contexts;
 using Stubble.Core.Helpers;
 using Stubble.Core.Renderers.Interfaces;
@@ -26,18 +27,25 @@ namespace Stubble.Core.Settings
                 Dictionary<string, Lazy<Func<object, object>>>>>();
 
         /// <summary>
+        /// Delegate type for value getters
+        /// </summary>
+        /// <param name="value">The value to lookup the key within</param>
+        /// <param name="key">The key to lookup</param>
+        /// <param name="ignoreCase">If case should be ignored when looking up value</param>
+        /// <returns>The value if found or null if not found</returns>
+        public delegate object ValueGetterDelegate(object value, string key, bool ignoreCase);
+
+        /// <summary>
         /// Returns the default value getters
         /// </summary>
-        /// <param name="ignoreCase">If case should be ignored on lookup</param>
         /// <returns>The default value getters</returns>
-        public static Dictionary<Type, Func<object, string, object>> DefaultValueGetters(
-            bool ignoreCase)
+        public static Dictionary<Type, ValueGetterDelegate> DefaultValueGetters()
         {
-            return new Dictionary<Type, Func<object, string, object>>()
+            return new Dictionary<Type, ValueGetterDelegate>()
             {
                 {
                     typeof(IList),
-                    (value, key) =>
+                    (value, key, ignoreCase) =>
                     {
                         var castValue = value as IList;
 
@@ -51,32 +59,44 @@ namespace Stubble.Core.Settings
                 },
                 {
                     typeof(IDictionary<string, object>),
-                    (value, key) =>
+                    (value, key, ignoreCase) =>
                     {
-                        var castValue = ignoreCase
-                            ? new Dictionary<string, object>(
-                                (IDictionary<string, object>)value,
-                                StringComparer.OrdinalIgnoreCase)
-                            : value as IDictionary<string, object>;
+                        var castValue = value as IDictionary<string, object>;
 
                         return castValue != null && castValue.TryGetValue(key, out object outValue) ? outValue : null;
                     }
                 },
                 {
                     typeof(IDictionary),
-                    (value, key) =>
+                    (value, key, ignoreCase) =>
                     {
-                        var castValue = ignoreCase
-                            ? new Dictionary<string, object>(
-                                (IDictionary<string, object>)value,
-                                StringComparer.OrdinalIgnoreCase)
-                            : value as IDictionary;
+                        var castValue = value as IDictionary;
 
                         return castValue?[key];
                     }
                 },
                 {
-                    typeof(object), (value, key) => GetValueFromObjectByName(value, key, ignoreCase)
+                    typeof(IDynamicMetaObjectProvider),
+                    (value, key, ignoreCase) =>
+                    {
+                        if (value is IDictionary<string, object> cast)
+                        {
+                            IDictionary<string, object> caseBound = ignoreCase
+                                ? new Dictionary<string, object>(cast, StringComparer.OrdinalIgnoreCase)
+                                : cast;
+
+                            if (caseBound.TryGetValue(key, out object val))
+                            {
+                                return val;
+                            }
+                        }
+
+                        return null;
+                    }
+                },
+                {
+                    typeof(object),
+                    GetValueFromObjectByName
                 }
             };
         }

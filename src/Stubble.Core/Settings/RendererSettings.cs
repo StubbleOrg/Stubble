@@ -12,6 +12,7 @@ using Stubble.Core.Interfaces;
 using Stubble.Core.Parser;
 using Stubble.Core.Parser.Interfaces;
 using Stubble.Core.Renderers;
+using static Stubble.Core.Settings.RendererSettingsDefaults;
 
 namespace Stubble.Core.Settings
 {
@@ -36,7 +37,7 @@ namespace Stubble.Core.Settings
         /// <param name="defaultTags">The default tags to use during parsing</param>
         /// <param name="parserPipeline">The parser pipeline to use during parsing</param>
         public RendererSettings(
-            Dictionary<Type, Func<object, string, object>> valueGetters,
+            Dictionary<Type, ValueGetterDelegate> valueGetters,
             IEnumerable<Func<object, bool?>> truthyChecks,
             IStubbleLoader templateLoader,
             IStubbleLoader partialLoader,
@@ -67,7 +68,7 @@ namespace Stubble.Core.Settings
         /// <summary>
         /// Gets a map of Types to Value getter functions
         /// </summary>
-        public ImmutableDictionary<Type, Func<object, string, object>> ValueGetters { get; }
+        public ImmutableDictionary<Type, ValueGetterDelegate> ValueGetters { get; }
 
         /// <summary>
         /// Gets a readonly list of TruthyChecks

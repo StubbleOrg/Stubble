@@ -21,14 +21,14 @@ namespace Stubble.Core.Tests
             var builder = new StubbleBuilder()
                 .Configure(b =>
                 {
-                    b.AddValueGetter(typeof(string), (o, s) => null);
+                    b.AddValueGetter(typeof(string), (o, s, i) => null);
                 });
 
             var settingsBuilder = new RendererSettingsBuilder();
             builder.ConfigureSettings(settingsBuilder);
 
             Assert.Contains(typeof(string), settingsBuilder.ValueGetters.Keys);
-            Assert.Null(settingsBuilder.ValueGetters[typeof(string)](null, null));
+            Assert.Null(settingsBuilder.ValueGetters[typeof(string)](null, null, false));
         }
 
         [Fact]
