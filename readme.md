@@ -37,9 +37,15 @@ The numbers here represent the baseline values graphed from the timeline test wi
 
 ### Extensibility
 Stubble exposes certain internal structures for parsing and rendering extensions to be added in a loosely coupled way.
-These extensions can be added on to the `IRendererSettingsBuilder` as extension methods or the `IStubbleBuilder` which implements the interface for of `IRendererSettingsBuilder` and passes through to an internal builder. This is to simplify the building interface.
+These extensions can be added on to the `IRendererSettingsBuilder` as extension methods to simplify it for users.
 
 For more detail on the types of Extensibility and how to extend stubble please see the [extensibility docs here.](/docs/extensibility.md).
+
+### Compilation
+Stubble provides compilation of templates to functions that take strongly typed arguments based on how you configure the stubble template compiler.
+To use compilation, simple create a `StubbleCompilationRenderer` and call Compile or Compile async after configuring it.
+
+For more detailed information and edgecases please see the [compilation docs here.](/docs/compilation.md).
 
 ### Template Loading
 Stubble comes in the box with very few template loaders but provides an interface and extension points which allow you to provide your own async and sync methods to get templates from a given name or use one that has already been created in a separate package.
