@@ -274,7 +274,7 @@ namespace Stubble.Compilation.Contexts
                     continue;
                 }
 
-                var outputVal = entry.Value(value, instance, key);
+                var outputVal = entry.Value(value, instance, key, CompilerSettings.IgnoreCaseOnKeyLookup);
                 if (outputVal != null)
                 {
                     return new RegistryResult

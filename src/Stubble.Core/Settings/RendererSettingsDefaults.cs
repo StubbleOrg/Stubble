@@ -61,6 +61,12 @@ namespace Stubble.Core.Settings
                     typeof(IDictionary<string, object>),
                     (value, key, ignoreCase) =>
                     {
+                        // Skip dynamic objects since they also implement IDictionary<string, object>
+                        if (typeof(IDynamicMetaObjectProvider).IsAssignableFrom(value.GetType()))
+                        {
+                            return null;
+                        }
+
                         var castValue = value as IDictionary<string, object>;
 
                         return castValue != null && castValue.TryGetValue(key, out object outValue) ? outValue : null;

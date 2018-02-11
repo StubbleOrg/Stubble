@@ -15,7 +15,6 @@ using Stubble.Core.Parser;
 using Stubble.Core.Renderers;
 using Stubble.Core.Renderers.Interfaces;
 using Stubble.Core.Settings;
-using Getter = System.Func<System.Type, System.Linq.Expressions.Expression, string, System.Linq.Expressions.Expression>;
 
 namespace Stubble.Compilation.Settings
 {
@@ -33,8 +32,8 @@ namespace Stubble.Compilation.Settings
         /// <summary>
         /// Gets or sets a map of Types to Value getter functions
         /// </summary>
-        protected internal Dictionary<Type, Getter> ValueGetters { get; set; }
-            = new Dictionary<Type, Getter>();
+        protected internal Dictionary<Type, DefaultSettings.ValueGetterDelegate> ValueGetters { get; set; }
+            = new Dictionary<Type, DefaultSettings.ValueGetterDelegate>();
 
         /// <summary>
         /// Gets or sets a readonly list of TruthyChecks
@@ -70,7 +69,7 @@ namespace Stubble.Compilation.Settings
         /// <returns>The built compilation settings</returns>
         public override CompilerSettings BuildSettings()
         {
-            var mergedGetters = DefaultSettings.DefaultValueGetters(IgnoreCaseOnKeyLookup).MergeLeft(ValueGetters);
+            var mergedGetters = DefaultSettings.DefaultValueGetters().MergeLeft(ValueGetters);
 
             return new CompilerSettings(
                 mergedGetters,
