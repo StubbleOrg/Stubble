@@ -1,7 +1,7 @@
-#tool "nuget:?package=coveralls.net"
 #tool "nuget:?package=ReportGenerator"
 
-#addin "nuget:?package=Cake.Coveralls"
+#tool nuget:?package=Codecov
+#addin nuget:?package=Cake.Codecov
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
@@ -13,14 +13,15 @@ var buildDir = Directory("./src/Stubble.Core/bin/Any CPU/") + Directory(configur
 var testBuildDir = Directory("./test/Stubble.Core.Tests/bin/Any CPU/") + Directory(configuration);
 
 var artifactsDir = Directory("./artifacts/");
+var coverageDir = Directory("./coverage-results");
 
 Task("Clean")
     .Does(() =>
 {
     CleanDirectory(buildDir);
     CleanDirectory(testBuildDir);
-    CleanDirectory("./artifacts");
-    CleanDirectory("./coverage-results");
+    CleanDirectory(artifactsDir);
+    CleanDirectory(coverageDir);
     CleanDirectory("./coverage-report");
     CleanDirectory("./test/Stubble.Core.Tests/TestResults");
 });
@@ -152,23 +153,37 @@ Task("Pack")
     DotNetCorePack("./src/Stubble.Compilation/Stubble.Compilation.csproj", settings);
 });
 
-Task("Coveralls")
+Task("CodeCov")
     .IsDependentOn("Pack")
     .Does(() =>
 {
-    if (!AppVeyor.IsRunningOnAppVeyor) return;
+    var coverageFiles = GetFiles("./coverage-results/*.xml")
+        .Select(f => f.FullPath)
+        .ToArray();
 
-    var token = EnvironmentVariable("COVERALLS_REPO_TOKEN");
+    var settings = new CodecovSettings();
 
-    CoverallsNet("./coverage-results/results.xml", CoverallsNetReportType.OpenCover, new CoverallsNetSettings()
+    if (AppVeyor.IsRunningOnAppVeyor) {
+        var token = EnvironmentVariable("CODECOV_REPO_TOKEN");
+        settings.Token = token;
+        settings.Branch = AppVeyor.Environment.Repository.Branch;
+        settings.Commit = AppVeyor.Environment.Repository.Commit.Id;
+        settings.Pr = AppVeyor.Environment.PullRequest.Number.ToString();
+    }
+    else if (BuildSystem.IsRunningOnTravisCI)
     {
-        RepoToken = token,
-        CommitId = EnvironmentVariable("APPVEYOR_REPO_COMMIT"),
-        CommitBranch = EnvironmentVariable("APPVEYOR_REPO_BRANCH"),
-        CommitAuthor = EnvironmentVariable("APPVEYOR_REPO_COMMIT_AUTHOR"),
-        CommitEmail = EnvironmentVariable("APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL"),
-        CommitMessage = EnvironmentVariable("APPVEYOR_REPO_COMMIT_MESSAGE")
-    });
+        settings.Branch = BuildSystem.TravisCI.Environment.Build.Branch;
+        settings.Commit = BuildSystem.TravisCI.Environment.Repository.Commit;
+        settings.Pr = BuildSystem.TravisCI.Environment.Repository.PullRequest;
+    }
+
+    foreach(var file in coverageFiles)
+    {
+        settings.Files = new [] { file };
+
+        // Upload coverage reports.
+        Codecov(settings);
+    }
 });
 
 Task("CoverageReport")
@@ -179,10 +194,10 @@ Task("CoverageReport")
 });
 
 Task("AppVeyor")
-    .IsDependentOn("Coveralls");
+    .IsDependentOn("CodeCov");
 
 Task("Travis")
-    .IsDependentOn("Test");
+    .IsDependentOn("CodeCov");
 
 Task("Default")
     .IsDependentOn("Pack");
