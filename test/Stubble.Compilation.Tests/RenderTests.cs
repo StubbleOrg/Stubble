@@ -1,7 +1,9 @@
 ﻿using Stubble.Compilation.Settings;
 using Stubble.Core.Exceptions;
 using Stubble.Test.Shared.Spec;
+using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using Xunit;
 
@@ -70,6 +72,39 @@ namespace Stubble.Compilation.Tests
             var func = stubble.Compile("{{foo}}", arg);
 
             Assert.Equal("", func(arg));
+        }
+
+        [Fact]
+        public void It_Can_Retrieve_Values_From_Dynamic()
+        {
+            dynamic input = new ExpandoObject();
+            input.Foo = "Bar";
+            input.Number = 1;
+            input.Blah = new { String = "Test" };
+
+            var builder = new CompilerSettingsBuilder();
+            var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
+
+            var func = stubble.Compile<ExpandoObject>("{{Foo}} {{Number}} {{Blah.String}}", input);
+
+            Assert.Equal("Bar 1 ", func(input));
+        }
+
+        [Fact]
+        public void It_Should_Throw_On_Data_Miss_Based_On_RenderSettings()
+        {
+            var input = new
+            {
+                Foo = "Foo"
+            };
+
+            var builder = new CompilerSettingsBuilder();
+            var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
+
+            var ex = Assert.Throws<StubbleDataMissException>(() => stubble.Compile("{{Bar}}", input, new CompilationSettings { ThrowOnDataMiss = true }));
+            Assert.Equal("'Bar' is undefined.", ex.Message);
+            Assert.NotNull(ex.Data["Name"]);
+            Assert.NotNull(ex.Data["SkipRecursiveLookup"]);
         }
 
         public static IEnumerable<object[]> Data => new List<SpecTest>

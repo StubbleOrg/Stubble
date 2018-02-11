@@ -52,15 +52,16 @@ namespace Stubble.Compilation.Settings
                     (type, instance, key) =>
                     {
                         var outVar = Expression.Variable(typeof(object));
-
-                        return Expression.Block(new Expression[]
+                        var block = new Expression[]
                         {
                             outVar,
                             Expression.Condition(
-                                Expression.Call(instance, type.GetMethod("TryGetValue"), new Expression[] { Expression.Constant(key), outVar }),
+                                Expression.Call(instance, typeof(IDictionary<string, object>).GetMethod("TryGetValue"), new Expression[] { Expression.Constant(key), outVar }),
                                 outVar,
                                 Expression.Constant(null))
-                        });
+                        };
+
+                        return Expression.Block(new[] { outVar }, block);
                     }
                 },
                 {
