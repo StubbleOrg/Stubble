@@ -142,6 +142,10 @@ Task("Pack")
     .IsDependentOn("Test")
     .Does(() =>
 {
+    if (BuildSystem.IsRunningOnTravisCI) {
+        return;
+    }
+
     var settings = new DotNetCorePackSettings
     {
         OutputDirectory = artifactsDir,
@@ -166,15 +170,6 @@ Task("CodeCov")
     if (AppVeyor.IsRunningOnAppVeyor) {
         var token = EnvironmentVariable("CODECOV_REPO_TOKEN");
         settings.Token = token;
-        settings.Branch = AppVeyor.Environment.Repository.Branch;
-        settings.Commit = AppVeyor.Environment.Repository.Commit.Id;
-        settings.Pr = AppVeyor.Environment.PullRequest.Number.ToString();
-    }
-    else if (BuildSystem.IsRunningOnTravisCI)
-    {
-        settings.Branch = BuildSystem.TravisCI.Environment.Build.Branch;
-        settings.Commit = BuildSystem.TravisCI.Environment.Repository.Commit;
-        settings.Pr = BuildSystem.TravisCI.Environment.Repository.PullRequest;
     }
 
     foreach(var file in coverageFiles)
