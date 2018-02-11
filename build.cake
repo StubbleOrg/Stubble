@@ -9,8 +9,8 @@ var testFramework = Argument("testFramework", "");
 var framework = Argument("framework", "");
 var runCoverage = Argument<bool>("runCoverage", true);
 
-var buildDir = Directory("./src/Stubble.Core/bin") + Directory(configuration);
-var testBuildDir = Directory("./test/Stubble.Core.Tests/bin") + Directory(configuration);
+var buildDir = Directory("./src/Stubble.Core/bin/Any CPU/") + Directory(configuration);
+var testBuildDir = Directory("./test/Stubble.Core.Tests/bin/Any CPU/") + Directory(configuration);
 
 var artifactsDir = Directory("./artifacts/");
 
@@ -32,6 +32,9 @@ Task("Restore")
     if (AppVeyor.IsRunningOnAppVeyor) {
         DotNetCoreRestore("./src/Stubble.Core/Stubble.Core.csproj");
         DotNetCoreRestore("./test/Stubble.Core.Tests/Stubble.Core.Tests.csproj");
+
+        DotNetCoreRestore("./src/Stubble.Compilation/Stubble.Compilation.csproj");
+        DotNetCoreRestore("./test/Stubble.Compilation.Tests/Stubble.Compilation.Tests.csproj");
     } else {
         DotNetCoreRestore("./Stubble.Core.sln");
     }
@@ -65,45 +68,33 @@ Task("Build")
 
     DotNetCoreBuild("./src/Stubble.Core/", setting);
     DotNetCoreBuild("./test/Stubble.Core.Tests/", testSetting);
+    DotNetCoreBuild("./src/Stubble.Compilation/", setting);
+    DotNetCoreBuild("./test/Stubble.Compilation.Tests/", testSetting);
 });
 
-Task("Test")
-    .IsDependentOn("Build")
-    .Does(() =>
-{
-    Action<ICakeContext> testAction = tool => {
-        tool.DotNetCoreTest("./test/Stubble.Core.Tests/Stubble.Core.Tests.csproj", new DotNetCoreTestSettings {
+private Action<ICakeContext> testAction(string projectPath) {
+    return (tool) => {
+        var testSettings = new DotNetCoreTestSettings {
             Configuration = configuration,
             NoBuild = true,
             Verbosity = DotNetCoreVerbosity.Quiet,
             Framework = testFramework,
             ArgumentCustomization = args =>
                 args.Append("--logger:trx")
-        });
+        };
+
+        tool.DotNetCoreTest(projectPath, testSettings);
     };
+}
 
-    if(runCoverage || AppVeyor.IsRunningOnAppVeyor)
+Task("Test")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    if (runCoverage || AppVeyor.IsRunningOnAppVeyor)
     {
-        var path = new FilePath("./OpenCover-Experimental/OpenCover.Console.exe").MakeAbsolute(Context.Environment);
-
-        Information(path.ToString());
-
-        CreateDirectory("./coverage-results/");
-        OpenCover(
-            testAction,
-            new FilePath(string.Format("./coverage-results/results.xml", DateTime.UtcNow)),
-            new OpenCoverSettings {
-                Register = "user",
-                SkipAutoProps = true,
-                OldStyle = true,
-                ToolPath = path,
-                ReturnTargetCodeOffset = 0
-            }
-            .WithFilter("-[Stubble.Core.Tests]*")
-            .WithFilter("+[Stubble.*]*")
-            .WithFilter("-[Stubble.Core]*.Imported.*")
-            .WithFilter("-[Stubble.Core]Stubble.Core.Helpers.*")
-        );
+        RunCoverageForTestProject("./test/Stubble.Core.Tests/Stubble.Core.Tests.csproj");
+        RunCoverageForTestProject("./test/Stubble.Compilation.Tests/Stubble.Compilation.Tests.csproj");
 
         if (AppVeyor.IsRunningOnAppVeyor)
         {
@@ -114,9 +105,37 @@ Task("Test")
             }
         }
     } else {
-        testAction(Context);
+        testAction("./test/Stubble.Core.Tests/Stubble.Core.Tests.csproj")(Context);
+        testAction("./test/Stubble.Compilation.Tests/Stubble.Compilation.Tests.csproj")(Context);
     }
 });
+
+private void RunCoverageForTestProject(string projectPath) {
+    var path = new FilePath("./OpenCover-Experimental/OpenCover.Console.exe").MakeAbsolute(Context.Environment);
+
+    Information(path.ToString());
+
+    CreateDirectory("./coverage-results/");
+    OpenCover(
+        testAction(projectPath),
+        new FilePath(string.Format($"./coverage-results/results-{DateTime.UtcNow:dd-MM-yyyy-HH-mm-ss-FFF}.xml")),
+        new OpenCoverSettings {
+            Register = "user",
+            SkipAutoProps = true,
+            OldStyle = true,
+            ToolPath = path,
+            ReturnTargetCodeOffset = 0
+        }
+        .WithFilter("-[Stubble.Core.Tests]*")
+        .WithFilter("-[Stubble.Compilation.Tests]*")
+        .WithFilter("+[Stubble.*]*")
+        .WithFilter("-[Stubble.Core]*.Imported.*")
+        .WithFilter("-[Stubble.Compilation]*.Import.*")
+        .WithFilter("-[Stubble.Compilation]Stubble.Compilation.Contexts.RegistryResult")
+        .WithFilter("-[Stubble.Core]Stubble.Core.Helpers.*")
+        .WithFilter("-[Stubble.Compilation]Stubble.Compilation.Helpers.*")
+    );
+}
 
 Task("Pack")
     .IsDependentOn("Test")
@@ -130,6 +149,7 @@ Task("Pack")
     };
 
     DotNetCorePack("./src/Stubble.Core/Stubble.Core.csproj", settings);
+    DotNetCorePack("./src/Stubble.Compilation/Stubble.Compilation.csproj", settings);
 });
 
 Task("Coveralls")
