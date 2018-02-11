@@ -194,14 +194,21 @@ namespace Stubble.Compilation.Contexts
         /// <returns>An expression checking for truthyness</returns>
         public Expression GetTruthyExpression(Expression value)
         {
-            if (CompilerSettings.TruthyChecks.TryGetValue(value.Type, out var lambda))
+            var checks = new List<Expression>();
+
+            if (!value.Type.GetIsValueType())
             {
-                return Expression.Invoke(lambda, value);
+                checks.Add(Expression.NotEqual(value, Expression.Constant(null)));
+            }
+
+            if (CompilerSettings.TruthyChecks.TryGetValue(value.Type, out var typeTruthyChecks))
+            {
+                checks.AddRange(typeTruthyChecks.Select(c => Expression.Invoke(c, value)));
             }
 
             if (value.Type == typeof(bool))
             {
-                return value;
+                checks.Add(value);
             }
 
             if (value.Type == typeof(string))
@@ -209,27 +216,31 @@ namespace Stubble.Compilation.Contexts
                 var stringEqual = typeof(string).GetMethod(nameof(string.Equals), new[] { typeof(string), typeof(StringComparison) });
                 var stringNullOrWhitespace = typeof(string).GetMethod(nameof(string.IsNullOrWhiteSpace), new[] { typeof(string) });
 
-                return new Expression[]
+                checks.AddRange(new Expression[]
                 {
                     Expression.Equal(value, Expression.Constant("1")),
                     Expression.Call(value, stringEqual, Expression.Constant("true"), Expression.Constant(StringComparison.OrdinalIgnoreCase)),
                     Expression.Not(Expression.Equal(value, Expression.Constant("0"))),
                     Expression.Not(Expression.Call(value, stringEqual, Expression.Constant("false"), Expression.Constant(StringComparison.OrdinalIgnoreCase))),
                     Expression.Not(Expression.Call(null, stringNullOrWhitespace, value))
-                }.Aggregate(Expression.Constant(true), (Expression agg, Expression ex) => Expression.OrElse(agg, ex));
+                });
             }
 
             if (typeof(IEnumerable).IsAssignableFrom(value.Type))
             {
-                return Expression.Call(Expression.Call(value, typeof(IEnumerable).GetMethod("GetEnumerator")), typeof(IEnumerator).GetMethod("MoveNext"));
+                checks.Add(Expression.Call(Expression.Call(value, typeof(IEnumerable).GetMethod("GetEnumerator")), typeof(IEnumerator).GetMethod("MoveNext")));
             }
 
-            if (value.Type.GetIsValueType())
+            if (checks.Count == 0)
             {
                 return null;
             }
+            else if (checks.Count == 1)
+            {
+                return checks[0];
+            }
 
-            return Expression.NotEqual(value, Expression.Constant(null));
+            return checks.Skip(1).Aggregate(checks[0], (Expression agg, Expression ex) => Expression.AndAlso(agg, ex));
         }
 
         /// <summary>
