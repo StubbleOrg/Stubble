@@ -253,16 +253,9 @@ namespace Stubble.Compilation
             }
 
             var document = CompilerSettings.Parser.Parse(loadedTemplate, CompilerSettings.DefaultTags, pipeline: CompilerSettings.ParserPipeline);
-
             var renderer = new CompilationRenderer<T>(CompilerSettings.RendererPipeline, CompilerSettings.MaxRecursionDepth);
 
-            var partialsLoader = CompilerSettings.PartialTemplateLoader;
-            if (partials != null && partials.Keys.Count > 0)
-            {
-                partialsLoader = new CompositeLoader(new DictionaryLoader(partials), CompilerSettings.PartialTemplateLoader);
-            }
-
-            var compilationContext = new CompilerContext(viewType, Expression.Parameter(viewType, "src"), CompilerSettings, partialsLoader, settings ?? CompilerSettings.CompilationSettings);
+            var compilationContext = BuildCompilerContext(viewType, partials, settings);
 
             return renderer.Compile(document, compilationContext) as Func<T, string>;
         }
@@ -277,18 +270,22 @@ namespace Stubble.Compilation
             }
 
             var document = CompilerSettings.Parser.Parse(loadedTemplate, CompilerSettings.DefaultTags, pipeline: CompilerSettings.ParserPipeline);
-
             var renderer = new CompilationRenderer<T>(CompilerSettings.RendererPipeline, CompilerSettings.MaxRecursionDepth);
 
+            var compilationContext = BuildCompilerContext(viewType, partials, settings);
+
+            return await renderer.CompileAsync(document, compilationContext) as Func<T, string>;
+        }
+
+        private CompilerContext BuildCompilerContext(Type viewType, IDictionary<string, string> partials, CompilationSettings settings)
+        {
             var partialsLoader = CompilerSettings.PartialTemplateLoader;
             if (partials != null && partials.Keys.Count > 0)
             {
                 partialsLoader = new CompositeLoader(new DictionaryLoader(partials), CompilerSettings.PartialTemplateLoader);
             }
 
-            var compilationContext = new CompilerContext(viewType, Expression.Parameter(viewType, "src"), CompilerSettings, partialsLoader, settings ?? CompilerSettings.CompilationSettings);
-
-            return await renderer.CompileAsync(document, compilationContext) as Func<T, string>;
+            return new CompilerContext(viewType, Expression.Parameter(viewType, "src"), CompilerSettings, partialsLoader, settings ?? CompilerSettings.CompilationSettings);
         }
     }
 }
