@@ -31,7 +31,7 @@ namespace Stubble.Core.Benchmark
 
         private StubbleVisitorRenderer StubbleVisitorRenderer;
 
-        [Setup]
+        [GlobalSetup]
         public void SetupRenderers()
         {
             StubbleVisitorRenderer = new StubbleVisitorRenderer();
