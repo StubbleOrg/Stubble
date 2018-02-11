@@ -60,6 +60,12 @@ namespace Stubble.Compilation.Settings
                     typeof(IDictionary<string, object>),
                     (type, instance, key, ignoreCase) =>
                     {
+                        // Skip dynamic objects since they also implement IDictionary<string, object>
+                        if (typeof(IDynamicMetaObjectProvider).IsAssignableFrom(type))
+                        {
+                            return null;
+                        }
+
                         var outVar = Expression.Variable(typeof(object));
                         var block = new Expression[]
                         {
