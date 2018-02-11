@@ -81,7 +81,7 @@ namespace Stubble.Core.Benchmark
 
         public Func<Timeline, string> TimelineCompiled;
 
-        [Setup]
+        [GlobalSetup]
         public void SetupBenchmark()
         {
             var loader = new DictionaryLoader(new Dictionary<string, string>()

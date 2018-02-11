@@ -44,6 +44,7 @@ Task("Build")
 {
     var setting = new DotNetCoreBuildSettings {
         Configuration = configuration,
+        NoRestore = true,
         ArgumentCustomization = args => args.Append("/property:WarningLevel=0") // Until Warnings are fixed in StyleCop
     };
 
@@ -53,6 +54,7 @@ Task("Build")
     }
 
     var testSetting = new DotNetCoreBuildSettings {
+        NoRestore = true,
         Configuration = configuration
     };
 
