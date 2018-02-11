@@ -15,7 +15,6 @@ using Stubble.Core.Parser;
 using Stubble.Core.Parser.Interfaces;
 using Stubble.Core.Renderers;
 using Stubble.Core.Settings;
-using Getter = System.Func<System.Type, System.Linq.Expressions.Expression, string, System.Linq.Expressions.Expression>;
 
 namespace Stubble.Compilation.Settings
 {
@@ -40,7 +39,7 @@ namespace Stubble.Compilation.Settings
         /// <param name="parserPipeline">The parser pipeline to use during parsing</param>
         /// <param name="compilationSettings">The default compilation settings for each render</param>
         public CompilerSettings(
-            Dictionary<Type, Getter> valueGetters,
+            Dictionary<Type, DefaultSettings.ValueGetterDelegate> valueGetters,
             Dictionary<Type, List<LambdaExpression>> truthyChecks,
             Dictionary<Type, Expression<Func<object, IEnumerable>>> enumerationConverters,
             TokenRendererPipeline<CompilerContext> rendererPipeline,
@@ -64,7 +63,7 @@ namespace Stubble.Compilation.Settings
         /// <summary>
         /// Gets a map of Types to Value getter functions
         /// </summary>
-        public ImmutableDictionary<Type, Getter> ValueGetters { get; }
+        public ImmutableDictionary<Type, DefaultSettings.ValueGetterDelegate> ValueGetters { get; }
 
         /// <summary>
         /// Gets a readonly list of TruthyChecks

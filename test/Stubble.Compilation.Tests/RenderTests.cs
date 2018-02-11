@@ -125,6 +125,22 @@ namespace Stubble.Compilation.Tests
         }
 
         [Fact]
+        public void It_Can_Retrieve_Values_From_Dynamic_CaseInsensitively()
+        {
+            dynamic input = new ExpandoObject();
+            input.Foo = "Bar";
+            input.Number = 1;
+            input.Blah = new { String = "Test" };
+
+            var builder = new CompilerSettingsBuilder().SetIgnoreCaseOnKeyLookup(true);
+            var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
+
+            var func = stubble.Compile<ExpandoObject>("{{foo}} {{number}}", input);
+
+            Assert.Equal("Bar 1", func(input));
+        }
+
+        [Fact]
         public void It_Should_Throw_On_Data_Miss_Based_On_RenderSettings()
         {
             var input = new
