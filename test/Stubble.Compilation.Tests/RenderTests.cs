@@ -1,4 +1,5 @@
-﻿using Stubble.Compilation.Settings;
+﻿using Stubble.Compilation.Builders;
+using Stubble.Compilation.Settings;
 using Stubble.Core.Exceptions;
 using Stubble.Test.Shared.Spec;
 using System;
@@ -137,7 +138,8 @@ namespace Stubble.Compilation.Tests
 
             var func = stubble.Compile<ExpandoObject>("{{foo}} {{number}}", input);
 
-            Assert.Equal("Bar 1", func(input));
+            var value = func(input);
+            Assert.Equal("Bar 1", value);
         }
 
         [Fact]
@@ -155,6 +157,19 @@ namespace Stubble.Compilation.Tests
             Assert.Equal("'Bar' is undefined.", ex.Message);
             Assert.NotNull(ex.Data["Name"]);
             Assert.NotNull(ex.Data["SkipRecursiveLookup"]);
+        }
+
+        [Fact]
+        public void You_Should_Be_Able_To_Build_Using_Builder()
+        {
+            var builder = new StubbleCompilationBuilder();
+            builder.Configure(b => b.SetIgnoreCaseOnKeyLookup(true));
+            var stubble = builder.Build();
+
+            var input = new { Foo = "Bar" };
+            var func = stubble.Compile("{{Foo}}", input);
+
+            Assert.Equal("Bar", func(input));
         }
 
         public static IEnumerable<object[]> Data => new List<SpecTest>
