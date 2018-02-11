@@ -3,25 +3,9 @@
 language: csharp
 sudo: required
 dist: trusty
-mono: latest
-env:
-  - CLI_VERSION=latest
+dotnet: 2.1.4
 git:
   depth: 9999999
 
-addons:
-  apt:
-    packages:
-    - gettext
-    - libcurl4-openssl-dev
-    - libicu-dev
-    - libssl-dev
-    - libunwind8
-
-install:
-    - export DOTNET_INSTALL_DIR="$PWD/.dotnetcli"
-    - curl -sSL https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.sh | bash /dev/stdin --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR"
-    - export PATH="$DOTNET_INSTALL_DIR:$PATH"
-
 script:
-  - ./build.sh --target Travis -- -runCoverage=false -framework="netstandard1.3" -testFramework="netcoreapp1.1"
+  - ./build.sh --target Travis -- -runCoverage=false -framework="netstandard1.3" -testFramework="netcoreapp2.0"
