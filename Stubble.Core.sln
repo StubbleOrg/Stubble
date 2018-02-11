@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{129DB9C9-21F8-4218-AD2C-2A8970876FDB}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		build.cake = build.cake
 		licence.md = licence.md
 		.nuget\packages.config = .nuget\packages.config
-		readme.mdown = readme.mdown
+		readme.md = readme.md
 		stylecop.json = stylecop.json
 		version.json = version.json
 		test\xunit.runner.json = test\xunit.runner.json
