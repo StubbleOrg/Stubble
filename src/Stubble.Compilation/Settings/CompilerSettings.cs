@@ -41,7 +41,7 @@ namespace Stubble.Compilation.Settings
         /// <param name="compilationSettings">The default compilation settings for each render</param>
         public CompilerSettings(
             Dictionary<Type, Getter> valueGetters,
-            Dictionary<Type, LambdaExpression> truthyChecks,
+            Dictionary<Type, List<LambdaExpression>> truthyChecks,
             Dictionary<Type, Expression<Func<object, IEnumerable>>> enumerationConverters,
             TokenRendererPipeline<CompilerContext> rendererPipeline,
             IStubbleLoader templateLoader,
@@ -55,7 +55,7 @@ namespace Stubble.Compilation.Settings
             : base(templateLoader, partialLoader, maxRecursionDepth, ignoreCaseOnLookup, parser, defaultTags, parserPipeline)
         {
             ValueGetters = valueGetters.ToImmutableDictionary();
-            TruthyChecks = truthyChecks.ToImmutableDictionary();
+            TruthyChecks = truthyChecks.ToImmutableDictionary(k => k.Key, v => v.Value.ToImmutableList());
             EnumerationConverters = enumerationConverters.ToImmutableDictionary();
             RendererPipeline = rendererPipeline;
             CompilationSettings = compilationSettings;
@@ -69,7 +69,7 @@ namespace Stubble.Compilation.Settings
         /// <summary>
         /// Gets a readonly list of TruthyChecks
         /// </summary>
-        public ImmutableDictionary<Type, LambdaExpression> TruthyChecks { get; }
+        public ImmutableDictionary<Type, ImmutableList<LambdaExpression>> TruthyChecks { get; }
 
         /// <summary>
         /// Gets a map of Types to Enumeration convert functions
