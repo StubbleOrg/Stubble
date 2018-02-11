@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Stubble.Compilation.Tests
@@ -23,19 +24,52 @@ namespace Stubble.Compilation.Tests
             {
                 var ex = Assert.Throws(data.ExpectedException.GetType(), () =>
                 {
-                    var output = data.Partials != null ? stubble.Compile(data.Template, data.Data, data.Partials) : stubble.Compile(data.Template, data.Data);
-
-                    var outputResult = output(data.Data);
+                    CompileAndRender();
                 });
 
                 Assert.Equal(data.ExpectedException.Message, ex.Message);
             }
             else
             {
-                var output = data.Partials != null ? stubble.Compile(data.Template, data.Data, data.Partials) : stubble.Compile(data.Template, data.Data);
-                var outputResult = output(data.Data);
+                Assert.Equal(data.Expected, CompileAndRender());
+            }
 
-                Assert.Equal(data.Expected, outputResult);
+            string CompileAndRender()
+            {
+                var output = data.Partials != null ?
+                    stubble.Compile(data.Template, data.Data, data.Partials) :
+                    stubble.Compile(data.Template, data.Data);
+
+                return (string)output(data.Data);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public async Task CompilationRenderer_SpecialTests_Async(SpecTest data)
+        {
+            var builder = new CompilerSettingsBuilder();
+
+            var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
+
+            if (data.ExpectedException != null)
+            {
+                var ex = await Assert.ThrowsAsync(data.ExpectedException.GetType(), CompileAndRender);
+
+                Assert.Equal(data.ExpectedException.Message, ex.Message);
+            }
+            else
+            {
+                Assert.Equal(data.Expected, await CompileAndRender());
+            }
+
+            async Task<string> CompileAndRender()
+            {
+                var output = data.Partials != null ?
+                    await stubble.CompileAsync(data.Template, data.Data, data.Partials) :
+                    await stubble.CompileAsync(data.Template, data.Data);
+
+                return (string)output(data.Data);
             }
         }
 
@@ -157,6 +191,27 @@ namespace Stubble.Compilation.Tests
                 },
                 ExpectedException = new StubbleException("Cannot call a partial with more than 16 parameters.\nThis is likely due to a large amount of section scopes"),
                 Expected = @"Not Too Deeply Nested Data | Very Nested Data == Not Too Deeply Nested Data | Very Nested Data"
+            },
+            new SpecTest
+            {
+                Name = "It can render Enumerators",
+                Data = new { Items = "abcdefg".ToCharArray().GetEnumerator() },
+                Expected = "abcdefg",
+                Template = "{{#Items}}{{.}}{{/Items}}"
+            },
+            new SpecTest
+            {
+                Name = "It can render without Data",
+                Data = new {},
+                Expected = "I have No Data :(",
+                Template = "I have No Data :("
+            },
+            new SpecTest
+            {
+                Name = "Primatives Are Always Truthy",
+                Data = new { MyInt = 1 },
+                Template = "{{#MyInt}}That should totally be true{{/MyInt}}",
+                Expected = "That should totally be true"
             }
         }.Select(s => new[] { s });
     }

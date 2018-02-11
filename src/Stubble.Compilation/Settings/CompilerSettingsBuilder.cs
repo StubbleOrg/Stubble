@@ -39,8 +39,8 @@ namespace Stubble.Compilation.Settings
         /// <summary>
         /// Gets or sets a readonly list of TruthyChecks
         /// </summary>
-        protected internal Dictionary<Type, LambdaExpression> TruthyChecks { get; set; }
-            = new Dictionary<Type, LambdaExpression>();
+        protected internal Dictionary<Type, List<LambdaExpression>> TruthyChecks { get; set; }
+            = new Dictionary<Type, List<LambdaExpression>>();
 
         /// <summary>
         /// Gets or sets a map of Types to Enumeration convert functions
@@ -95,7 +95,14 @@ namespace Stubble.Compilation.Settings
         /// <returns>The builder for chaining calls</returns>
         public CompilerSettingsBuilder AddTruthyCheck<T>(Expression<Func<T, bool>> expr)
         {
-            TruthyChecks.Add(typeof(T), expr);
+            if (TruthyChecks.TryGetValue(typeof(T), out var check))
+            {
+                TruthyChecks[typeof(T)].Add(expr);
+            }
+            else
+            {
+                TruthyChecks.Add(typeof(T), new List<LambdaExpression>() { expr });
+            }
 
             return this;
         }

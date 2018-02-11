@@ -52,5 +52,43 @@ namespace Stubble.Compilation.Tests
             Assert.Equal("", func(input));
             Assert.Equal("", func2(input));
         }
+
+        [Fact]
+        public void CompilationRenderer_ItShouldAllowMultipleTruthyChecks()
+        {
+            var builder = new CompilerSettingsBuilder();
+
+            builder.AddTruthyCheck<string>(val => !val.Equals("Bar"));
+            builder.AddTruthyCheck<string>(val => !val.Equals("Boo"));
+
+            var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
+
+            var obj = new
+            {
+                Foo = "Bar",
+                Bar = "Display Me"
+            };
+
+            var func = stubble.Compile("{{#Foo}}{{Bar}}{{/Foo}}", obj);
+
+            Assert.Equal("", func(obj));
+            Assert.Equal("", func(new
+            {
+                Foo = "Boo",
+                Bar = "Display Me"
+            }));
+
+            Assert.Equal("", func(new
+            {
+                Foo = "false",
+                Bar = "Display Me"
+            }));
+
+            Assert.Equal("", func(new
+            {
+                Foo = (string)null,
+                Bar = "Display Me"
+            }));
+        }
     }
 }
