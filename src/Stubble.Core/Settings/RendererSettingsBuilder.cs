@@ -39,8 +39,8 @@ namespace Stubble.Core.Settings
         /// <summary>
         /// Gets or sets a readonly list of TruthyChecks
         /// </summary>
-        internal List<Func<object, bool?>> TruthyChecks { get; set; }
-            = new List<Func<object, bool?>>();
+        internal Dictionary<Type, List<Func<object, bool>>> TruthyChecks { get; set; }
+            = new Dictionary<Type, List<Func<object, bool>>>();
 
         /// <summary>
         /// Gets or sets the RenderSettings
@@ -111,10 +111,21 @@ namespace Stubble.Core.Settings
         /// </summary>
         /// <param name="truthyCheck">A truthy check</param>
         /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
-        public RendererSettingsBuilder AddTruthyCheck(Func<object, bool?> truthyCheck)
+        /// <typeparam name="T">The type the truthy check is for</typeparam>
+        public RendererSettingsBuilder AddTruthyCheck<T>(Func<T, bool> truthyCheck)
         {
-            TruthyChecks.Add(truthyCheck);
+            if (TruthyChecks.TryGetValue(typeof(T), out var check))
+            {
+                TruthyChecks[typeof(T)].Add(CastFunc);
+            }
+            else
+            {
+                TruthyChecks.Add(typeof(T), new List<Func<object, bool>>() { CastFunc });
+            }
+
             return this;
+
+            bool CastFunc(object obj) => truthyCheck((T)obj);
         }
     }
 }

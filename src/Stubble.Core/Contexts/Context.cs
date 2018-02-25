@@ -180,12 +180,13 @@ namespace Stubble.Core.Contexts
                 return false;
             }
 
-            foreach (var func in RendererSettings.TruthyChecks)
+            var type = value.GetType();
+            if (RendererSettings.TruthyChecks.TryGetValue(type, out var truthyChecks))
             {
-                var funcResult = func(value);
-                if (funcResult.HasValue)
+                foreach (var func in truthyChecks)
                 {
-                    return funcResult.Value;
+                    var funcResult = func(value);
+                    return funcResult;
                 }
             }
 
