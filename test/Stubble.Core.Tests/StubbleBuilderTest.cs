@@ -53,13 +53,9 @@ namespace Stubble.Core.Tests
             var builder = new StubbleBuilder()
                 .Configure(b =>
                 {
-                    b.AddTruthyCheck((val) =>
+                    b.AddTruthyCheck<string>((val) =>
                     {
-                        if (val is string)
-                        {
-                            return val.Equals("Foo");
-                        }
-                        return null;
+                        return val.Equals("Foo");
                     });
                 });
 
@@ -67,9 +63,9 @@ namespace Stubble.Core.Tests
             builder.ConfigureSettings(settingsBuilder);
 
             var check = Assert.Single(settingsBuilder.TruthyChecks);
-            Assert.True(check("Foo"));
-            Assert.False(check("Bar"));
-            Assert.Null(check(null));
+            Assert.Equal(typeof(string), check.Key);
+            Assert.True(check.Value[0]("Foo"));
+            Assert.False(check.Value[0]("Bar"));
         }
 
         [Fact]

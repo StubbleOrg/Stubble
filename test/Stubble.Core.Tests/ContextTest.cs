@@ -212,21 +212,13 @@ namespace Stubble.Core.Tests
             var builder = new RendererSettingsBuilder();
 
             builder
-                .AddTruthyCheck((val) =>
+                .AddTruthyCheck<string>((val) =>
                 {
-                    if (val is string)
-                    {
-                        return val.Equals("Foo");
-                    }
-                    return null;
+                    return val.Equals("Foo");
                 })
-                .AddTruthyCheck((val) =>
+                .AddTruthyCheck<uint>((val) =>
                 {
-                    if (val is uint)
-                    {
-                        return (uint) val > 0;
-                    }
-                    return null;
+                    return val > 0;
                 });
 
             var context = new Context(

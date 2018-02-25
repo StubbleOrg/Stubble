@@ -38,7 +38,7 @@ namespace Stubble.Core.Settings
         /// <param name="parserPipeline">The parser pipeline to use during parsing</param>
         public RendererSettings(
             Dictionary<Type, ValueGetterDelegate> valueGetters,
-            IEnumerable<Func<object, bool?>> truthyChecks,
+            Dictionary<Type, List<Func<object, bool>>> truthyChecks,
             IStubbleLoader templateLoader,
             IStubbleLoader partialLoader,
             uint maxRecursionDepth,
@@ -59,7 +59,7 @@ namespace Stubble.Core.Settings
                   parserPipeline)
         {
             ValueGetters = valueGetters.ToImmutableDictionary();
-            TruthyChecks = truthyChecks.ToImmutableArray();
+            TruthyChecks = truthyChecks.ToImmutableDictionary(k => k.Key, v => v.Value.ToImmutableArray());
             RenderSettings = renderSettings;
             EnumerationConverters = enumerationConverters.ToImmutableDictionary();
             RendererPipeline = rendererPipeline;
@@ -73,7 +73,7 @@ namespace Stubble.Core.Settings
         /// <summary>
         /// Gets a readonly list of TruthyChecks
         /// </summary>
-        public ImmutableArray<Func<object, bool?>> TruthyChecks { get; }
+        public ImmutableDictionary<Type, ImmutableArray<Func<object, bool>>> TruthyChecks { get; }
 
         /// <summary>
         /// Gets the RenderSettings
