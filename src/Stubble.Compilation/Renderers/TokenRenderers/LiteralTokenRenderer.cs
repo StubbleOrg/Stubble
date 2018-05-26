@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Stubble.Compilation.Contexts;
+using Stubble.Compilation.Helpers;
 using Stubble.Core.Helpers;
 using Stubble.Core.Tokens;
 
@@ -34,9 +35,7 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
                 builder.Append(item.ToString());
             }
 
-            var appendMethod = typeof(StringBuilder).GetMethod("Append", new[] { typeof(string) });
-
-            var append = Expression.Call(renderer.Builder, appendMethod, Expression.Constant(builder.ToString()));
+            var append = Expression.Call(renderer.Builder, MethodInfos.Instance.StringBuilderAppendString, Expression.Constant(builder.ToString()));
 
             renderer.AddExpressionToScope(append);
         }

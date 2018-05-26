@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Stubble.Compilation.Contexts;
+using Stubble.Compilation.Helpers;
 using Stubble.Core.Renderers;
 using Stubble.Core.Tokens;
 
@@ -39,7 +40,6 @@ namespace Stubble.Compilation.Renderers
         /// <returns>A function representing the document</returns>
         public Func<T, string> Compile(MustacheTemplate document, CompilerContext compilationContext)
         {
-            var builderString = typeof(StringBuilder).GetMethod("ToString", new Type[0]);
             var blockContext = (List<Expression>)Render(document, compilationContext);
 
             return BuildLambda(compilationContext, blockContext);
@@ -60,7 +60,6 @@ namespace Stubble.Compilation.Renderers
 
         private Func<T, string> BuildLambda(CompilerContext compilationContext, List<Expression> blockContext)
         {
-            var builderString = typeof(StringBuilder).GetMethod("ToString", new Type[0]);
             var @params = new List<ParameterExpression>(1 + PartialExpressionCache.Count)
             {
                 Builder
@@ -77,7 +76,7 @@ namespace Stubble.Compilation.Renderers
                 Expressions.Add(Expression.Block(blockContext));
             }
 
-            Expressions.Add(Expression.Call(Builder, builderString));
+            Expressions.Add(Expression.Call(Builder, MethodInfos.Instance.StringBuilderToString));
 
             var param = (ParameterExpression)compilationContext.SourceData;
 
