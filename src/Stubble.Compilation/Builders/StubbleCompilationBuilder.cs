@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright file="StubbleCompilationBuilder.cs" company="Stubble Authors">
+// Copyright (c) Stubble Authors. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+using System;
 using Stubble.Compilation.Settings;
 using Stubble.Core.Interfaces;
 
@@ -29,7 +34,7 @@ namespace Stubble.Compilation.Builders
         /// <returns>The builder to continue chaining with</returns>
         public StubbleCompilationBuilder Configure(Action<CompilerSettingsBuilder> configureSettings)
         {
-            this.ConfigureSettings = configureSettings;
+            ConfigureSettings = configureSettings;
             return this;
         }
     }
