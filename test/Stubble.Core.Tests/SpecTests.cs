@@ -15,7 +15,7 @@ namespace Stubble.Core.Tests
         }
 
         [Theory]
-        [MemberData(nameof(Specs.SpecTests), MemberType = typeof(Specs))]
+        [MemberData(nameof(Specs.SpecTestsWithLambda), MemberType = typeof(Specs))]
         public void StringRendererSpecTest(SpecTest data)
         {
             OutputStream.WriteLine(data.Name);
@@ -27,7 +27,7 @@ namespace Stubble.Core.Tests
         }
 
         [Theory]
-        [MemberData(nameof(Specs.SpecTests), MemberType = typeof(Specs))]
+        [MemberData(nameof(Specs.SpecTestsWithLambda), MemberType = typeof(Specs))]
         public async Task StringRendererSpecTest_Async(SpecTest data)
         {
             OutputStream.WriteLine(data.Name);
