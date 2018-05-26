@@ -13,5 +13,14 @@ namespace Stubble.Test.Shared.Spec
                 .Concat(InvertedTests)
                 .Concat(PartialTests)
                 .Concat(SectionTests);
+
+        public static IEnumerable<object[]> SpecTestsWithLambda
+        {
+            get
+            {
+                globalInt.Value = 0;
+                return SpecTests.Concat(LambdaTests);
+            }
+        }
     };
 }
