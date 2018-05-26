@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nerdbank.GitVersioning" Version="2.1.17" PrivateAssets="All" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="2.1.23" PrivateAssets="All" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" PrivateAssets="All" />
   </ItemGroup>
 
