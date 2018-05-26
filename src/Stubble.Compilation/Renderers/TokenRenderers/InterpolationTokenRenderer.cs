@@ -39,13 +39,12 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
                         isValueType ? expression : Expression.Coalesce(expression, Expression.Constant(string.Empty)),
                         expression.Type.GetMethod("ToString", Type.EmptyTypes));
 
-                expression = Expression.Call(null, typeof(WebUtility).GetMethod(nameof(WebUtility.HtmlEncode), new[] { typeof(string) }), stringExpression);
+                expression = Expression.Call(null, MethodInfos.Instance.HtmlEncode, stringExpression);
             }
 
             if (obj.Indent > 0)
             {
-                var appendMethod = typeof(StringBuilder).GetMethod("Append", new[] { typeof(string) });
-                var append = Expression.Call(renderer.Builder, appendMethod, Expression.Constant(new string(' ', obj.Indent)));
+                var append = Expression.Call(renderer.Builder, MethodInfos.Instance.StringBuilderAppendString, Expression.Constant(new string(' ', obj.Indent)));
                 renderer.AddExpressionToScope(append);
             }
 
