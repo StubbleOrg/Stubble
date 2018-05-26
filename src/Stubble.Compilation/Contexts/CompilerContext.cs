@@ -213,22 +213,19 @@ namespace Stubble.Compilation.Contexts
 
             if (value.Type == typeof(string))
             {
-                var stringEqual = typeof(string).GetMethod(nameof(string.Equals), new[] { typeof(string), typeof(StringComparison) });
-                var stringNullOrWhitespace = typeof(string).GetMethod(nameof(string.IsNullOrWhiteSpace), new[] { typeof(string) });
-
                 checks.AddRange(new Expression[]
                 {
                     Expression.Equal(value, Expression.Constant("1")),
-                    Expression.Call(value, stringEqual, Expression.Constant("true"), Expression.Constant(StringComparison.OrdinalIgnoreCase)),
+                    Expression.Call(value, MethodInfos.Instance.StringEqualWithComparison, Expression.Constant("true"), Expression.Constant(StringComparison.OrdinalIgnoreCase)),
                     Expression.Not(Expression.Equal(value, Expression.Constant("0"))),
-                    Expression.Not(Expression.Call(value, stringEqual, Expression.Constant("false"), Expression.Constant(StringComparison.OrdinalIgnoreCase))),
-                    Expression.Not(Expression.Call(null, stringNullOrWhitespace, value))
+                    Expression.Not(Expression.Call(value, MethodInfos.Instance.StringEqualWithComparison, Expression.Constant("false"), Expression.Constant(StringComparison.OrdinalIgnoreCase))),
+                    Expression.Not(Expression.Call(null, MethodInfos.Instance.StringIsNullOrWhitespace, value))
                 });
             }
 
             if (typeof(IEnumerable).IsAssignableFrom(value.Type))
             {
-                checks.Add(Expression.Call(Expression.Call(value, typeof(IEnumerable).GetMethod("GetEnumerator")), typeof(IEnumerator).GetMethod("MoveNext")));
+                checks.Add(Expression.Call(Expression.Call(value, MethodInfos.Instance.GetEnumerator), MethodInfos.Instance.MoveNext));
             }
 
             if (checks.Count == 0)

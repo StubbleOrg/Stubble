@@ -147,18 +147,16 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
 
         private static Expression WriteIEnumerator(Expression value, ParameterExpression param, Type type, List<Expression> blockContent)
         {
-            var moveNext = typeof(IEnumerator).GetMethod("MoveNext");
-
             if (blockContent.Count > 0)
             {
-                var getMethod = Expression.Call(value, typeof(IEnumerator).GetProperty("Current").GetGetMethod());
+                var getMethod = Expression.Call(value, MethodInfos.Instance.EnumeratorGetCurrent);
 
                 var block = Expression.Block(new[] { param }, new[]
                 {
                         Expression.Assign(param, type == typeof(object) ? Expression.Convert(getMethod, typeof(object)) : (Expression)getMethod)
                 }.Concat(blockContent));
 
-                return CustomExpression.While(Expression.Call(value, moveNext), block);
+                return CustomExpression.While(Expression.Call(value, MethodInfos.Instance.MoveNext), block);
             }
 
             return null;
