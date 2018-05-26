@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BenchmarkDotNet.Columns;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Diagnostics.Windows;
-using BenchmarkDotNet.Running;
-using BenchmarkDotNet.Validators;
+﻿using BenchmarkDotNet.Running;
 
 namespace Stubble.Core.Benchmark
 {
