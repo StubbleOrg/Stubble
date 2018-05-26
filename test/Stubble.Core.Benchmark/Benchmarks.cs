@@ -112,8 +112,7 @@ namespace Stubble.Core.Benchmark
 
         protected virtual void OnFoo()
         {
-            var handler = Foo;
-            if (handler != null) handler(this, EventArgs.Empty);
+            Foo?.Invoke(this, EventArgs.Empty);
         }
     }
 
