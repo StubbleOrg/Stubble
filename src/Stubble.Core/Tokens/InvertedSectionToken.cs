@@ -64,8 +64,7 @@ namespace Stubble.Core.Tokens
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
-            var a = obj as InvertedSectionToken;
-            return a != null && Equals(a);
+            return obj is InvertedSectionToken a && Equals(a);
         }
 
         /// <summary>
@@ -76,7 +75,7 @@ namespace Stubble.Core.Tokens
         {
             unchecked
             {
-                int hashCode = base.GetHashCode();
+                var hashCode = base.GetHashCode();
                 hashCode = (hashCode * 397) ^ StartPosition;
                 hashCode = (hashCode * 397) ^ EndPosition;
                 hashCode = (hashCode * 397) ^ (SectionName?.GetHashCode() ?? 0);

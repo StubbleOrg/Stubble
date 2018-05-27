@@ -3,7 +3,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -21,9 +20,8 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
         protected override void Write(CompilationRenderer renderer, InvertedSectionToken obj, CompilerContext context)
         {
             Expression expression = null;
-            var sectionContent = renderer.Render(obj, context) as List<Expression>;
 
-            if (sectionContent != null && sectionContent.Count > 0)
+            if (renderer.Render(obj, context) is List<Expression> sectionContent && sectionContent.Count > 0)
             {
                 expression = Expression.Block(sectionContent);
             }
@@ -45,9 +43,8 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
         protected override async Task WriteAsync(CompilationRenderer renderer, InvertedSectionToken obj, CompilerContext context)
         {
             Expression expression = null;
-            var sectionContent = await renderer.RenderAsync(obj, context) as List<Expression>;
 
-            if (sectionContent != null && sectionContent.Count > 0)
+            if (await renderer.RenderAsync(obj, context) is List<Expression> sectionContent && sectionContent.Count > 0)
             {
                 expression = Expression.Block(sectionContent);
             }

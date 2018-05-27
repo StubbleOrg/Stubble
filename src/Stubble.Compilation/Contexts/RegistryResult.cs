@@ -17,12 +17,23 @@ namespace Stubble.Compilation.Contexts
         /// <summary>
         /// Gets or sets the type associated to the expression
         /// </summary>
-        public Type Type { get; set; }
+        public readonly Type Type;
 
         /// <summary>
         /// Gets or sets the expression looked up from the registry
         /// </summary>
-        public Expression Expression { get; set; }
+        public readonly Expression Expression;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegistryResult"/> struct.
+        /// </summary>
+        /// <param name="type">The type of the lookup</param>
+        /// <param name="expression">The expression to get the value</param>
+        public RegistryResult(Type type, Expression expression)
+        {
+            Type = type;
+            Expression = expression;
+        }
 
         /// <summary>
         /// Checks if the object is equal to the passed object

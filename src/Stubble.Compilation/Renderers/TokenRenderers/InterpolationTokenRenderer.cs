@@ -5,13 +5,11 @@
 
 using System;
 using System.Linq.Expressions;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Stubble.Compilation.Contexts;
 using Stubble.Compilation.Helpers;
-using Stubble.Compilation.Renderers;
 using Stubble.Core.Helpers;
 using Stubble.Core.Tokens;
 

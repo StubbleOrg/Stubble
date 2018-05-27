@@ -114,14 +114,14 @@ namespace Stubble.Compilation.Contexts
             var instance = SourceData;
             Expression value = null;
 
-            if (cache.TryGetValue(name, out Expression outValue))
+            if (cache.TryGetValue(name, out var outValue))
             {
                 value = outValue;
             }
             else
             {
                 var context = this;
-                bool lookupHit = false;
+                var lookupHit = false;
                 while (context != null)
                 {
                     var type = context.View;
@@ -274,11 +274,7 @@ namespace Stubble.Compilation.Contexts
                 var outputVal = entry.Value(value, instance, key, CompilerSettings.IgnoreCaseOnKeyLookup);
                 if (outputVal != null)
                 {
-                    return new RegistryResult
-                    {
-                        Expression = outputVal,
-                        Type = outputVal.Type
-                    };
+                    return new RegistryResult(outputVal.Type, outputVal);
                 }
             }
 

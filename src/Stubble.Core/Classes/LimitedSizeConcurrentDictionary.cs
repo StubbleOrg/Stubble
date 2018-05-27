@@ -55,8 +55,7 @@ namespace Stubble.Core.Classes
 
         private void DumpFirstItem()
         {
-            TValue output;
-            TryRemove(this.First().Key, out output);
+            TryRemove(this.First().Key, out var output);
         }
     }
 }

@@ -37,9 +37,9 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
                 var key = PartialLambdaExpressionDefinition.GetKey(template, context.SourceData.Type);
 
                 // Recursive calls use the existing variable to call the partial lambda.
-                if (renderer.PartialExpressionCache.TryGetValue(key, out PartialLambdaExpressionDefinition var))
+                if (renderer.PartialExpressionCache.TryGetValue(key, out var partialVariable))
                 {
-                    renderer.AddExpressionToScope(Expression.Invoke(var.Variable, context.SourceData));
+                    renderer.AddExpressionToScope(Expression.Invoke(partialVariable.Variable, context.SourceData));
                     return;
                 }
 
@@ -81,9 +81,9 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
                 var key = PartialLambdaExpressionDefinition.GetKey(template, context.SourceData.Type);
 
                 // Recursive calls use the existing variable to call the partial lambda.
-                if (renderer.PartialExpressionCache.TryGetValue(key, out PartialLambdaExpressionDefinition var))
+                if (renderer.PartialExpressionCache.TryGetValue(key, out var partialVariable))
                 {
-                    renderer.AddExpressionToScope(Expression.Invoke(var.Variable, context.SourceData));
+                    renderer.AddExpressionToScope(Expression.Invoke(partialVariable.Variable, context.SourceData));
                     return;
                 }
 
@@ -118,7 +118,7 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
                     : Expression.Parameter(param.Type);
             });
 
-            Expression block = partialContent.Count > 0
+            var block = partialContent.Count > 0
                     ? Expression.Block(partialContent)
                     : EmptyPartial;
 

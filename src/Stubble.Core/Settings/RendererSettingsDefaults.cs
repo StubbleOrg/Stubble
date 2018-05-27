@@ -49,7 +49,7 @@ namespace Stubble.Core.Settings
                     {
                         var castValue = value as IList;
 
-                        if (int.TryParse(key, out int intVal))
+                        if (int.TryParse(key, out var intVal))
                         {
                             return castValue != null && intVal < castValue.Count ? castValue[intVal] : null;
                         }
@@ -67,9 +67,7 @@ namespace Stubble.Core.Settings
                             return null;
                         }
 
-                        var castValue = value as IDictionary<string, object>;
-
-                        return castValue != null && castValue.TryGetValue(key, out object outValue) ? outValue : null;
+                        return value is IDictionary<string, object> castValue && castValue.TryGetValue(key, out var outValue) ? outValue : null;
                     }
                 },
                 {
@@ -87,11 +85,11 @@ namespace Stubble.Core.Settings
                     {
                         if (value is IDictionary<string, object> cast)
                         {
-                            IDictionary<string, object> caseBound = ignoreCase
+                            var caseBound = ignoreCase
                                 ? new Dictionary<string, object>(cast, StringComparer.OrdinalIgnoreCase)
                                 : cast;
 
-                            if (caseBound.TryGetValue(key, out object val))
+                            if (caseBound.TryGetValue(key, out var val))
                             {
                                 return val;
                             }
@@ -126,8 +124,7 @@ namespace Stubble.Core.Settings
         private static object GetValueFromObjectByName(object value, string key, bool ignoreCase)
         {
             var objectType = value.GetType();
-            Tuple<Dictionary<string, Lazy<Func<object, object>>>, Dictionary<string, Lazy<Func<object, object>>>> typeLookup;
-            if (!GettersCache.TryGetValue(objectType, out typeLookup))
+            if (!GettersCache.TryGetValue(objectType, out var typeLookup))
             {
                 var memberLookup = ReflectionHelper.GetMemberFunctionLookup(objectType);
                 var noCase =
@@ -139,7 +136,7 @@ namespace Stubble.Core.Settings
 
             var lookup = ignoreCase ? typeLookup.Item2 : typeLookup.Item1;
 
-            return lookup.TryGetValue(key, out Lazy<Func<object, object>> outValue) ? outValue.Value(value) : null;
+            return lookup.TryGetValue(key, out var outValue) ? outValue.Value(value) : null;
         }
     }
 }

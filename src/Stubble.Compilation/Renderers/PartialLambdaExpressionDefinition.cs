@@ -29,6 +29,6 @@ namespace Stubble.Compilation.Renderers
         /// <param name="template">The template the partial represents</param>
         /// <param name="type">The type used as an argument for the partial</param>
         /// <returns>The key</returns>
-        public static string GetKey(string template, Type type) => template + " " + type.FullName;
+        public static string GetKey(string template, Type type) => $"{template} {type.FullName}";
     }
 }

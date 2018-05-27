@@ -82,9 +82,8 @@ namespace Stubble.Core.Parser.TokenParsers
         /// <param name="content">the content the tags were parsed from</param>
         public override void EndBlock(Processor processor, BlockToken token, BlockCloseToken closeToken, StringSlice content)
         {
-            var sectionTag = token as SectionToken;
             var sectionEndTag = closeToken as SectionEndToken;
-            if (sectionTag != null && sectionEndTag != null)
+            if (token is SectionToken sectionTag && sectionEndTag != null)
             {
                 if (sectionTag.SectionName.Equals(sectionEndTag.SectionName))
                 {
