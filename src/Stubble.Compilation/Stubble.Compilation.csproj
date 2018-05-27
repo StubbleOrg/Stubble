@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>In memory compilation for trimmed down {{mustache}} templates in .NET</Description>
     <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Stubble.Compilation</AssemblyName>
-    <PackageId>Stubble.Compulation</PackageId>
+    <PackageId>Stubble.Compilation</PackageId>
     <PackageTags>template;mustache;text;generation;fast;compilation</PackageTags>
     <RepositoryType>git</RepositoryType>
     <Company>Alex McAuliffe</Company>
