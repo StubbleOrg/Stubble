@@ -43,8 +43,7 @@ namespace Stubble.Core.Tokens
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
-            var a = obj as DelimiterToken;
-            return a != null && Equals(a);
+            return obj is DelimiterToken a && Equals(a);
         }
 
         /// <inheritdoc/>

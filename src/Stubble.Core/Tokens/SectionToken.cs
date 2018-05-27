@@ -79,8 +79,7 @@ namespace Stubble.Core.Tokens
         /// <returns>If the object is equal to this tag</returns>
         public override bool Equals(object obj)
         {
-            var a = obj as SectionToken;
-            return a != null && Equals(a);
+            return obj is SectionToken a && Equals(a);
         }
 
         /// <summary>
@@ -91,7 +90,7 @@ namespace Stubble.Core.Tokens
         {
             unchecked
             {
-                int hashCode = base.GetHashCode();
+                var hashCode = base.GetHashCode();
                 hashCode = (hashCode * 397) ^ StartPosition;
                 hashCode = (hashCode * 397) ^ EndPosition;
                 hashCode = (hashCode * 397) ^ (SectionName?.GetHashCode() ?? 0);

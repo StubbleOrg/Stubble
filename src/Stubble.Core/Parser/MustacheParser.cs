@@ -16,7 +16,7 @@ namespace Stubble.Core.Parser
     public class MustacheParser
     {
         private readonly Processor processor;
-        private StringSlice content;
+        private readonly StringSlice content;
 
         private MustacheParser(string text, Classes.Tags startingTags, int lineIndent, ParserPipeline pipeline)
         {

@@ -29,8 +29,7 @@ namespace Stubble.Core.Tokens
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
-            var a = obj as CommentToken;
-            return a != null && Equals(a);
+            return obj is CommentToken a && Equals(a);
         }
 
         /// <inheritdoc/>

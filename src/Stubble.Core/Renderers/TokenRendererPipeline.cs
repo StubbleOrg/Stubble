@@ -47,9 +47,9 @@ namespace Stubble.Core.Renderers
     {
       var objectType = obj.GetType();
 
-      if (!renderersPerType.TryGetValue(objectType, out ITokenRenderer<TContext> tokenRenderer))
+      if (!renderersPerType.TryGetValue(objectType, out var tokenRenderer))
       {
-        for (int i = 0; i < tokenRenderers.Count; i++)
+        for (var i = 0; i < tokenRenderers.Count; i++)
         {
           var testRenderer = tokenRenderers[i];
           if (testRenderer.Accept(renderer, obj))

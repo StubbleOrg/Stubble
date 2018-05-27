@@ -34,7 +34,7 @@ namespace Stubble.Core.Builders
         /// <returns>The builder to continue chaining with</returns>
         public StubbleBuilder Configure(Action<RendererSettingsBuilder> configureSettings)
         {
-            this.ConfigureSettings = configureSettings;
+            ConfigureSettings = configureSettings;
             return this;
         }
     }

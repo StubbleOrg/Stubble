@@ -13,8 +13,8 @@ namespace Stubble.Core.Parser.TokenParsers
     /// </summary>
     public class DelimiterTagParser : Interfaces.InlineParser
     {
-        private char[] openingTagDelimiter = { '=' };
-        private char[] closingTagDelimiter = { '=' };
+        private readonly char[] openingTagDelimiter = { '=' };
+        private readonly char[] closingTagDelimiter = { '=' };
 
         /// <summary>
         /// Tries to match delimiter tags from the current slice

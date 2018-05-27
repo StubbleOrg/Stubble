@@ -47,7 +47,7 @@ namespace Stubble.Core.Parser
             }
 
             var key = new TemplateKey(text, startingTags, lineIndent);
-            var success = Cache.TryGetValue(key, out MustacheTemplate template);
+            var success = Cache.TryGetValue(key, out var template);
             if (!success)
             {
                 template = Cache[key] = MustacheParser.Parse(text, startingTags, lineIndent, pipeline);
@@ -81,7 +81,7 @@ namespace Stubble.Core.Parser
             /// <inheritdoc/>
             public override int GetHashCode()
             {
-                int hash = 13;
+                var hash = 13;
                 hash = (hash * 7) + template.GetHashCode();
                 hash = (hash * 7) + startingTags?.GetHashCode() ?? 1;
                 hash = (hash * 7) + lineIndent.GetHashCode();

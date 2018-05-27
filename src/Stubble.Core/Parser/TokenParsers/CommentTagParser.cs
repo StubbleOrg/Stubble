@@ -13,7 +13,7 @@ namespace Stubble.Core.Parser.TokenParsers
     /// </summary>
     public class CommentTagParser : Interfaces.InlineParser
     {
-        private char tagId = '!';
+        private const char TagId = '!';
 
         /// <summary>
         /// Tries to match a comment tag from the provided slice
@@ -32,7 +32,7 @@ namespace Stubble.Core.Parser.TokenParsers
             }
 
             var match = slice[index];
-            if (match == tagId)
+            if (match == TagId)
             {
                 slice.Start = index;
                 var startIndex = index + 1;
