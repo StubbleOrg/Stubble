@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using Stubble.Core.Loaders;
 using Xunit;
 
 namespace Stubble.Compilation.Tests
@@ -172,6 +173,141 @@ namespace Stubble.Compilation.Tests
             Assert.Equal("Bar", func(input));
         }
 
+        [Fact]
+        public void You_Should_Be_Able_To_Create_A_Renderer()
+        {
+            var stubble = new StubbleCompilationRenderer();
+
+            var input = new { Foo = "Bar" };
+            var func = stubble.Compile("{{Foo}}", input);
+
+            Assert.Equal("Bar", func(input));
+        }
+
+        [Fact]
+        public async Task You_Should_Be_Able_To_Compile_Without_An_Example_Object()
+        {
+            var stubble = new StubbleCompilationRenderer();
+
+            var input = new ExampleClass { Foo = "Bar" };
+            var func = stubble.Compile<ExampleClass>("{{Foo}}");
+            var funcAsync = await stubble.CompileAsync<ExampleClass>("{{Foo}}");
+
+            Assert.Equal("Bar", func(input));
+            Assert.Equal("Bar", funcAsync(input));
+        }
+
+        [Fact]
+        public async Task You_Should_Be_Able_To_Compile_Without_An_Example_Object_And_CompilationSettings()
+        {
+            var stubble = new StubbleCompilationRenderer();
+            var settings = new CompilationSettings
+            {
+                ThrowOnDataMiss = true
+            };
+
+            var input = new ExampleClass { Foo = "Bar" };
+            var func = stubble.Compile<ExampleClass>("{{Foo}}", settings);
+            var funcAsync = await stubble.CompileAsync<ExampleClass>("{{Foo}}", settings);
+
+            Assert.Equal("Bar", func(input));
+            Assert.Equal("Bar", funcAsync(input));
+        }
+
+        [Fact]
+        public async Task You_Should_Be_Able_To_Compile_Without_An_Example_Object_With_Partials()
+        {
+            var stubble = new StubbleCompilationRenderer();
+            var partials = new Dictionary<string, string>
+            {
+                {"Partial", "{{Foo}}"}
+            };
+
+            var input = new ExampleClass { Foo = "Bar" };
+            var func = stubble.Compile<ExampleClass>("{{> Partial}}", partials);
+            var funcAsync = await stubble.CompileAsync<ExampleClass>("{{> Partial}}", partials);
+
+            Assert.Equal("Bar", func(input));
+            Assert.Equal("Bar", funcAsync(input));
+        }
+
+        [Fact]
+        public async Task You_Should_Be_Able_To_Compile_Without_An_Example_Object_With_Partials_And_Settings()
+        {
+            var stubble = new StubbleCompilationRenderer();
+            var settings = new CompilationSettings
+            {
+                ThrowOnDataMiss = true
+            };
+            var partials = new Dictionary<string, string>
+            {
+                {"Partial", "{{Foo}}"}
+            };
+
+            var input = new ExampleClass { Foo = "Bar" };
+            var func = stubble.Compile<ExampleClass>("{{> Partial}}", partials, settings);
+            var funcAsync = await stubble.CompileAsync<ExampleClass>("{{> Partial}}", partials, settings);
+
+            Assert.Equal("Bar", func(input));
+            Assert.Equal("Bar", funcAsync(input));
+        }
+
+        [Fact]
+        public async Task You_Should_Be_Able_To_Compile_With_An_Example_Object_With_Settings()
+        {
+            var stubble = new StubbleCompilationRenderer();
+            var settings = new CompilationSettings
+            {
+                ThrowOnDataMiss = true
+            };
+
+            var input = new ExampleClass { Foo = "Bar" };
+            var func = stubble.Compile("{{Foo}}", input, settings);
+            var funcAsync = await stubble.CompileAsync("{{Foo}}", input, settings);
+
+            Assert.Equal("Bar", func(input));
+            Assert.Equal("Bar", funcAsync(input));
+        }
+
+        [Fact]
+        public async Task You_Should_Be_Able_To_Compile_With_An_Example_Object_With_Partials_And_Settings()
+        {
+            var stubble = new StubbleCompilationRenderer();
+            var settings = new CompilationSettings
+            {
+                ThrowOnDataMiss = true
+            };
+            var partials = new Dictionary<string, string>
+            {
+                {"Partial", "{{Foo}}"}
+            };
+
+            var input = new ExampleClass { Foo = "Bar" };
+            var func = stubble.Compile("{{> Partial}}", input, partials, settings);
+            var funcAsync = await stubble.CompileAsync("{{> Partial}}", input, partials, settings);
+
+            Assert.Equal("Bar", func(input));
+            Assert.Equal("Bar", funcAsync(input));
+        }
+
+        [Fact]
+        public async Task Unknown_Exceptions_Are_Thrown()
+        {
+            var partials = new Dictionary<string, string>
+            {
+                {"Partial", "{{Foo}}"}
+            };
+
+            var stubble = new StubbleCompilationBuilder()
+                .Configure(configure => { configure.SetTemplateLoader(new DictionaryLoader(partials)); })
+                .Build();
+
+            var input = new ExampleClass { Foo = "Bar" };
+
+            Assert.Throws<UnknownTemplateException>(() => stubble.Compile("MissingPartial", input));
+            await Assert.ThrowsAsync<UnknownTemplateException>(async () => await stubble.CompileAsync("MissingPartial", input));
+        }
+
         public static IEnumerable<object[]> Data => new List<SpecTest>
         {
             new SpecTest
@@ -245,5 +381,10 @@ namespace Stubble.Compilation.Tests
                 Expected = "That should totally be true"
             }
         }.Select(s => new[] { s });
+
+        private class ExampleClass
+        {
+            public string Foo { get; set; }
+        }
     }
 }
