@@ -43,7 +43,7 @@ namespace Stubble.Compilation.Settings
                     typeof(IList),
                     (type, instance, key, ignoreCase) =>
                     {
-                        if (int.TryParse(key, out int intVal))
+                        if (int.TryParse(key, out var intVal))
                         {
                             var index = Expression.Constant(intVal);
 
@@ -92,7 +92,7 @@ namespace Stubble.Compilation.Settings
                     {
                         var outVar = Expression.Variable(typeof(object));
 
-                        Expression dynamic = ignoreCase
+                        var dynamic = ignoreCase
                             ? Expression.New(
                                 typeof(Dictionary<string, object>).GetConstructor(
                                     new[] { typeof(IDictionary<string, object>), typeof(IEqualityComparer<string>) }),

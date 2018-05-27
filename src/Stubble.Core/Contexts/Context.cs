@@ -95,14 +95,14 @@ namespace Stubble.Core.Contexts
         public object Lookup(string name)
         {
             object value = null;
-            if (Cache.TryGetValue(name, out object outValue))
+            if (Cache.TryGetValue(name, out var outValue))
             {
                 value = outValue;
             }
             else
             {
                 var context = this;
-                bool lookupHit = false;
+                var lookupHit = false;
                 while (context != null)
                 {
                     if (name.IndexOf('.') > 0)
@@ -282,7 +282,7 @@ namespace Stubble.Core.Contexts
         /// <returns>The passed value or the value after conversion</returns>
         private object TryEnumerationConversionIfRequired(object value)
         {
-            if (value != null && RendererSettings.EnumerationConverters.TryGetValue(value.GetType(), out Func<object, IEnumerable> outFunc))
+            if (value != null && RendererSettings.EnumerationConverters.TryGetValue(value.GetType(), out var outFunc))
             {
                 return outFunc.Invoke(value);
             }
