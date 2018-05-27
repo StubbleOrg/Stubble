@@ -32,9 +32,7 @@ Our benchmarks can be found in the repo and we test using the Tweet benchmarks f
 
 The test itself measures how long it takes to render a timeline of tweets with partials, inverted sections default values and missing data.
 
-![image](https://docs.google.com/spreadsheets/d/1QRKCy1GkwvI-pZqQaqcEHRHxWTRkz0aFXSt4O-zgOIk/pubchart?oid=572928806&format=image)
-
-_Note:_ This graph shows the original Regex parser and renderer, this will be removed from the chart with the version 1.0.0 release to avoid confusion for new users.
+![image](/docs/Benchmarks.png)
 
 The numbers here represent the baseline values graphed from the timeline test with warm-ups and outliers removed, please feel free to checkout the repository and run the benchmarks to verify the results or if there's a better way to benchmark the library, we're always open to improvements.
 
