@@ -21,6 +21,7 @@
     <PackageLicenseUrl>https://github.com/StubbleOrg/Stubble/blob/master/licence.md</PackageLicenseUrl>
     <Platform>Any CPU</Platform>
     <RootNamespace>Stubble.Compilation</RootNamespace>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
