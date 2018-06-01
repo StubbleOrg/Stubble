@@ -151,6 +151,11 @@ Task("CodeCov")
 
     var settings = new CodecovSettings();
 
+    if (AppVeyor.IsRunningOnAppVeyor) {
+        var token = EnvironmentVariable("CODECOV_REPO_TOKEN");
+        settings.Token = token;
+    }
+
     foreach(var file in coverageFiles)
     {
         settings.Files = new [] { file };
@@ -171,7 +176,7 @@ Task("AppVeyor")
     .IsDependentOn("CodeCov");
 
 Task("Travis")
-    .IsDependentOn("CodeCov");
+    .IsDependentOn("Test");
 
 Task("Default")
     .IsDependentOn("Pack");

@@ -9,3 +9,5 @@ git:
 
 script:
   - ./build.sh --target Travis -- -framework="netstandard1.3" -testFramework="netcoreapp2.0"
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -f .\coverage-results\*.xml
