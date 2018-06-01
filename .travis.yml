@@ -8,4 +8,4 @@ git:
   depth: 9999999
 
 script:
-  - ./build.sh --target Travis -- -runCoverage=false -framework="netstandard1.3" -testFramework="netcoreapp2.0"
+  - ./build.sh --target Travis -- -framework="netstandard1.3" -testFramework="netcoreapp2.0"
