@@ -28,28 +28,12 @@ namespace Stubble.Core.Renderers
         }
 
         /// <summary>
-        /// Renders a given tag
-        /// </summary>
-        /// <param name="token">The tag to render</param>
-        /// <param name="context">The context to write the tag with</param>
-        /// <returns>The current renderer</returns>
-        public abstract object Render(MustacheToken token, TContext context);
-
-        /// <summary>
         /// Renders a block tag
         /// </summary>
         /// <param name="token">The block tag to render</param>
         /// <param name="context">The context to write the tag with</param>
         /// <returns>The current renderer</returns>
         public abstract object Render(BlockToken token, TContext context);
-
-        /// <summary>
-        /// Renders a given tag
-        /// </summary>
-        /// <param name="token">The tag to render</param>
-        /// <param name="context">The context to write the tag with</param>
-        /// <returns>The current renderer</returns>
-        public abstract ValueTask<object> RenderAsync(MustacheToken token, TContext context);
 
         /// <summary>
         /// Renders a block tag

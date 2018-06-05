@@ -60,17 +60,6 @@ namespace Stubble.Core.Renderers.StringRenderer
         }
 
         /// <summary>
-        /// Writes the specified slice to the writer
-        /// </summary>
-        /// <param name="slice">The slice.</param>
-        /// <returns>The renderer</returns>
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
-        public T Write(StringSlice slice)
-        {
-            return Write(ref slice);
-        }
-
-        /// <summary>
         /// Writes the character a specified number of times to the writer.
         /// </summary>
         /// <param name="character">The character to repeat</param>

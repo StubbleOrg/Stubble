@@ -48,18 +48,6 @@ namespace Stubble.Core.Renderers.StringRenderer
         }
 
         /// <summary>
-        /// Render a given token
-        /// </summary>
-        /// <param name="token">token</param>
-        /// <param name="context">The context to write the tag with</param>
-        /// <returns>The writer</returns>
-        public override object Render(MustacheToken token, Context context)
-        {
-            Write(token, context);
-            return Writer;
-        }
-
-        /// <summary>
         /// Renders a block tag and its children
         /// </summary>
         /// <param name="block">The tag to render</param>
@@ -80,13 +68,6 @@ namespace Stubble.Core.Renderers.StringRenderer
                 currentDepth--;
             }
 
-            return Writer;
-        }
-
-        /// <inheritdoc/>
-        public override async ValueTask<object> RenderAsync(MustacheToken token, Context context)
-        {
-            await WriteAsync(token, context);
             return Writer;
         }
 
