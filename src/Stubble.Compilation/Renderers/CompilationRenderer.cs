@@ -64,18 +64,6 @@ namespace Stubble.Compilation.Renderers
         protected Stack<List<Expression>> Scopes { get; } = new Stack<List<Expression>>();
 
         /// <summary>
-        /// Renders the provided token
-        /// </summary>
-        /// <param name="token">The token to render</param>
-        /// <param name="context">The context to write the token with</param>
-        /// <returns>null</returns>
-        public override object Render(MustacheToken token, CompilerContext context)
-        {
-            Write(token, context);
-            return null;
-        }
-
-        /// <summary>
         /// Renders the block with the given context
         /// </summary>
         /// <param name="block">The block to render</param>
@@ -100,18 +88,6 @@ namespace Stubble.Compilation.Renderers
             var scope = Scopes.Pop();
 
             return scope;
-        }
-
-        /// <summary>
-        /// Renders the provided token
-        /// </summary>
-        /// <param name="token">The token to render</param>
-        /// <param name="context">The context to write the token with</param>
-        /// <returns>null</returns>
-        public override async ValueTask<object> RenderAsync(MustacheToken token, CompilerContext context)
-        {
-            await WriteAsync(token, context);
-            return null;
         }
 
         /// <summary>

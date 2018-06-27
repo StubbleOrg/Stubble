@@ -379,6 +379,17 @@ namespace Stubble.Compilation.Tests
                 Data = new { MyInt = 1 },
                 Template = "{{#MyInt}}That should totally be true{{/MyInt}}",
                 Expected = "That should totally be true"
+            },
+            new SpecTest
+            {
+                Name = "Empty Partials are Cached Specially",
+                Data = new { MyInt = 1 },
+                Template = "{{MyInt}}{{>EmptyPartial}}",
+                Expected = "1",
+                Partials = new Dictionary<string, string>
+                {
+                    { "EmptyPartial", "" }
+                }
             }
         }.Select(s => new[] { s });
 
