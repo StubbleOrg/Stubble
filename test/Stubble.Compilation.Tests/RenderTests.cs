@@ -308,6 +308,44 @@ namespace Stubble.Compilation.Tests
             await Assert.ThrowsAsync<UnknownTemplateException>(async () => await stubble.CompileAsync("MissingPartial", input));
         }
 
+        [Fact]
+        public void It_Should_Skip_Html_Encoding_With_Setting()
+        {
+            var stubble = new StubbleCompilationBuilder()
+                .Build();
+
+            var obj = new
+            {
+                Html = "<b>Html</b>"
+            };
+
+            var func = stubble.Compile("{{Html}}\n{{{Html}}}", obj, new CompilationSettings
+            {
+                SkipHtmlEncoding = true
+            });
+
+            Assert.Equal("<b>Html</b>\n<b>Html</b>", func(obj));
+        }
+
+        [Fact]
+        public async Task It_Should_Skip_Html_Encoding_With_Setting_Async()
+        {
+            var stubble = new StubbleCompilationBuilder()
+                .Build();
+
+            var obj = new
+            {
+                Html = "<b>Html</b>"
+            };
+
+            var func = await stubble.CompileAsync("{{Html}}\n{{{Html}}}", obj, new CompilationSettings
+            {
+                SkipHtmlEncoding = true
+            });
+
+            Assert.Equal("<b>Html</b>\n<b>Html</b>", func(obj));
+        }
+
         public static IEnumerable<object[]> Data => new List<SpecTest>
         {
             new SpecTest

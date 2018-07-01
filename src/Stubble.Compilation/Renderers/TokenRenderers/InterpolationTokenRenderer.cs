@@ -27,7 +27,7 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
 
             var expression = context.Lookup(member);
 
-            if (obj.EscapeResult && expression != null)
+            if (!context.CompilationSettings.SkipHtmlEncoding && obj.EscapeResult && expression != null)
             {
                 var isValueType = expression.Type.GetIsValueType();
 
