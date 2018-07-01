@@ -23,6 +23,11 @@ namespace Stubble.Compilation.Settings
         public bool ThrowOnDataMiss { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether interpolation tokens should be html encoded by default
+        /// </summary>
+        public bool SkipHtmlEncoding { get; set; }
+
+        /// <summary>
         /// Gets the default render settings
         /// </summary>
         /// <returns>the default <see cref="CompilationSettings"/></returns>
@@ -31,7 +36,8 @@ namespace Stubble.Compilation.Settings
             return new CompilationSettings
             {
                 SkipRecursiveLookup = false,
-                ThrowOnDataMiss = false
+                ThrowOnDataMiss = false,
+                SkipHtmlEncoding = false
             };
         }
     }

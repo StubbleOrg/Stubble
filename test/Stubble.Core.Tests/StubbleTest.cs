@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Stubble.Core.Builders;
 using Stubble.Core.Classes;
 using Stubble.Core.Exceptions;
@@ -333,6 +334,42 @@ namespace Stubble.Core.Tests
 
             Dictionary<string, object> dataHash = new Dictionary<string, object>();
             Assert.Equal("", stubble.Render("{{Foo.Value}}", dataHash));
+        }
+
+        [Fact]
+        public void It_Should_Skip_Html_Encoding_With_Setting()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var obj = new
+            {
+                Html = "<b>Html</b>"
+            };
+
+            var result = stubble.Render("{{Html}}\n{{{Html}}}", obj, new RenderSettings
+            {
+                SkipHtmlEncoding = true
+            });
+            Assert.Equal("<b>Html</b>\n<b>Html</b>", result);
+        }
+
+        [Fact]
+        public async Task It_Should_Skip_Html_Encoding_With_Setting_Async()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var obj = new
+            {
+                Html = "<b>Html</b>"
+            };
+
+            var result = await stubble.RenderAsync("{{Html}}\n{{{Html}}}", obj, new RenderSettings
+            {
+                SkipHtmlEncoding = true
+            });
+            Assert.Equal("<b>Html</b>\n<b>Html</b>", result);
         }
     }
 }

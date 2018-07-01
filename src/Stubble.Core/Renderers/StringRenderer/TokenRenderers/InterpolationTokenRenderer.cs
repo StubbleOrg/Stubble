@@ -37,7 +37,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                 value = resultString;
             }
 
-            if (obj.EscapeResult && value != null)
+            if (!context.RenderSettings.SkipHtmlEncoding && obj.EscapeResult && value != null)
             {
                 value = WebUtility.HtmlEncode(value.ToString());
             }
@@ -71,7 +71,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                 value = resultString;
             }
 
-            if (obj.EscapeResult && value != null)
+            if (!context.RenderSettings.SkipHtmlEncoding && obj.EscapeResult && value != null)
             {
                 value = WebUtility.HtmlEncode(value.ToString());
             }
