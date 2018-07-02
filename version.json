@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.0-alpha18",
+  "version": "1.0-alpha19",
   "publicReleaseRefSpec": [
     "^refs/tags/v\\d\\.\\d" // we also release tags starting with vN.N
   ],
