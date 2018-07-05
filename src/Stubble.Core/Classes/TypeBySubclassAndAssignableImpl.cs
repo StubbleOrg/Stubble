@@ -5,12 +5,7 @@
 
 using System;
 using System.Collections.Generic;
-
-#if NETSTANDARD1_3
-using static Stubble.Core.Helpers.TypeHelper;
-#else
 using System.Reflection;
-#endif
 
 namespace Stubble.Core.Classes
 {

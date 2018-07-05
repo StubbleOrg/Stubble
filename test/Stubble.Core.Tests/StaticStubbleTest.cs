@@ -150,7 +150,7 @@ namespace Stubble.Core.Tests
                         .Any(z => methodParams.Any(y => y.ParameterType == z.ParameterType && y.Name == z.Name));
 
                     return x.Name.Equals(method.Name) &&
-                           TypeHelper.IsAssignableFrom(method.ReturnType, x.ReturnType) &&
+                           method.ReturnType.IsAssignableFrom(x.ReturnType) &&
                            (!staticParams.Any() || allParamsMatch);
                 });
                 output.WriteLine(method.ToString());
