@@ -21,7 +21,6 @@ public class MyBuildData
     public DotNetCoreTestSettings TestSettings { get; }
     public DotNetCorePackSettings PackSettings { get; }
     public CoverletSettings CoverletSettings { get; }
-    public CoverletSettings CompilationCoverletSettings { get; }
 
     public IReadOnlyList<ConvertableDirectoryPath> BuildDirs { get; }
 
@@ -74,25 +73,16 @@ public class MyBuildData
             CollectCoverage = runCoverage,
             CoverletOutputFormat = CoverletOutputFormat.opencover,
             CoverletOutputDirectory = CoverageDirectory,
-            CoverletOutputName = $"results-{DateTime.UtcNow:dd-MM-yyyy-HH-mm-ss-FFF}"
+            CoverletOutputName = $"results",
         }
         .WithFilter("[Stubble.Core.Tests]*")
         .WithFilter("[Stubble.Core]*.Imported.*")
-        .WithFilter("[Stubble.Core]Stubble.Core.Helpers.*");
-
-        CompilationCoverletSettings = new CoverletSettings {
-            CollectCoverage = runCoverage,
-            CoverletOutputFormat = CoverletOutputFormat.opencover,
-            CoverletOutputDirectory = CoverageDirectory,
-            CoverletOutputName = $"results-{DateTime.UtcNow:dd-MM-yyyy-HH-mm-ss-FFF}"
-        }
-        .WithFilter("[Stubble.Core.Tests]*")
+        .WithFilter("[Stubble.Compilation]Stubble.Compilation.Helpers.*")
         .WithFilter("[Stubble.Compilation.Tests]*")
-        .WithFilter("[Stubble.Core]*.Imported.*")
         .WithFilter("[Stubble.Compilation]*.Import.*")
         .WithFilter("[Stubble.Compilation]Stubble.Compilation.Contexts.RegistryResult")
         .WithFilter("[Stubble.Core]Stubble.Core.Helpers.*")
-        .WithFilter("[Stubble.Compilation]Stubble.Compilation.Helpers.*");
+        .WithDateTimeTransformer();
 
         var testSettings = new DotNetCoreTestSettings {
             Configuration = configuration,
@@ -178,7 +168,7 @@ Task("Test")
     .Does<MyBuildData>((data) =>
 {
     DotNetCoreTest("./test/Stubble.Core.Tests/Stubble.Core.Tests.csproj", data.TestSettings, data.CoverletSettings);
-    DotNetCoreTest("./test/Stubble.Compilation.Tests/Stubble.Compilation.Tests.csproj", data.TestSettings, data.CompilationCoverletSettings);
+    DotNetCoreTest("./test/Stubble.Compilation.Tests/Stubble.Compilation.Tests.csproj", data.TestSettings, data.CoverletSettings);
 
     if (data.RunCoverage && AppVeyor.IsRunningOnAppVeyor)
     {
