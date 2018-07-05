@@ -17,7 +17,7 @@ namespace Stubble.Core.Helpers
         /// </summary>
         public static Task CompletedTask { get; }
             =
-#if NETSTANDARD1_3
+#if NETSTANDARD2_0
             Task.CompletedTask;
 #else
             Task.FromResult(true);

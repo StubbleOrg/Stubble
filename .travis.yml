@@ -8,6 +8,6 @@ git:
   depth: 9999999
 
 script:
-  - ./build.sh --target Travis -- -framework="netstandard1.3" -testFramework="netcoreapp2.0"
+  - ./build.sh --target Travis -- -framework="netstandard2.0" -testFramework="netcoreapp2.0"
 after_success:
   - bash <(curl -s https://codecov.io/bash) -f ./coverage-results/*.xml
