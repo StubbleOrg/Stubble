@@ -1,0 +1,15 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "artifacts": true,
+        "**/BenchmarkDotNet.Artifacts": true,
+        "coverage-report": true,
+        "coverage-results": true,
+        "tools": true,
+        ".vs": true,
+    }
+}
