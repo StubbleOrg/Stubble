@@ -28,7 +28,7 @@ namespace Stubble.Core.Benchmark
                 Add(new MemoryDiagnoser());
                 Add(ExecutionValidator.FailOnError);
                 Add(CsvMeasurementsExporter.Default);
-                Add(Job.LongRun, Job.LegacyJitX86, Job.LegacyJitX64, Job.RyuJitX64);
+                Add(Job.RyuJitX64);
             }
         }
 
