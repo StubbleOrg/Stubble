@@ -23,7 +23,7 @@ namespace Stubble.Core.Builders
         /// </summary>
         public ParserPipelineBuilder()
         {
-            InlineParsers = new List<Parser.Interfaces.InlineParser>
+            InlineParsers = new List<InlineParser>
             {
                 new CommentTagParser(),
                 new DelimiterTagParser(),
@@ -41,7 +41,7 @@ namespace Stubble.Core.Builders
         /// <summary>
         /// Gets the inline parsers
         /// </summary>
-        public List<Parser.Interfaces.InlineParser> InlineParsers { get; }
+        public List<InlineParser> InlineParsers { get; }
 
         /// <summary>
         /// Gets the block parsers
@@ -62,6 +62,154 @@ namespace Stubble.Core.Builders
 
             pipeline = new ParserPipeline(InlineParsers, BlockParsers);
             return pipeline;
+        }
+
+        /// <summary>
+        /// Finds a parser with the provided type and replaces it with the new parser
+        /// </summary>
+        /// <typeparam name="T">The type to replace</typeparam>
+        /// <param name="parser">The parser to replace the provided one with</param>
+        /// <returns>The builder for chaining</returns>
+        public ParserPipelineBuilder Replace<T>(InlineParser parser)
+            where T : InlineParser
+        {
+            Replace<T, InlineParser>(InlineParsers, parser);
+            return this;
+        }
+
+        /// <summary>
+        /// Finds a parser with the provided type and replaces it with the new parser
+        /// </summary>
+        /// <typeparam name="T">The type to replace</typeparam>
+        /// <param name="parser">The parser to replace the provided one with</param>
+        /// <returns>The builder for chaining</returns>
+        public ParserPipelineBuilder Replace<T>(BlockParser parser)
+            where T : BlockParser
+        {
+            Replace<T, BlockParser>(BlockParsers, parser);
+            return this;
+        }
+
+        /// <summary>
+        /// Finds a parser with the provided type and adds the new parser after it
+        /// </summary>
+        /// <typeparam name="T">The type to replace</typeparam>
+        /// <param name="parser">The parser to add after</param>
+        /// <returns>The builder for chaining</returns>
+        public ParserPipelineBuilder AddAfter<T>(InlineParser parser)
+            where T : InlineParser
+        {
+            AddAfter<T, InlineParser>(InlineParsers, parser);
+            return this;
+        }
+
+        /// <summary>
+        /// Finds a parser with the provided type and adds the new parser after it
+        /// </summary>
+        /// <typeparam name="T">The type to replace</typeparam>
+        /// <param name="parser">The parser to add after</param>
+        /// <returns>The builder for chaining</returns>
+        public ParserPipelineBuilder AddAfter<T>(BlockParser parser)
+            where T : BlockParser
+        {
+            AddAfter<T, BlockParser>(BlockParsers, parser);
+            return this;
+        }
+
+        /// <summary>
+        /// Finds a parser with the provided type and adds the new parser before it
+        /// </summary>
+        /// <typeparam name="T">The type to replace</typeparam>
+        /// <param name="parser">The parser to add before</param>
+        /// <returns>The builder for chaining</returns>
+        public ParserPipelineBuilder AddBefore<T>(InlineParser parser)
+            where T : InlineParser
+        {
+            AddBefore<T, InlineParser>(InlineParsers, parser);
+            return this;
+        }
+
+        /// <summary>
+        /// Finds a parser with the provided type and adds the new parser before it
+        /// </summary>
+        /// <typeparam name="T">The type to replace</typeparam>
+        /// <param name="parser">The parser to add before</param>
+        /// <returns>The builder for chaining</returns>
+        public ParserPipelineBuilder AddBefore<T>(BlockParser parser)
+            where T : BlockParser
+        {
+            AddBefore<T, BlockParser>(BlockParsers, parser);
+            return this;
+        }
+
+        /// <summary>
+        /// Finds a parser with the provided type and adds the new parser before it
+        /// </summary>
+        /// <typeparam name="T">The type to replace</typeparam>
+        /// <returns>The builder for chaining</returns>
+        public ParserPipelineBuilder Remove<T>()
+        {
+            if (typeof(InlineParser).IsAssignableFrom(typeof(T)))
+            {
+                Remove<T, InlineParser>(InlineParsers);
+            }
+            else if (typeof(BlockParser).IsAssignableFrom(typeof(T)))
+            {
+                Remove<T, BlockParser>(BlockParsers);
+            }
+
+            return this;
+        }
+
+        private static void Remove<T, TItem>(IList<TItem> collection)
+        {
+            for (var i = 0; i < collection.Count; i++)
+            {
+                var item = collection[i];
+                if (item is T)
+                {
+                    collection.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        private static void Replace<T, TItem>(IList<TItem> collection, TItem value)
+        {
+            for (var i = 0; i < collection.Count; i++)
+            {
+                var item = collection[i];
+                if (item is T)
+                {
+                    collection[i] = value;
+                }
+            }
+        }
+
+        private static void AddAfter<T, TItem>(IList<TItem> collection, TItem value)
+        {
+            for (var i = 0; i < collection.Count; i++)
+            {
+                var item = collection[i];
+                if (item is T)
+                {
+                    collection.Insert(i + 1, value);
+                    break;
+                }
+            }
+        }
+
+        private static void AddBefore<T, TItem>(IList<TItem> collection, TItem value)
+        {
+            for (var i = 0; i < collection.Count; i++)
+            {
+                var item = collection[i];
+                if (item is T)
+                {
+                    collection.Insert(i, value);
+                    break;
+                }
+            }
         }
     }
 }
