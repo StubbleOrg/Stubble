@@ -90,6 +90,12 @@ namespace Stubble.Compilation.Settings
                     typeof(IDynamicMetaObjectProvider),
                     (type, instance, key, ignoreCase) =>
                     {
+                        // Skip dynamic objects since they also implement IDictionary<string, object>
+                        if (!typeof(IDictionary<string, object>).IsAssignableFrom(type))
+                        {
+                            return null;
+                        }
+
                         var outVar = Expression.Variable(typeof(object));
 
                         var dynamic = ignoreCase

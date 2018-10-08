@@ -173,6 +173,8 @@ namespace Stubble.Compilation.Contexts
                     instance = context?.SourceData;
                 }
 
+                value = TryEnumerationConversionIfRequired(value);
+
                 cache[name] = value;
             }
 
@@ -279,6 +281,24 @@ namespace Stubble.Compilation.Contexts
             }
 
             return default(RegistryResult);
+        }
+
+        /// <summary>
+        /// Tries to convert an object into an Enumeration if possible
+        /// </summary>
+        /// <param name="value">The object to try convert</param>
+        /// <returns>The passed value or the value after conversion</returns>
+        private Expression TryEnumerationConversionIfRequired(Expression value)
+        {
+            if (value != null && CompilerSettings.EnumerationConverters.TryGetValue(value.Type, out var converter))
+            {
+                var genericEnumerable = typeof(IEnumerable<>).MakeGenericType(converter.ChildType);
+                return Expression.Convert(
+                    Expression.Invoke(converter.ConverterExpression, value),
+                    genericEnumerable);
+            }
+
+            return value;
         }
     }
 }

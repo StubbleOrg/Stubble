@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
+using Stubble.Compilation.Class;
 using Stubble.Compilation.Contexts;
 using Stubble.Core.Classes;
 using Stubble.Core.Interfaces;
@@ -41,7 +42,7 @@ namespace Stubble.Compilation.Settings
         public CompilerSettings(
             Dictionary<Type, DefaultSettings.ValueGetterDelegate> valueGetters,
             Dictionary<Type, List<LambdaExpression>> truthyChecks,
-            Dictionary<Type, Expression<Func<object, IEnumerable>>> enumerationConverters,
+            Dictionary<Type, EnumerationConverter> enumerationConverters,
             TokenRendererPipeline<CompilerContext> rendererPipeline,
             IStubbleLoader templateLoader,
             IStubbleLoader partialLoader,
@@ -73,7 +74,7 @@ namespace Stubble.Compilation.Settings
         /// <summary>
         /// Gets a map of Types to Enumeration convert functions
         /// </summary>
-        public ImmutableDictionary<Type, Expression<Func<object, IEnumerable>>> EnumerationConverters { get; }
+        public ImmutableDictionary<Type, EnumerationConverter> EnumerationConverters { get; }
 
         /// <summary>
         /// Gets the renderer pipeline to be used when rendering

@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Stubble.Compilation.Class;
 using Stubble.Compilation.Contexts;
 using Stubble.Core.Builders;
 using Stubble.Core.Helpers;
@@ -44,8 +45,8 @@ namespace Stubble.Compilation.Settings
         /// <summary>
         /// Gets or sets a map of Types to Enumeration convert functions
         /// </summary>
-        protected internal Dictionary<Type, Expression<Func<object, IEnumerable>>> EnumerationConverters { get; set; }
-            = new Dictionary<Type, Expression<Func<object, IEnumerable>>>();
+        protected internal Dictionary<Type, EnumerationConverter> EnumerationConverters { get; set; }
+            = new Dictionary<Type, EnumerationConverter>();
 
         /// <summary>
         /// Gets or sets the RenderSettings
@@ -102,6 +103,37 @@ namespace Stubble.Compilation.Settings
             {
                 TruthyChecks.Add(typeof(T), new List<LambdaExpression>() { expr });
             }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a value getter for the specific type describing how to get values from a type
+        /// </summary>
+        /// <typeparam name="T">The type to get the value from</typeparam>
+        /// <param name="func">The getter function for the type</param>
+        /// <returns>The builder for chaining calls</returns>
+        public CompilerSettingsBuilder AddValueGetter<T>(DefaultSettings.ValueGetterDelegate func)
+        {
+            ValueGetters[typeof(T)] = func;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds an enumeration conversion for the given type
+        /// </summary>
+        /// <typeparam name="T">The type to convert to an enumeration</typeparam>
+        /// <typeparam name="TItem">The returning type of the IEnumerable items</typeparam>
+        /// <param name="expr">How to convert the type to IEnumerable</param>
+        /// <returns>The builder for chaining calls</returns>
+        public CompilerSettingsBuilder AddEnumerationConverter<T, TItem>(Expression<Func<T, IEnumerable<TItem>>> expr)
+        {
+            var @param = Expression.Parameter(typeof(object));
+            var convertLambda = Expression.Lambda<Func<object, IEnumerable>>(
+                Expression.Invoke(expr, Expression.Convert(param, typeof(T))),
+                @param);
+
+            EnumerationConverters[typeof(T)] = new EnumerationConverter(convertLambda, typeof(TItem));
 
             return this;
         }
