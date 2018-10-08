@@ -71,7 +71,7 @@ Tag parsing is performed in a very explicit method with a low garbage collection
 New tag parsers are added to the `ParserPipelineBuilder` as either `InlineParsers` or `BlockParsers`.
 These are handled in order and so if you're replacing a tag parser it's recommended to remove the existing parser before hand. If you're adding a new tag make sure the syntax doesn't collide with the opening syntax of any existing tags or that it comes before that tags parser.
 
-For more information about building parser pipelines please see [docs here.](/docs/parser-pipelines)
+For more information about building parser pipelines please see [docs here.](/docs/parser-pipelines.md)
 
 The built pipeline should be cached if it needs to be reused and can be passed in as an overload into the static `MustacheParser` class if all you want is to parse the tags into an AST.
 
