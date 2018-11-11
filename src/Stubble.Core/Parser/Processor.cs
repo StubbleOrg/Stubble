@@ -184,7 +184,7 @@ namespace Stubble.Core.Parser
                 {
                     var literalTag = tag as LiteralToken;
 
-                    if (Document.Children[i + 1] is LiteralToken nextTag)
+                    if (Document.Children[i + 1] is LiteralToken nextTag && literalTag.Indent == nextTag.Indent)
                     {
                         literalTag.ContentEndPosition = nextTag.ContentEndPosition;
                         literalTag.Indent = nextTag.Indent > literalTag.Indent ? nextTag.Indent : literalTag.Indent;

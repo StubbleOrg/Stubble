@@ -371,5 +371,45 @@ namespace Stubble.Core.Tests
             });
             Assert.Equal("<b>Html</b>\n<b>Html</b>", result);
         }
+
+        [Fact]
+        public async Task It_Should_Indent_Partials_When_Folding_Literals_Correctly()
+        {
+            var tpl = @"<div>
+    {{> Body}}
+</div>";
+            var partial = @"<a href=""{{Url}}"">
+    My Link
+</a>";
+
+            var stubble = new StubbleBuilder()
+                .Configure(conf =>
+                {
+                    conf.SetPartialTemplateLoader(new DictionaryLoader(new Dictionary<string, string>
+                    {
+                        { "Body", partial }
+                    }));
+                })
+                .Build();
+
+            var obj = new
+            {
+                Url = "MyUrl"
+            };
+
+            var result = stubble.Render(tpl, obj);
+
+            Assert.Equal(@"<div>
+    <a href=""MyUrl"">
+        My Link
+    </a></div>", result);
+
+            var resultAsync = await stubble.RenderAsync(tpl, obj);
+
+            Assert.Equal(@"<div>
+    <a href=""MyUrl"">
+        My Link
+    </a></div>", resultAsync);
+        }
     }
 }
