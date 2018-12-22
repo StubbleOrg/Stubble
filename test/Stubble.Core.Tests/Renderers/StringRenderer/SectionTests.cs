@@ -182,6 +182,46 @@ namespace Stubble.Core.Tests.Renderers.StringRenderer
         }
 
         [Fact]
+        public void It_Can_Render_Multiple_IEnumerators()
+        {
+            const string result = "abcabc";
+            var settings = new RendererSettingsBuilder().BuildSettings();
+
+            // Get Enumerator doesn't exist on string (netstandard 1.3)
+            // will be added back in netstandard 2.0
+            var enumerator = "abc".ToCharArray().GetEnumerator();
+
+            var context = new Context(
+                new
+                {
+                    list = enumerator
+                },
+                settings,
+                settings.RenderSettings);
+
+            var stringRenderer = new StringRender(StreamWriter, settings.RendererPipeline);
+            var sectionTokenRenderer = new SectionTokenRenderer();
+
+            var sectionToken = new SectionToken
+            {
+                SectionName = "list",
+                Children = new List<MustacheToken>
+                    {
+                        new InterpolationToken { Content = new StringSlice(".") },
+                    }
+            };
+
+            sectionTokenRenderer.Write(stringRenderer, sectionToken, context);
+            sectionTokenRenderer.Write(stringRenderer, sectionToken, context);
+
+            StreamWriter.Flush();
+            MemStream.Position = 0;
+            var sr = new StreamReader(MemStream);
+            var myStr = sr.ReadToEnd();
+            Assert.Equal(result, myStr);
+        }
+
+        [Fact]
         public void It_Can_Render_LambdaTags_WithoutContext()
         {
             const string result = "1";

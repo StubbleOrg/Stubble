@@ -51,6 +51,8 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                 {
                     renderer.Render(obj, context.Push(enumeratorValue.Current));
                 }
+
+                enumeratorValue.Reset();
             }
             else if (value is Func<dynamic, string, object> || value is Func<string, object>)
             {
@@ -96,6 +98,8 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                 {
                     await renderer.RenderAsync(obj, context.Push(enumeratorValue.Current));
                 }
+
+                enumeratorValue.Reset();
             }
             else if (value is Func<dynamic, string, object> || value is Func<string, object>)
             {
