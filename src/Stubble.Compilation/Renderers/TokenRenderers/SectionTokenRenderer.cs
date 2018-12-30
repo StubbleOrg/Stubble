@@ -151,12 +151,18 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
             {
                 var getMethod = Expression.Call(value, MethodInfos.Instance.EnumeratorGetCurrent);
 
-                var block = Expression.Block(new[] { param }, new[]
+                var whileBlock = Expression.Block(new[] { param }, new[]
                 {
-                        Expression.Assign(param, type == typeof(object) ? Expression.Convert(getMethod, typeof(object)) : (Expression)getMethod)
+                    Expression.Assign(param, type == typeof(object) ? Expression.Convert(getMethod, typeof(object)) : (Expression)getMethod)
                 }.Concat(blockContent));
 
-                return CustomExpression.While(Expression.Call(value, MethodInfos.Instance.MoveNext), block);
+                var block = new Expression[]
+                {
+                    CustomExpression.While(Expression.Call(value, MethodInfos.Instance.MoveNext), whileBlock),
+                    Expression.Call(value, MethodInfos.Instance.EnumeratorReset)
+                };
+
+                return Expression.Block(block);
             }
 
             return null;

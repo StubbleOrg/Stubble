@@ -406,6 +406,13 @@ namespace Stubble.Compilation.Tests
             },
             new SpecTest
             {
+                Name = "It can render Enumerators Twice in the same Context",
+                Data = new { Items = "abcdefg".ToCharArray().GetEnumerator() },
+                Expected = "abcdefg abcdefg",
+                Template = "{{#Items}}{{.}}{{/Items}} {{#Items}}{{.}}{{/Items}}"
+            },
+            new SpecTest
+            {
                 Name = "It can render without Data",
                 Data = new {},
                 Expected = "I have No Data :(",

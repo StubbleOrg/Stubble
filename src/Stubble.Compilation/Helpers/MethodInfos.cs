@@ -27,6 +27,7 @@ namespace Stubble.Compilation.Helpers
         internal readonly MethodInfo MoveNext;
         internal readonly MethodInfo HtmlEncode;
         internal readonly MethodInfo EnumeratorGetCurrent;
+        internal readonly MethodInfo EnumeratorReset;
 
         public MethodInfos()
         {
@@ -49,6 +50,8 @@ namespace Stubble.Compilation.Helpers
             HtmlEncode = typeof(WebUtility).GetMethod(nameof(WebUtility.HtmlEncode), new[] { typeof(string) });
 
             EnumeratorGetCurrent = typeof(IEnumerator).GetProperty(nameof(IEnumerator.Current)).GetGetMethod();
+
+            EnumeratorReset = typeof(IEnumerator).GetMethod(nameof(IEnumerator.Reset));
         }
     }
 }
