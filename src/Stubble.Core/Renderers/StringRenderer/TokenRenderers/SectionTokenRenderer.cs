@@ -19,12 +19,6 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
     /// </summary>
     internal class SectionTokenRenderer : StringObjectRenderer<SectionToken>
     {
-        private static readonly List<Type> EnumerableBlacklist = new List<Type>
-        {
-            typeof(IDictionary),
-            typeof(string)
-        };
-
         /// <inheritdoc/>
         protected override void Write(StringRender renderer, SectionToken obj, Context context)
         {
@@ -35,7 +29,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                 return;
             }
 
-            if (value is IEnumerable && !EnumerableBlacklist.Any(x => x.IsInstanceOfType(value)))
+            if (value is IEnumerable && !context.RendererSettings.SectionBlacklistTypes.Any(x => x.IsInstanceOfType(value)))
             {
                 var arrayValue = value as IEnumerable;
 
@@ -82,7 +76,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                 return;
             }
 
-            if (value is IEnumerable && !EnumerableBlacklist.Any(x => x.IsInstanceOfType(value)))
+            if (value is IEnumerable && !context.RendererSettings.SectionBlacklistTypes.Any(x => x.IsInstanceOfType(value)))
             {
                 var arrayValue = value as IEnumerable;
 

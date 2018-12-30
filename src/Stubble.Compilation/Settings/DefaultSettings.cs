@@ -158,5 +158,15 @@ namespace Stubble.Compilation.Settings
                 new InvertedSectionTokenRenderer(),
              };
         }
+
+        /// <summary>
+        /// Returns the default blacklisted types for sections
+        /// </summary>
+        /// <returns>A hashset of default blacklisted types for sections</returns>
+        internal static HashSet<Type> DefaultSectionBlacklistTypes() => new HashSet<Type>
+        {
+            typeof(IDictionary),
+            typeof(string)
+        };
     }
 }

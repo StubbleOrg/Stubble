@@ -59,7 +59,7 @@ namespace Stubble.Core.Settings
         /// <returns>The registry settings</returns>
         public override RendererSettings BuildSettings()
         {
-            var mergedGetters = RendererSettingsDefaults.DefaultValueGetters().MergeLeft(ValueGetters);
+            var mergedGetters = DefaultValueGetters().MergeLeft(ValueGetters);
 
             mergedGetters = mergedGetters
                 .OrderBy(x => x.Key, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable())
@@ -77,7 +77,8 @@ namespace Stubble.Core.Settings
                 Parser ?? new CachedMustacheParser(),
                 new TokenRendererPipeline<Context>(TokenRenderers),
                 DefaultTags ?? new Tags("{{", "}}"),
-                ParserPipeline ?? new ParserPipelineBuilder().Build());
+                ParserPipeline ?? new ParserPipelineBuilder().Build(),
+                SectionBlacklistTypes ?? DefaultSectionBlacklistTypes());
         }
 
         /// <summary>

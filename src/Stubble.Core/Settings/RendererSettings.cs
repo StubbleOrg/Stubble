@@ -36,6 +36,7 @@ namespace Stubble.Core.Settings
         /// <param name="rendererPipeline">The renderer pipeline to use</param>
         /// <param name="defaultTags">The default tags to use during parsing</param>
         /// <param name="parserPipeline">The parser pipeline to use during parsing</param>
+        /// <param name="sectionBlacklistTypes">The blacklisted section types</param>
         public RendererSettings(
             Dictionary<Type, ValueGetterDelegate> valueGetters,
             Dictionary<Type, List<Func<object, bool>>> truthyChecks,
@@ -48,7 +49,8 @@ namespace Stubble.Core.Settings
             IMustacheParser parser,
             TokenRendererPipeline<Context> rendererPipeline,
             Classes.Tags defaultTags,
-            ParserPipeline parserPipeline)
+            ParserPipeline parserPipeline,
+            HashSet<Type> sectionBlacklistTypes)
             : base(
                   templateLoader,
                   partialLoader,
@@ -56,7 +58,8 @@ namespace Stubble.Core.Settings
                   ignoreCaseOnLookup,
                   parser,
                   defaultTags,
-                  parserPipeline)
+                  parserPipeline,
+                  sectionBlacklistTypes)
         {
             ValueGetters = valueGetters.ToImmutableDictionary();
             TruthyChecks = truthyChecks.ToImmutableDictionary(k => k.Key, v => v.Value.ToImmutableArray());

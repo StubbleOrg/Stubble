@@ -39,6 +39,7 @@ namespace Stubble.Compilation.Settings
         /// <param name="defaultTags">The default tags to use during parsing</param>
         /// <param name="parserPipeline">The parser pipeline to use during parsing</param>
         /// <param name="compilationSettings">The default compilation settings for each render</param>
+        /// <param name="sectionBlacklistTypes">The blacklisted section types</param>
         public CompilerSettings(
             Dictionary<Type, DefaultSettings.ValueGetterDelegate> valueGetters,
             Dictionary<Type, List<LambdaExpression>> truthyChecks,
@@ -51,8 +52,9 @@ namespace Stubble.Compilation.Settings
             IMustacheParser parser,
             Tags defaultTags,
             ParserPipeline parserPipeline,
-            CompilationSettings compilationSettings)
-            : base(templateLoader, partialLoader, maxRecursionDepth, ignoreCaseOnLookup, parser, defaultTags, parserPipeline)
+            CompilationSettings compilationSettings,
+            HashSet<Type> sectionBlacklistTypes)
+            : base(templateLoader, partialLoader, maxRecursionDepth, ignoreCaseOnLookup, parser, defaultTags, parserPipeline, sectionBlacklistTypes)
         {
             ValueGetters = valueGetters.ToImmutableDictionary();
             TruthyChecks = truthyChecks.ToImmutableDictionary(k => k.Key, v => v.Value.ToImmutableList());

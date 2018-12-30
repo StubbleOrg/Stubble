@@ -3,6 +3,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
+using System.Collections.Generic;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Loaders;
 using Stubble.Core.Parser;
@@ -56,6 +58,11 @@ namespace Stubble.Core.Settings
         /// Gets or sets the default tags to use during parsing
         /// </summary>
         protected internal Classes.Tags DefaultTags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the types blacklisted from sections
+        /// </summary>
+        protected internal HashSet<Type> SectionBlacklistTypes { get; set; }
 
         /// <summary>
         /// Builds a RegistrySettings class with all the provided details
@@ -161,6 +168,17 @@ namespace Stubble.Core.Settings
         public TBuilder SetParserPipeline(ParserPipeline pipeline)
         {
             ParserPipeline = pipeline;
+            return (TBuilder)this;
+        }
+
+        /// <summary>
+        /// Sets the blacklisted types for sections
+        /// </summary>
+        /// <param name="types">The types to be blacklisted</param>
+        /// <returns>The IRendererSettingsBuilder for chaining</returns>
+        public TBuilder SetSectionBlacklistTypes(HashSet<Type> types)
+        {
+            SectionBlacklistTypes = types;
             return (TBuilder)this;
         }
 

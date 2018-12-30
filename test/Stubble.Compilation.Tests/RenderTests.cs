@@ -346,6 +346,34 @@ namespace Stubble.Compilation.Tests
             Assert.Equal("<b>Html</b>\n<b>Html</b>", func(obj));
         }
 
+        [Fact]
+        public void It_Should_Loop_Dictionary_When_Allowed()
+        {
+            var stubble = new StubbleCompilationBuilder()
+                .Configure(conf =>
+                {
+                    conf.SetSectionBlacklistTypes(new HashSet<Type>
+                    {
+                        typeof(string)
+                    });
+                })
+                .Build();
+
+            var obj = new
+            {
+                Dict = new Dictionary<string, string>
+                {
+                    { "key1", "value1" },
+                    { "key2", "value2" },
+                    { "key3", "value3" },
+                }
+            };
+
+            var func = stubble.Compile("{{#Dict}}{{Key}}|{{Value}}.{{/Dict}}", obj);
+
+            Assert.Equal("key1|value1.key2|value2.key3|value3.", func(obj));
+        }
+
         public static IEnumerable<object[]> Data => new List<SpecTest>
         {
             new SpecTest

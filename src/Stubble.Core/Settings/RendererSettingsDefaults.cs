@@ -121,6 +121,16 @@ namespace Stubble.Core.Settings
             };
         }
 
+        /// <summary>
+        /// Returns the default blacklisted types for sections
+        /// </summary>
+        /// <returns>A hashset of default blacklisted types for sections</returns>
+        public static HashSet<Type> DefaultSectionBlacklistTypes() => new HashSet<Type>
+        {
+            typeof(IDictionary),
+            typeof(string)
+        };
+
         private static object GetValueFromObjectByName(object value, string key, bool ignoreCase)
         {
             var objectType = value.GetType();

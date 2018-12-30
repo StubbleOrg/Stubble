@@ -84,7 +84,8 @@ namespace Stubble.Compilation.Settings
                 Parser ?? new CachedMustacheParser(),
                 DefaultTags ?? new Core.Classes.Tags("{{", "}}"),
                 ParserPipeline ?? new ParserPipelineBuilder().Build(),
-                CompilationSettings ?? CompilationSettings.GetDefaultRenderSettings());
+                CompilationSettings ?? CompilationSettings.GetDefaultRenderSettings(),
+                SectionBlacklistTypes ?? DefaultSettings.DefaultSectionBlacklistTypes());
         }
 
         /// <summary>

@@ -34,6 +34,7 @@ namespace Stubble.Core.Tests
             Assert.NotNull(settings.RendererPipeline);
             Assert.Equal(new Tags("{{", "}}"), settings.DefaultTags);
             Assert.NotNull(settings.ParserPipeline);
+            Assert.NotEmpty(settings.SectionBlacklistTypes);
         }
 
         [Fact]
@@ -68,6 +69,19 @@ namespace Stubble.Core.Tests
                 .BuildSettings();
 
             Assert.Equal(pipeline, settings.ParserPipeline);
+        }
+
+        [Fact]
+        public void It_Can_Override_Section_Blacklist()
+        {
+            var set = new HashSet<Type> { typeof(FactAttribute) };
+
+            var settings = new RendererSettingsBuilder()
+                .SetSectionBlacklistTypes(set)
+                .BuildSettings();
+
+            Assert.NotEmpty(settings.SectionBlacklistTypes);
+            Assert.Equal(typeof(FactAttribute), settings.SectionBlacklistTypes.First());
         }
     }
 }

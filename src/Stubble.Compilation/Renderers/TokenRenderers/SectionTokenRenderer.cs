@@ -22,12 +22,6 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
     /// </summary>
     public class SectionTokenRenderer : ExpressionObjectRenderer<SectionToken>
     {
-        private static readonly List<Type> EnumerableBlacklist = new List<Type>
-        {
-            typeof(IDictionary),
-            typeof(string)
-        };
-
         /// <inheritdoc/>
         protected override void Write(CompilationRenderer renderer, SectionToken obj, CompilerContext context)
         {
@@ -40,7 +34,7 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
 
             Expression expression = null;
 
-            if (typeof(IEnumerable).IsAssignableFrom(value.Type) && !EnumerableBlacklist.Any(x => x.IsAssignableFrom(value.Type)))
+            if (typeof(IEnumerable).IsAssignableFrom(value.Type) && !context.CompilerSettings.SectionBlacklistTypes.Any(x => x.IsAssignableFrom(value.Type)))
             {
                 var innerType = value.Type.GetElementTypeOfIEnumerable();
                 var param = Expression.Parameter(innerType);
@@ -88,7 +82,7 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
 
             Expression expression = null;
 
-            if (typeof(IEnumerable).IsAssignableFrom(value.Type) && !EnumerableBlacklist.Any(x => x.IsAssignableFrom(value.Type)))
+            if (typeof(IEnumerable).IsAssignableFrom(value.Type) && !context.CompilerSettings.SectionBlacklistTypes.Any(x => x.IsAssignableFrom(value.Type)))
             {
                 var innerType = value.Type.GetElementTypeOfIEnumerable();
                 var param = Expression.Parameter(innerType);

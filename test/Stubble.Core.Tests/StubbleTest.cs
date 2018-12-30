@@ -373,6 +373,34 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
+        public void It_Should_Loop_Dictionary_When_Allowed()
+        {
+            var stubble = new StubbleBuilder()
+                .Configure(conf =>
+                {
+                    conf.SetSectionBlacklistTypes(new HashSet<Type>
+                    {
+                        typeof(string)
+                    });
+                })
+                .Build();
+
+            var obj = new
+            {
+                Dict = new Dictionary<string, string>
+                {
+                    { "key1", "value1" },
+                    { "key2", "value2" },
+                    { "key3", "value3" },
+                }
+            };
+
+            var result = stubble.Render("{{#Dict}}{{Key}}|{{Value}}.{{/Dict}}", obj);
+
+            Assert.Equal("key1|value1.key2|value2.key3|value3.", result);
+        }
+
+        [Fact]
         public async Task It_Should_Indent_Partials_When_Folding_Literals_Correctly()
         {
             var tpl = @"<div>

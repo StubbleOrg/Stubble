@@ -3,6 +3,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Parser;
 using Stubble.Core.Parser.Interfaces;
@@ -24,6 +27,7 @@ namespace Stubble.Core.Settings
         /// <param name="parser">The mustache parser to use</param>
         /// <param name="defaultTags">The default tags to use during parsing</param>
         /// <param name="parserPipeline">The parser pipeline to use during parsing</param>
+        /// <param name="sectionBlacklistTypes">The blacklisted section types</param>
         public BaseSettings(
             IStubbleLoader templateLoader,
             IStubbleLoader partialLoader,
@@ -31,7 +35,8 @@ namespace Stubble.Core.Settings
             bool ignoreCaseOnLookup,
             IMustacheParser parser,
             Classes.Tags defaultTags,
-            ParserPipeline parserPipeline)
+            ParserPipeline parserPipeline,
+            HashSet<Type> sectionBlacklistTypes)
         {
             TemplateLoader = templateLoader;
             PartialTemplateLoader = partialLoader;
@@ -40,6 +45,7 @@ namespace Stubble.Core.Settings
             Parser = parser;
             DefaultTags = defaultTags;
             ParserPipeline = parserPipeline;
+            SectionBlacklistTypes = sectionBlacklistTypes.ToImmutableHashSet();
         }
 
         /// <summary>
@@ -76,5 +82,10 @@ namespace Stubble.Core.Settings
         /// Gets the default tags to be used during parsing
         /// </summary>
         public Classes.Tags DefaultTags { get; }
+
+        /// <summary>
+        /// Gets the blacklisted types for sections
+        /// </summary>
+        public ImmutableHashSet<Type> SectionBlacklistTypes { get; }
     }
 }
