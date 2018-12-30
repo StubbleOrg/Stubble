@@ -44,7 +44,10 @@ namespace Stubble.Core.Helpers
                     .Lambda<Func<object, object>>(Expression.Convert(ex, typeof(object)), param)
                     .Compile());
 
-                dict.Add(m.Name, func);
+				if (!dict.ContainsKey(m.Name))
+				{
+					dict.Add(m.Name, func);
+				}
             }
 
             return dict;
