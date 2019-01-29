@@ -93,31 +93,31 @@ Tag lambdas are rendered in place of the tag in the template. They have to be th
 
 ```csharp
 var obj = new {
-   Bar = "Bar"
-   Foo = new Func<dynamic, object>((dyn) => { return dyn.Bar; }
-}
+   Bar = "Bar",
+   Foo = new Func<dynamic, object>((dyn) => { return dyn.Bar; })
+};
 
 stubble.Render("{{Foo}}", obj); // Outputs: "Bar"
 ```
 
 #### Section Lambdas
 
-Section lambdas are used to wrap sections of a template. The contents of the section is passed into the lambda as an argument. They have to be of the type `Func<string, dynamic, object>` or `Func<string, object>`
+Section lambdas are used to wrap sections of a template. The contents of the section is passed into the lambda as an argument. They have to be of the type `Func<dynamic, string, object>` or `Func<string, object>`
 
 **Example**
 
 ```csharp
 var obj = new {
-   Bar = "Bar"
-   Foo = new Func<string, dynamic, object>((str, dyn) => { return string.Replace("World", dyn.Bar); }
-}
+   Bar = "Bar",
+   Foo = new Func<dynamic, string, object>((dyn, str) => { return str.Replace("World", dyn.Bar); })
+};
 
 stubble.Render("{{Foo}} Hello World {{/Foo}}", obj); //Outputs: " Hello Bar "
 
 var obj2 = new {
-   Bar = "Bar"
-   Foo = new Func<string, object>((str) => { return "Foo {{Bar}}" }
-}
+   Bar = "Bar",
+   Foo = new Func<string, object>((str) => { return "Foo {{Bar}}"; })
+};
 
 stubble.Render("{{Foo}} Hello World {{/Foo}}", obj2); //Outputs: "Foo Bar"
 ```
