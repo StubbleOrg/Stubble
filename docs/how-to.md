@@ -2,7 +2,7 @@
 
 Stubble follows the mustache spec explicitly so anything that works in other spec compliant mustache libraries such as [mustache.js](https://github.com/janl/mustache.js), [mustache.java](https://github.com/spullara/mustache.java) and [mustache.php](https://github.com/bobthecow/mustache.php) should work without any issues.
 
-The full spec can be found [here.](mustache.github.io/mustache.5.html)
+The full spec can be found [here.](https://mustache.github.io/mustache.5.html)
 
 ## Stubble Specifics
 
