@@ -74,12 +74,12 @@ namespace Stubble.Core.Contexts
         /// <summary>
         /// Gets the render settings for the context
         /// </summary>
-        internal RenderSettings RenderSettings { get; }
+        public RenderSettings RenderSettings { get; }
 
         /// <summary>
         /// Gets the registry for the context
         /// </summary>
-        internal RendererSettings RendererSettings { get; }
+        public RendererSettings RendererSettings { get; }
 
         /// <summary>
         /// Gets the value cache to avoid multiple lookups
