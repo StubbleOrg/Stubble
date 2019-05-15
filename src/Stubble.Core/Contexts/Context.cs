@@ -195,6 +195,32 @@ namespace Stubble.Core.Contexts
                 return (bool)value;
             }
 
+            if (value is int)
+            {
+                return (int)value != 0;
+            }
+
+            if (value is long)
+            {
+                return (long)value != 0;
+            }
+
+            if (value is decimal)
+            {
+                return (int)value != 0m;
+            }
+
+            if (value is float)
+            {
+                return (float)value != 0f;
+            }
+
+
+            if (value is double)
+            {
+                return (double)value != 0d;
+            }
+
             if (value is string strValue)
             {
                 var trimmed = strValue.Trim();
