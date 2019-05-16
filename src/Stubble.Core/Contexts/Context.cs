@@ -207,7 +207,7 @@ namespace Stubble.Core.Contexts
 
             if (value is decimal)
             {
-                return (int)value != 0m;
+                return (decimal)value != 0m;
             }
 
             if (value is float)
