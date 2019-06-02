@@ -25,7 +25,7 @@ namespace Stubble.Core.Benchmark
         {
             public Config()
             {
-                Add(new MemoryDiagnoser());
+                Add(MemoryDiagnoser.Default);
                 Add(ExecutionValidator.FailOnError);
                 Add(CsvMeasurementsExporter.Default);
                 Add(Job.RyuJitX64);
