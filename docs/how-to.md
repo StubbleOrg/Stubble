@@ -102,7 +102,15 @@ stubble.Render("{{Foo}}", obj); // Outputs: "Bar"
 
 #### Section Lambdas
 
-Section lambdas are used to wrap sections of a template. The contents of the section is passed into the lambda as an argument. They have to be of the type `Func<dynamic, string, object>` or `Func<string, object>`
+Section lambdas are used to wrap sections of a template. The contents of the section is passed into the lambda as an argument. They have to be one of the following types:
+ - `Func<dynamic, string, object>`
+ - `Func<string, object>`
+ - `Func<string, Func<string, string>, object>`
+ - `Func<dynamic, string, Func<string, string>, object>`
+
+The signature with `Func<string, string>` as an argument will be provided a renderer that will render the passed template within the current context. This can be used for my dynamic templates.
+
+_**Note:** This is not particularly performant since this is an edge case and used in such scenarios. We would recommend performing any logic outside of your templates before rendering._ 
 
 **Example**
 
@@ -120,4 +128,11 @@ var obj2 = new {
 };
 
 stubble.Render("{{Foo}} Hello World {{/Foo}}", obj2); //Outputs: "Foo Bar"
+
+var obj3 = new {
+   Bar = "Bar",
+   Foo = new Func<string, Func<string, string>, object>((str, render) => { return "Foo " + render("{{Bar}}"); })
+};
+
+stubble.Render("{{Foo}} Hello World {{/Foo}}", obj3); //Outputs: "Foo Bar"
 ```
