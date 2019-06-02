@@ -439,5 +439,49 @@ namespace Stubble.Core.Tests
         My Link
     </a></div>", resultAsync);
         }
+
+        [Fact]
+        public void It_Should_Allow_A_Render_Function_In_Lambda()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var obj = new
+            {
+                Value = "a",
+                ValueDictionary = new Dictionary<string, string>
+                {
+                    { "a", "A is Cool" },
+                    { "b", "B is Cool" },
+                },
+                ValueRender = new Func<string, Func<string, string>, object>((string text, Func<string, string> render) 
+                    => "{{ValueDictionary." + render("{{Value}}") +"}}")
+            };
+
+            var result = stubble.Render("{{#ValueRender}}{{/ValueRender}}", obj);
+            Assert.Equal("A is Cool", result);
+        }
+
+        [Fact]
+        public void It_Should_Allow_A_Render_Function_WithContext_In_Lambda()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var obj = new
+            {
+                Value = "a",
+                ValueDictionary = new Dictionary<string, string>
+                {
+                    { "a", "A is Cool" },
+                    { "b", "B is Cool" },
+                },
+                ValueRender = new Func<dynamic, string, Func<string, string>, object>((dynamic ctx, string text, Func<string, string> render)
+                    => "{{ValueDictionary." + render(ctx.Value) + "}}")
+            };
+
+            var result = stubble.Render("{{#ValueRender}}{{/ValueRender}}", obj);
+            Assert.Equal("A is Cool", result);
+        }
     }
 }
