@@ -18,7 +18,7 @@ namespace Stubble.Core.Benchmark
         {
             public Config()
             {
-                Add(new MemoryDiagnoser());
+                Add(MemoryDiagnoser.Default);
                 Add(ExecutionValidator.FailOnError);
                 Add(new TagColumn("Renderer", name => name.Split('_')[0]));
                 Add(CsvMeasurementsExporter.Default);

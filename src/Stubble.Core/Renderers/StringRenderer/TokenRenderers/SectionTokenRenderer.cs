@@ -6,8 +6,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Stubble.Core.Contexts;
 using Stubble.Core.Tokens;
@@ -19,6 +19,14 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
     /// </summary>
     internal class SectionTokenRenderer : StringObjectRenderer<SectionToken>
     {
+        private static readonly HashSet<Type> LambdaTypes = new HashSet<Type>
+        {
+            typeof(Func<dynamic, string, object>),
+            typeof(Func<string, object>),
+            typeof(Func<dynamic, string, Func<string, string>, object>),
+            typeof(Func<string, Func<string, string>, object>)
+        };
+
         /// <inheritdoc/>
         protected override void Write(StringRender renderer, SectionToken obj, Context context)
         {
@@ -48,17 +56,28 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
 
                 enumeratorValue.Reset();
             }
-            else if (value is Func<dynamic, string, object> || value is Func<string, object>)
+            else if (LambdaTypes.Contains(value.GetType()))
             {
-                var functionDynamicValue = value as Func<dynamic, string, object>;
-                var functionStringValue = value as Func<string, object>;
-                var sectionContent = obj.SectionContent;
+                var sectionContent = obj.SectionContent.ToString();
 
-                value = functionDynamicValue != null
-                    ? functionDynamicValue.Invoke(context.View, sectionContent.ToString())
-                    : functionStringValue.Invoke(sectionContent.ToString());
+                switch (value)
+                {
+                    case Func<dynamic, string, object> func:
+                        value = func(context.View, sectionContent);
+                        break;
+                    case Func<string, object> func:
+                        value = func(sectionContent);
+                        break;
+                    case Func<dynamic, string, Func<string, string>, object> func:
+                        value = func(context.View, sectionContent, RenderInContext(context, obj.Tags));
+                        break;
+                    case Func<string, Func<string, string>, object> func:
+                        value = func(sectionContent, RenderInContext(context, obj.Tags));
+                        break;
+                }
 
-                renderer.Render(context.RendererSettings.Parser.Parse(value.ToString(), obj.Tags), context);
+                var valueString = value?.ToString() ?? string.Empty;
+                renderer.Render(context.RendererSettings.Parser.Parse(valueString, obj.Tags), context);
             }
             else if (value is IDictionary || value != null)
             {
@@ -95,22 +114,54 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
 
                 enumeratorValue.Reset();
             }
-            else if (value is Func<dynamic, string, object> || value is Func<string, object>)
+            else if (LambdaTypes.Contains(value.GetType()))
             {
-                var functionDynamicValue = value as Func<dynamic, string, object>;
-                var functionStringValue = value as Func<string, object>;
-                var sectionContent = obj.SectionContent;
+                var sectionContent = obj.SectionContent.ToString();
 
-                value = functionDynamicValue != null
-                    ? functionDynamicValue.Invoke(context.View, sectionContent.ToString())
-                    : functionStringValue.Invoke(sectionContent.ToString());
+                switch (value)
+                {
+                    case Func<dynamic, string, object> func:
+                        value = func(context.View, sectionContent);
+                        break;
+                    case Func<string, object> func:
+                        value = func(sectionContent);
+                        break;
+                    case Func<dynamic, string, Func<string, string>, object> func:
+                        value = func(context.View, sectionContent, RenderInContext(context, obj.Tags));
+                        break;
+                    case Func<string, Func<string, string>, object> func:
+                        value = func(sectionContent, RenderInContext(context, obj.Tags));
+                        break;
+                }
 
-                await renderer.RenderAsync(context.RendererSettings.Parser.Parse(value.ToString(), obj.Tags), context);
+                var valueString = value?.ToString() ?? string.Empty;
+                renderer.Render(context.RendererSettings.Parser.Parse(value.ToString(), obj.Tags), context);
             }
             else if (value is IDictionary || value != null)
             {
                 await renderer.RenderAsync(obj, context.Push(value));
             }
+        }
+
+        private Func<string, string> RenderInContext(Context context, Classes.Tags tags)
+        {
+            return (str) =>
+            {
+                if (!str.Contains(tags.StartTag))
+                {
+                    return str;
+                }
+
+                using (var writer = new StringWriter())
+                {
+                    var blockRenderer = new StringRender(writer, context.RendererSettings.RendererPipeline);
+                    var parsed = context.RendererSettings.Parser.Parse(str, tags);
+
+                    blockRenderer.Render(parsed, context);
+
+                    return writer.ToString();
+                }
+            };
         }
     }
 }

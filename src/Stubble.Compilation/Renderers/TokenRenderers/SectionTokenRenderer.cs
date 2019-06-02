@@ -38,7 +38,7 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
             {
                 var innerType = value.Type.GetElementTypeOfIEnumerable();
                 var param = Expression.Parameter(innerType);
-                expression = WriteIEnumerable(value, param, innerType, renderer.Render(obj, context.Push(innerType, param)) as List<Expression>);
+                expression = WriteIEnumerable(value, param, renderer.Render(obj, context.Push(innerType, param)) as List<Expression>);
             }
             else if (typeof(IEnumerator).IsAssignableFrom(value.Type))
             {
@@ -90,7 +90,7 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
 
                 if (sectionContent.Count > 0)
                 {
-                    expression = WriteIEnumerable(value, param, innerType, sectionContent);
+                    expression = WriteIEnumerable(value, param, sectionContent);
                 }
             }
             else if (typeof(IEnumerator).IsAssignableFrom(value.Type))
@@ -128,7 +128,7 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
             }
         }
 
-        private static Expression WriteIEnumerable(Expression value, ParameterExpression param, Type type, List<Expression> blockContent)
+        private static Expression WriteIEnumerable(Expression value, ParameterExpression param, List<Expression> blockContent)
         {
             if (blockContent.Count > 0)
             {

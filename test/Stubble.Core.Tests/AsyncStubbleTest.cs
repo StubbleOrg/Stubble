@@ -154,5 +154,57 @@ namespace Stubble.Core.Tests
             var output = await stubble.RenderAsync("{{Foo}}", new { Foo = new Func<object>(() => "{{Bar}}"), Bar = "FooBar" });
             Assert.Equal("FooBar", output);
         }
+
+        [Fact]
+        public async Task It_Can_Render_With_SectionLambda_WithContext_Async()
+        {
+            var stubble = new StubbleVisitorRenderer();
+            var output = await stubble.RenderAsync("{{#Foo}}{{/Foo}}", new { Foo = new Func<dynamic, string, object>((ctx, str) => ctx.Bar), Bar = "FooBar" });
+            Assert.Equal("FooBar", output);
+        }
+
+        [Fact]
+        public async Task It_Should_Allow_An_NonAsync_Render_Function_WithContext_In_Lambda()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var obj = new
+            {
+                Value = "a",
+                ValueDictionary = new Dictionary<string, string>
+                {
+                    { "a", "A is Cool" },
+                    { "b", "B is Cool" },
+                },
+                ValueRender = new Func<dynamic, string, Func<string, string>, object>((dynamic ctx, string text, Func<string, string> render)
+                    => "{{ValueDictionary." + render(ctx.Value) + "}}")
+            };
+
+            var result = await stubble.RenderAsync("{{#ValueRender}}{{/ValueRender}}", obj);
+            Assert.Equal("A is Cool", result);
+        }
+
+        [Fact]
+        public async Task It_Should_Allow_An_NonAsync_Render_Function_In_Lambda()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var obj = new
+            {
+                Value = "a",
+                ValueDictionary = new Dictionary<string, string>
+                {
+                    { "a", "A is Cool" },
+                    { "b", "B is Cool" },
+                },
+                ValueRender = new Func<string, Func<string, string>, object>((string text, Func<string, string> render)
+                    => "{{ValueDictionary." + render("{{Value}}") + "}}")
+            };
+
+            var result = await stubble.RenderAsync("{{#ValueRender}}{{/ValueRender}}", obj);
+            Assert.Equal("A is Cool", result);
+        }
     }
 }
