@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using Stubble.Core.Builders;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Loaders;
 using Stubble.Core.Parser;
@@ -23,6 +24,11 @@ namespace Stubble.Core.Settings
         private IStubbleLoader templateLoader = new StringLoader();
 
         private IStubbleLoader partialTemplateLoader;
+
+        /// <summary>
+        /// Gets the parser pipeline builder.
+        /// </summary>
+        protected internal ParserPipelineBuilder ParserPipelineBuilder { get; } = new ParserPipelineBuilder();
 
         /// <summary>
         /// Gets the Template Loader
@@ -48,11 +54,6 @@ namespace Stubble.Core.Settings
         /// Gets or sets the mustache parser to use
         /// </summary>
         protected internal IMustacheParser Parser { get; set; }
-
-        /// <summary>
-        /// Gets or sets the mustache parser pipeline to use during parsing
-        /// </summary>
-        protected internal ParserPipeline ParserPipeline { get; set; }
 
         /// <summary>
         /// Gets or sets the default tags to use during parsing
@@ -103,6 +104,17 @@ namespace Stubble.Core.Settings
         public TBuilder AddToPartialTemplateLoader(IStubbleLoader loader)
         {
             return CombineLoaders(ref partialTemplateLoader, loader.Clone());
+        }
+
+        /// <summary>
+        /// Configure the parser pipeline.
+        /// </summary>
+        /// <param name="builder">The parser pipeline builder.</param>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining.</returns>
+        public TBuilder ConfigureParserPipeline(Action<IParserPipelineBuilder> builder)
+        {
+            builder?.Invoke(ParserPipelineBuilder);
+            return (TBuilder)this;
         }
 
         /// <summary>
@@ -165,9 +177,9 @@ namespace Stubble.Core.Settings
         /// </summary>
         /// <param name="pipeline">The pipeline to use</param>
         /// <returns>The IRendererSettingsBuilder for chaining</returns>
+        [Obsolete("Use the ConfigureParserPipeline to modify the pipeline.", true)]
         public TBuilder SetParserPipeline(ParserPipeline pipeline)
         {
-            ParserPipeline = pipeline;
             return (TBuilder)this;
         }
 

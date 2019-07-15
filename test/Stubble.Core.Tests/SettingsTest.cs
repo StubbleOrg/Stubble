@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Stubble.Core.Classes;
 using Xunit;
 using Stubble.Core.Settings;
 using Stubble.Core.Loaders;
 using Stubble.Core.Parser;
-using Stubble.Core.Builders;
+using Stubble.Core.Parser.TokenParsers;
 
 namespace Stubble.Core.Tests
 {
@@ -61,14 +59,17 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
-        public void It_Can_Override_ParserPipeline()
+        public void It_Can_Configure_ParserPipeline()
         {
-            var pipeline = new ParserPipelineBuilder().Build();
             var settings = new RendererSettingsBuilder()
-                .SetParserPipeline(pipeline)
+                .ConfigureParserPipeline(pipe => pipe
+                    .Remove<InterpolationTagParser>()
+                    .Remove<PartialTagParser>())
                 .BuildSettings();
 
-            Assert.Equal(pipeline, settings.ParserPipeline);
+            Assert.Equal(
+                new[] { typeof(CommentTagParser), typeof(DelimiterTagParser) },
+                settings.ParserPipeline.InlineParsers.Select(x => x.GetType()));
         }
 
         [Fact]
