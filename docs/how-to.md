@@ -120,19 +120,19 @@ var obj = new {
    Foo = new Func<dynamic, string, object>((dyn, str) => { return str.Replace("World", dyn.Bar); })
 };
 
-stubble.Render("{{Foo}} Hello World {{/Foo}}", obj); //Outputs: " Hello Bar "
+stubble.Render("{{#Foo}} Hello World {{/Foo}}", obj); //Outputs: " Hello Bar "
 
 var obj2 = new {
    Bar = "Bar",
    Foo = new Func<string, object>((str) => { return "Foo {{Bar}}"; })
 };
 
-stubble.Render("{{Foo}} Hello World {{/Foo}}", obj2); //Outputs: "Foo Bar"
+stubble.Render("{{#Foo}} Hello World {{/Foo}}", obj2); //Outputs: "Foo Bar"
 
 var obj3 = new {
    Bar = "Bar",
    Foo = new Func<string, Func<string, string>, object>((str, render) => { return "Foo " + render("{{Bar}}"); })
 };
 
-stubble.Render("{{Foo}} Hello World {{/Foo}}", obj3); //Outputs: "Foo Bar"
+stubble.Render("{{#Foo}} Hello World {{/Foo}}", obj3); //Outputs: "Foo Bar"
 ```
