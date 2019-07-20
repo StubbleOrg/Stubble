@@ -1,0 +1,52 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - "*.md"
+    - "docs/*"
+
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+    - task: PowerShell@2
+      inputs:
+        filePath: 'build.ps1'
+      env:
+        CODECOV_REPO_TOKEN: $(CODECOV_REPO_TOKEN)
+        CAKE_SETTINGS_SKIPPACKAGEVERSIONCHECK: true
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/*.trx'
+        mergeTestResults: true
+    - task: PublishCodeCoverageResults@1
+      condition: succeededOrFailed()
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'coverage-results/*.cobertura.xml'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'artifacts/'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+
+- job: macOS
+  pool:
+    vmImage: 'macOS-10.14'
+  steps:
+    - task: Bash@3
+      inputs:
+        filePath: 'build.sh'
+        
+- job: Linux
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - task: Bash@3
+      inputs:
+        filePath: 'build.sh'
