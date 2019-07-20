@@ -190,70 +190,52 @@ namespace Stubble.Core.Contexts
                 }
             }
 
-            if (value is bool)
+            switch (value)
             {
-                return (bool)value;
-            }
+                case bool val:
+                    return val;
+                case int val:
+                    return val != 0;
+                case long val:
+                    return val != 0L;
+                case decimal val:
+                    return val != 0m;
+                case float val:
+                    return val != 0f;
+                case double val:
+                    return val != 0d;
+                case string val:
+                    {
+                        var trimmed = val.Trim();
 
-            if (value is int)
-            {
-                return (int)value != 0;
-            }
+                        if (trimmed == "1")
+                        {
+                            return true;
+                        }
 
-            if (value is long)
-            {
-                return (long)value != 0;
-            }
+                        if (trimmed == "0")
+                        {
+                            return false;
+                        }
 
-            if (value is decimal)
-            {
-                return (decimal)value != 0m;
-            }
+                        if (trimmed.Equals("true", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return true;
+                        }
 
-            if (value is float)
-            {
-                return (float)value != 0f;
-            }
+                        if (trimmed.Equals("false", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return false;
+                        }
 
+                        return !string.IsNullOrEmpty(trimmed);
+                    }
 
-            if (value is double)
-            {
-                return (double)value != 0d;
-            }
-
-            if (value is string strValue)
-            {
-                var trimmed = strValue.Trim();
-
-                if (trimmed == "1")
-                {
+                case IEnumerable val:
+                    return val.GetEnumerator().MoveNext();
+                default:
                     return true;
-                }
-
-                if (trimmed == "0")
-                {
-                    return false;
-                }
-
-                if (trimmed.Equals("true", StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-
-                if (trimmed.Equals("false", StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-
-                return !string.IsNullOrEmpty(trimmed);
             }
-
-            if (value is IEnumerable enumerableValue)
-            {
-                return enumerableValue.GetEnumerator().MoveNext();
-            }
-
-            return true;
         }
 
         /// <summary>
