@@ -19,7 +19,6 @@ jobs:
         filePath: 'build.ps1'
       env:
         CODECOV_REPO_TOKEN: $(CODECOV_REPO_TOKEN)
-        CAKE_SETTINGS_SKIPPACKAGEVERSIONCHECK: true
     - task: PublishTestResults@2
       condition: succeededOrFailed()
       inputs:
@@ -46,6 +45,17 @@ jobs:
     - task: Bash@3
       inputs:
         filePath: 'build.sh'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/*.trx'
+        mergeTestResults: true
+    - task: PublishCodeCoverageResults@1
+      condition: succeededOrFailed()
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'coverage-results/*.cobertura.xml'
         
 - job: Linux
   pool:
@@ -56,3 +66,14 @@ jobs:
     - task: Bash@3
       inputs:
         filePath: 'build.sh'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/*.trx'
+        mergeTestResults: true
+    - task: PublishCodeCoverageResults@1
+      condition: succeededOrFailed()
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'coverage-results/*.cobertura.xml'

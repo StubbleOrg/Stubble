@@ -164,7 +164,6 @@ Task("Test")
 });
 
 Task("Pack")
-    .WithCriteria(IsRunningOnWindows())
     .IsDependentOn("Test")
     .Does<MyBuildData>((data) =>
 {
