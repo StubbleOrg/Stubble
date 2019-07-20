@@ -180,17 +180,16 @@ Task("CodeCov")
         .Select(f => f.FullPath)
         .ToArray();
 
-    var settings = new CodecovSettings();
     var token = EnvironmentVariable("CODECOV_REPO_TOKEN");
-    settings.Token = token;
 
-    foreach(var file in coverageFiles)
+    var settings = new CodecovSettings
     {
-        settings.Files = new [] { file };
+        Token = token,
+        Files = coverageFiles
+    };
 
-        // Upload coverage reports.
-        Codecov(settings);
-    }
+    // Upload coverage reports.
+    Codecov(settings);
 });
 
 Task("CoverageReport")
