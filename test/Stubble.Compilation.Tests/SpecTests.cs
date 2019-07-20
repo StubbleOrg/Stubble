@@ -1,4 +1,5 @@
-﻿using Stubble.Compilation.Settings;
+﻿using McMaster.Extensions.Xunit;
+using Stubble.Compilation.Settings;
 using Stubble.Test.Shared.Spec;
 using System.Threading.Tasks;
 using Xunit;
@@ -19,6 +20,7 @@ namespace Stubble.Compilation.Tests
 
         [Theory]
         [MemberData(nameof(Specs.SpecTests), MemberType = typeof(Specs))]
+        [UseCulture("en-GB")]
         public void CompilationRendererSpecTest(SpecTest data)
         {
             OutputStream.WriteLine(data.Name);
@@ -34,6 +36,7 @@ namespace Stubble.Compilation.Tests
 
         [Theory]
         [MemberData(nameof(Specs.SpecTests), MemberType = typeof(Specs))]
+        [UseCulture("en-GB")]
         public async Task CompilationRendererSpecTest_Async(SpecTest data)
         {
             OutputStream.WriteLine(data.Name);
