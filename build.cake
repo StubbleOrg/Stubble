@@ -82,6 +82,7 @@ public class MyBuildData
         .WithFilter("[Stubble.Compilation]*.Import.*")
         .WithFilter("[Stubble.Compilation]Stubble.Compilation.Contexts.RegistryResult")
         .WithFilter("[Stubble.Core]Stubble.Core.Helpers.*")
+        .WithFilter("[xunit.*]*")
         .WithDateTimeTransformer();
 
         var testSettings = new DotNetCoreTestSettings {
