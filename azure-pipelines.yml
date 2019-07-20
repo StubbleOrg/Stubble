@@ -19,7 +19,7 @@ jobs:
         filePath: 'build.ps1'
       env:
         CODECOV_REPO_TOKEN: $(CODECOV_REPO_TOKEN)
-    - task: PublishTestResults@2      
+    - task: PublishTestResults@2
       condition: succeededOrFailed()
       inputs:
         testRunTitle: 'Tests $(Agent.JobName)'

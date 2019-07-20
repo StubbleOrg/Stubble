@@ -200,6 +200,6 @@ Task("CoverageReport")
 });
 
 Task("Default")
-    .IsDependentOn("Pack");
+    .IsDependentOn("CodeCov");
 
 RunTarget(target);
