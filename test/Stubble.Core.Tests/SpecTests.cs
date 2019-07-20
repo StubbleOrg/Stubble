@@ -1,5 +1,4 @@
-﻿using McMaster.Extensions.Xunit;
-using Stubble.Test.Shared.Spec;
+﻿using Stubble.Test.Shared.Spec;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,7 +16,6 @@ namespace Stubble.Core.Tests
 
         [Theory]
         [MemberData(nameof(Specs.SpecTestsWithLambda), MemberType = typeof(Specs))]
-        [UseCulture("en-GB")]
         public void StringRendererSpecTest(SpecTest data)
         {
             OutputStream.WriteLine(data.Name);
@@ -30,7 +28,6 @@ namespace Stubble.Core.Tests
 
         [Theory]
         [MemberData(nameof(Specs.SpecTestsWithLambda), MemberType = typeof(Specs))]
-        [UseCulture("en-GB")]
         public async Task StringRendererSpecTest_Async(SpecTest data)
         {
             OutputStream.WriteLine(data.Name);
