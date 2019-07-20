@@ -1,7 +1,7 @@
 ﻿{
   "version": "1.4",
   "publicReleaseRefSpec": [
-    "^refs/tags/v\\d\\.\\d" // we also release tags starting with vN.N
+    "^refs/heads/master$", // we release out of master
   ],
   "cloudBuild": {
     "buildNumber": {
