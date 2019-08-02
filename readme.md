@@ -20,7 +20,7 @@ Stubble provides no methods of finding your templates, no complicated logic for 
 
 ### Okay I'm convinced, how do I get it and use it?
 
-At the moment Stubble is in alpha but please feel free to grab it from the pre-release feed on nuget.org by clicking on the badge above! Another option for the more adventurous is to download the source and build it yourself.
+Stubble is available on Nuget.org which can be acessed by clicking on the badge above! Another option for the more adventurous is to download the source and build it yourself.
 
 For how to use Stubble I'd recommend reading the how to use guide [here.](/docs/how-to.md)
 
