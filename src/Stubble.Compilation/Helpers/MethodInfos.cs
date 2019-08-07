@@ -25,7 +25,6 @@ namespace Stubble.Compilation.Helpers
         internal readonly MethodInfo StringIsNullOrWhitespace;
         internal readonly MethodInfo GetEnumerator;
         internal readonly MethodInfo MoveNext;
-        internal readonly MethodInfo HtmlEncode;
         internal readonly MethodInfo EnumeratorGetCurrent;
         internal readonly MethodInfo EnumeratorReset;
 
@@ -46,8 +45,6 @@ namespace Stubble.Compilation.Helpers
 
             StringBuilderAppendString =
                 typeof(StringBuilder).GetMethod(nameof(StringBuilder.Append), new[] { typeof(string) });
-
-            HtmlEncode = typeof(WebUtility).GetMethod(nameof(WebUtility.HtmlEncode), new[] { typeof(string) });
 
             EnumeratorGetCurrent = typeof(IEnumerator).GetProperty(nameof(IEnumerator.Current)).GetGetMethod();
 
