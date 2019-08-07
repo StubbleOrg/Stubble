@@ -83,7 +83,7 @@ namespace Stubble.Compilation.Settings
                 IgnoreCaseOnKeyLookup,
                 Parser ?? new CachedMustacheParser(),
                 DefaultTags ?? new Core.Classes.Tags("{{", "}}"),
-                ParserPipeline ?? new ParserPipelineBuilder().Build(),
+                ParserPipelineBuilder.Build(),
                 CompilationSettings ?? CompilationSettings.GetDefaultRenderSettings(),
                 SectionBlacklistTypes ?? DefaultSettings.DefaultSectionBlacklistTypes());
         }

@@ -143,9 +143,9 @@ namespace Stubble.Core.Builders
         }
 
         /// <summary>
-        /// Finds a parser with the provided type and adds the new parser before it
+        /// Finds and remove a parser with the provided type
         /// </summary>
-        /// <typeparam name="T">The type to replace</typeparam>
+        /// <typeparam name="T">The type to remove</typeparam>
         /// <returns>The builder for chaining</returns>
         public ParserPipelineBuilder Remove<T>()
         {

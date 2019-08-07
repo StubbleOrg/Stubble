@@ -77,7 +77,7 @@ namespace Stubble.Core.Settings
                 Parser ?? new CachedMustacheParser(),
                 new TokenRendererPipeline<Context>(TokenRenderers),
                 DefaultTags ?? new Tags("{{", "}}"),
-                ParserPipeline ?? new ParserPipelineBuilder().Build(),
+                ParserPipelineBuilder.Build(),
                 SectionBlacklistTypes ?? DefaultSectionBlacklistTypes());
         }
 
