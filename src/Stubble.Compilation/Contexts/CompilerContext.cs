@@ -212,8 +212,7 @@ namespace Stubble.Compilation.Contexts
             {
                 checks.Add(value);
             }
-
-            if (value.Type == typeof(string))
+            else if (value.Type == typeof(string))
             {
                 checks.AddRange(new Expression[]
                 {
@@ -224,8 +223,7 @@ namespace Stubble.Compilation.Contexts
                     Expression.Not(Expression.Call(null, MethodInfos.Instance.StringIsNullOrWhitespace, value))
                 });
             }
-
-            if (typeof(IEnumerable).IsAssignableFrom(value.Type))
+            else if (typeof(IEnumerable).IsAssignableFrom(value.Type))
             {
                 checks.Add(Expression.Call(Expression.Call(value, MethodInfos.Instance.GetEnumerator), MethodInfos.Instance.MoveNext));
             }

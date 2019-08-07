@@ -1,8 +1,8 @@
-#tool "nuget:?package=ReportGenerator"
+#tool "nuget:?package=ReportGenerator&version=4.2.10"
 
-#tool nuget:?package=Codecov
-#addin nuget:?package=Cake.Codecov
-#addin nuget:?package=Cake.Coverlet
+#tool nuget:?package=Codecov&version=1.5.0
+#addin nuget:?package=Cake.Codecov&version=0.6.0
+#addin nuget:?package=Cake.Coverlet&version=2.3.4
 
 public class MyBuildData
 {
@@ -71,7 +71,7 @@ public class MyBuildData
 
         CoverletSettings = new CoverletSettings {
             CollectCoverage = runCoverage,
-            CoverletOutputFormat = CoverletOutputFormat.opencover,
+            CoverletOutputFormat = CoverletOutputFormat.opencover | CoverletOutputFormat.cobertura,
             CoverletOutputDirectory = CoverageDirectory,
             CoverletOutputName = $"results",
         }
@@ -82,6 +82,7 @@ public class MyBuildData
         .WithFilter("[Stubble.Compilation]*.Import.*")
         .WithFilter("[Stubble.Compilation]Stubble.Compilation.Contexts.RegistryResult")
         .WithFilter("[Stubble.Core]Stubble.Core.Helpers.*")
+        .WithFilter("[xunit.*]*")
         .WithDateTimeTransformer();
 
         var testSettings = new DotNetCoreTestSettings {
@@ -141,15 +142,7 @@ Task("Restore")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    if (AppVeyor.IsRunningOnAppVeyor) {
-        DotNetCoreRestore("./src/Stubble.Core/Stubble.Core.csproj");
-        DotNetCoreRestore("./test/Stubble.Core.Tests/Stubble.Core.Tests.csproj");
-
-        DotNetCoreRestore("./src/Stubble.Compilation/Stubble.Compilation.csproj");
-        DotNetCoreRestore("./test/Stubble.Compilation.Tests/Stubble.Compilation.Tests.csproj");
-    } else {
-        DotNetCoreRestore("./Stubble.Core.sln");
-    }
+    DotNetCoreRestore("./Stubble.Core.sln");
 });
 
 Task("Build")
@@ -169,19 +162,9 @@ Task("Test")
 {
     DotNetCoreTest("./test/Stubble.Core.Tests/Stubble.Core.Tests.csproj", data.TestSettings, data.CoverletSettings);
     DotNetCoreTest("./test/Stubble.Compilation.Tests/Stubble.Compilation.Tests.csproj", data.TestSettings, data.CoverletSettings);
-
-    if (data.RunCoverage && AppVeyor.IsRunningOnAppVeyor)
-    {
-        foreach(var file in GetFiles((string)data.TestResultsDirectory + "/*"))
-        {
-            AppVeyor.UploadTestResults(file, AppVeyorTestResultsType.MSTest);
-            AppVeyor.UploadArtifact(file);
-        }
-    }
 });
 
 Task("Pack")
-    .WithCriteria(!BuildSystem.IsRunningOnTravisCI)
     .IsDependentOn("Test")
     .Does<MyBuildData>((data) =>
 {
@@ -191,41 +174,32 @@ Task("Pack")
 
 Task("CodeCov")
     .IsDependentOn("Pack")
+    .WithCriteria(BuildSystem.IsRunningOnAzurePipelinesHosted && IsRunningOnWindows())
     .Does<MyBuildData>((data) =>
 {
-    var coverageFiles = GetFiles((string)data.CoverageDirectory + "/*.xml")
+    var coverageFiles = GetFiles((string)data.CoverageDirectory + "/*opencover.xml")
         .Select(f => f.FullPath)
         .ToArray();
 
-    var settings = new CodecovSettings();
+    var token = EnvironmentVariable("CODECOV_REPO_TOKEN");
 
-    if (AppVeyor.IsRunningOnAppVeyor) {
-        var token = EnvironmentVariable("CODECOV_REPO_TOKEN");
-        settings.Token = token;
-    }
-
-    foreach(var file in coverageFiles)
+    var settings = new CodecovSettings
     {
-        settings.Files = new [] { file };
+        Token = token,
+        Files = coverageFiles
+    };
 
-        // Upload coverage reports.
-        Codecov(settings);
-    }
+    // Upload coverage reports.
+    Codecov(settings);
 });
 
 Task("CoverageReport")
     .Does<MyBuildData>((data) =>
 {
-    ReportGenerator((string)data.CoverageDirectory + "/*.xml", data.CoverageReportDirectory);
+    ReportGenerator((string)data.CoverageDirectory + "/*opencover.xml", data.CoverageReportDirectory);
 });
 
-Task("AppVeyor")
-    .IsDependentOn("CodeCov");
-
-Task("Travis")
-    .IsDependentOn("Test");
-
 Task("Default")
-    .IsDependentOn("Pack");
+    .IsDependentOn("CodeCov");
 
 RunTarget(target);

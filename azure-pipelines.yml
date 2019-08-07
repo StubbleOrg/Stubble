@@ -1,0 +1,82 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - "*.md"
+    - "docs/*"
+
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+    - checkout: self
+      submodules: true
+    - task: PowerShell@2
+      inputs:
+        filePath: 'build.ps1'
+      env:
+        CODECOV_REPO_TOKEN: $(CODECOV_REPO_TOKEN)
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunTitle: 'Tests $(Agent.JobName)'
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/*.trx'
+        mergeTestResults: true
+    - task: PublishCodeCoverageResults@1
+      condition: succeededOrFailed()
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'coverage-results/*.cobertura.xml'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'artifacts/'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+
+- job: macOS
+  pool:
+    vmImage: 'macOS-10.14'
+  steps:
+    - checkout: self
+      submodules: true
+    - task: Bash@3
+      inputs:
+        filePath: 'build.sh'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunTitle: 'Tests $(Agent.JobName)'
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/*.trx'
+        mergeTestResults: true
+    - task: PublishCodeCoverageResults@1
+      condition: succeededOrFailed()
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'coverage-results/*.cobertura.xml'
+        
+- job: Linux
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - checkout: self
+      submodules: true
+    - task: Bash@3
+      inputs:
+        filePath: 'build.sh'
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunTitle: 'Tests $(Agent.JobName)'
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/*.trx'
+        mergeTestResults: true
+    - task: PublishCodeCoverageResults@1
+      condition: succeededOrFailed()
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'coverage-results/*.cobertura.xml'

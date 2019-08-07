@@ -1,4 +1,4 @@
-# Stubble [![Build Status](https://img.shields.io/appveyor/ci/Romanx/stubble-ceybe/master.svg?style=flat-square)](https://ci.appveyor.com/project/Romanx/stubble-ceybe/branch/master) [![Build Status](https://travis-ci.org/StubbleOrg/Stubble.svg?branch=master)](https://travis-ci.org/StubbleOrg/Stubble) [![codecov](https://codecov.io/gh/StubbleOrg/Stubble/branch/master/graph/badge.svg)](https://codecov.io/gh/StubbleOrg/Stubble) [![Pre-release Build Nuget](https://img.shields.io/nuget/vpre/Stubble.Core.svg?style=flat-square&label=nuget%20pre)](https://www.nuget.org/packages/Stubble.Core/) [![Stable Nuget](https://img.shields.io/nuget/v/Stubble.Core.svg?style=flat-square)](https://www.nuget.org/packages/Stubble.Core/)
+# Stubble [![Build Status](https://dev.azure.com/stubble/Stubble/_apis/build/status/StubbleOrg.Stubble?branchName=master)](https://dev.azure.com/stubble/Stubble/_build/latest?definitionId=2&branchName=master) [![codecov](https://codecov.io/gh/StubbleOrg/Stubble/branch/master/graph/badge.svg)](https://codecov.io/gh/StubbleOrg/Stubble) [![Pre-release Build Nuget](https://img.shields.io/nuget/vpre/Stubble.Core.svg?style=flat-square&label=nuget%20pre)](https://www.nuget.org/packages/Stubble.Core/) [![Stable Nuget](https://img.shields.io/nuget/v/Stubble.Core.svg?style=flat-square)](https://www.nuget.org/packages/Stubble.Core/)
 
 <img align="right" width="160px" height="160px" src="assets/logo-256.png">
 
@@ -20,7 +20,7 @@ Stubble provides no methods of finding your templates, no complicated logic for 
 
 ### Okay I'm convinced, how do I get it and use it?
 
-At the moment Stubble is in alpha but please feel free to grab it from the pre-release feed on nuget.org by clicking on the badge above! Another option for the more adventurous is to download the source and build it yourself.
+Stubble is available on Nuget.org which can be acessed by clicking on the badge above! Another option for the more adventurous is to download the source and build it yourself.
 
 For how to use Stubble I'd recommend reading the how to use guide [here.](/docs/how-to.md)
 
