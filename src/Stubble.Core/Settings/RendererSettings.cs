@@ -37,6 +37,7 @@ namespace Stubble.Core.Settings
         /// <param name="defaultTags">The default tags to use during parsing</param>
         /// <param name="parserPipeline">The parser pipeline to use during parsing</param>
         /// <param name="sectionBlacklistTypes">The blacklisted section types</param>
+        /// <param name="encodingFunction">A function for encoding strings</param>
         public RendererSettings(
             Dictionary<Type, ValueGetterDelegate> valueGetters,
             Dictionary<Type, List<Func<object, bool>>> truthyChecks,
@@ -50,7 +51,8 @@ namespace Stubble.Core.Settings
             TokenRendererPipeline<Context> rendererPipeline,
             Classes.Tags defaultTags,
             ParserPipeline parserPipeline,
-            HashSet<Type> sectionBlacklistTypes)
+            HashSet<Type> sectionBlacklistTypes,
+            Func<string, string> encodingFunction)
             : base(
                   templateLoader,
                   partialLoader,
@@ -66,6 +68,7 @@ namespace Stubble.Core.Settings
             RenderSettings = renderSettings;
             EnumerationConverters = enumerationConverters.ToImmutableDictionary();
             RendererPipeline = rendererPipeline;
+            EncodingFuction = encodingFunction;
         }
 
         /// <summary>
@@ -92,5 +95,10 @@ namespace Stubble.Core.Settings
         /// Gets the renderer pipeline to be used when rendering
         /// </summary>
         public TokenRendererPipeline<Context> RendererPipeline { get; }
+
+        /// <summary>
+        /// Gets the encoding function used by the renderer
+        /// </summary>
+        public Func<string, string> EncodingFuction { get; }
     }
 }
