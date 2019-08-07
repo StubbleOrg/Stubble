@@ -111,7 +111,7 @@ namespace Stubble.Core.Settings
         /// </summary>
         /// <param name="builder">The parser pipeline builder.</param>
         /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining.</returns>
-        public TBuilder ConfigureParserPipeline(Action<IParserPipelineBuilder> builder)
+        public TBuilder ConfigureParserPipeline(Action<ParserPipelineBuilder> builder)
         {
             builder?.Invoke(ParserPipelineBuilder);
             return (TBuilder)this;

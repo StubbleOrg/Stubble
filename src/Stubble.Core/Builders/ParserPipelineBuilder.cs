@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using Stubble.Core.Parser;
 using Stubble.Core.Parser.Interfaces;
 using Stubble.Core.Parser.TokenParsers;
-using Stubble.Core.Settings;
 
 namespace Stubble.Core.Builders
 {
@@ -15,7 +14,7 @@ namespace Stubble.Core.Builders
     /// This class allows modification of the parser pipeline for use in
     /// parsing a Mustache template
     /// </summary>
-    public class ParserPipelineBuilder : IParserPipelineBuilder
+    public class ParserPipelineBuilder
     {
         private ParserPipeline pipeline;
 
@@ -161,34 +160,6 @@ namespace Stubble.Core.Builders
 
             return this;
         }
-
-        /// <inheritdoc/>
-        IParserPipelineBuilder IParserPipelineBuilder.Replace<T>(InlineParser parser)
-            => Replace<T>(parser);
-
-        /// <inheritdoc/>
-        IParserPipelineBuilder IParserPipelineBuilder.Replace<T>(BlockParser parser)
-            => Replace<T>(parser);
-
-        /// <inheritdoc/>
-        IParserPipelineBuilder IParserPipelineBuilder.AddAfter<T>(InlineParser parser)
-            => AddAfter<T>(parser);
-
-        /// <inheritdoc/>
-        IParserPipelineBuilder IParserPipelineBuilder.AddAfter<T>(BlockParser parser)
-            => AddAfter<T>(parser);
-
-        /// <inheritdoc/>
-        IParserPipelineBuilder IParserPipelineBuilder.AddBefore<T>(InlineParser parser)
-            => AddBefore<T>(parser);
-
-        /// <inheritdoc/>
-        IParserPipelineBuilder IParserPipelineBuilder.AddBefore<T>(BlockParser parser)
-            => AddBefore<T>(parser);
-
-        /// <inheritdoc/>
-        IParserPipelineBuilder IParserPipelineBuilder.Remove<T>()
-            => Remove<T>();
 
         private static void Remove<T, TItem>(IList<TItem> collection)
         {
