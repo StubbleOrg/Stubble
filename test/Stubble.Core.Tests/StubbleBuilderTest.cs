@@ -10,6 +10,7 @@ using Stubble.Core.Interfaces;
 using Stubble.Core.Loaders;
 using Xunit;
 using Stubble.Core.Settings;
+using System;
 
 namespace Stubble.Core.Tests
 {
@@ -169,6 +170,18 @@ namespace Stubble.Core.Tests
                             .UseCustomBuilder()
                             .Build();
             Assert.IsType<string>(stubble);
+        }
+
+        [Fact]
+        public void It_Can_Override_Encoding_Function()
+        {
+            string encodingFunc(string str) => str;
+
+            var stubbleBuilder = new StubbleBuilder()
+                .Configure(settings => settings.SetEncodingFunction(encodingFunc))
+                .Build();
+
+            Assert.Equal(encodingFunc, stubbleBuilder.RendererSettings.EncodingFuction);
         }
     }
 
