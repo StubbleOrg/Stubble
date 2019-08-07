@@ -48,6 +48,11 @@ namespace Stubble.Core.Settings
         internal RenderSettings RenderSettings { get; set; }
 
         /// <summary>
+        /// Gets or sets the encoding function for string escaping
+        /// </summary>
+        internal Func<string, string> EncodingFunction { get; set; }
+
+        /// <summary>
         /// Gets or sets a map of Types to Enumeration convert functions
         /// </summary>
         internal Dictionary<Type, Func<object, IEnumerable>> EnumerationConverters { get; set; }
@@ -78,7 +83,8 @@ namespace Stubble.Core.Settings
                 new TokenRendererPipeline<Context>(TokenRenderers),
                 DefaultTags ?? new Tags("{{", "}}"),
                 ParserPipelineBuilder.Build(),
-                SectionBlacklistTypes ?? DefaultSectionBlacklistTypes());
+                SectionBlacklistTypes ?? DefaultSectionBlacklistTypes(),
+                EncodingFunction ?? EncodingFunctions.WebUtilityHtmlEncoding);
         }
 
         /// <summary>
@@ -127,6 +133,17 @@ namespace Stubble.Core.Settings
             return this;
 
             bool CastFunc(object obj) => truthyCheck((T)obj);
+        }
+
+        /// <summary>
+        /// Sets the encoding function for escaping strings
+        /// </summary>
+        /// <param name="encodingFunction">the encoding function to use</param>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
+        public RendererSettingsBuilder SetEncodingFunction(Func<string, string> encodingFunction)
+        {
+            EncodingFunction = encodingFunction;
+            return this;
         }
     }
 }

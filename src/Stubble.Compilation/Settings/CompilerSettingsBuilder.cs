@@ -54,6 +54,11 @@ namespace Stubble.Compilation.Settings
         protected internal CompilationSettings CompilationSettings { get; set; }
 
         /// <summary>
+        /// Gets or sets the encoding function for string escaping
+        /// </summary>
+        protected internal Expression<Func<string, string>> EncodingFunction { get; set; }
+
+        /// <summary>
         /// Sets the compilation settings
         /// </summary>
         /// <param name="settings">The settings to use</param>
@@ -85,7 +90,8 @@ namespace Stubble.Compilation.Settings
                 DefaultTags ?? new Core.Classes.Tags("{{", "}}"),
                 ParserPipelineBuilder.Build(),
                 CompilationSettings ?? CompilationSettings.GetDefaultRenderSettings(),
-                SectionBlacklistTypes ?? DefaultSettings.DefaultSectionBlacklistTypes());
+                SectionBlacklistTypes ?? DefaultSettings.DefaultSectionBlacklistTypes(),
+                EncodingFunction ?? EncodingFunctions.WebUtilityHtmlEncoding);
         }
 
         /// <summary>
@@ -98,7 +104,7 @@ namespace Stubble.Compilation.Settings
         {
             if (TruthyChecks.TryGetValue(typeof(T), out var check))
             {
-                TruthyChecks[typeof(T)].Add(expr);
+                check.Add(expr);
             }
             else
             {
@@ -136,6 +142,17 @@ namespace Stubble.Compilation.Settings
 
             EnumerationConverters[typeof(T)] = new EnumerationConverter(convertLambda, typeof(TItem));
 
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the encoding function for escaping strings
+        /// </summary>
+        /// <param name="encodingFunction">the encoding function to use</param>
+        /// <returns>The <see cref="RendererSettingsBuilder"/> for chaining</returns>
+        public CompilerSettingsBuilder SetEncodingFunction(Expression<Func<string, string>> encodingFunction)
+        {
+            EncodingFunction = encodingFunction;
             return this;
         }
     }

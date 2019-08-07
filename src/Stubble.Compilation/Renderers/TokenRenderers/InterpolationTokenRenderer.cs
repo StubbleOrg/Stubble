@@ -37,7 +37,7 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
                         isValueType ? expression : Expression.Coalesce(expression, Expression.Constant(string.Empty)),
                         expression.Type.GetMethod("ToString", Type.EmptyTypes));
 
-                expression = Expression.Call(null, MethodInfos.Instance.HtmlEncode, stringExpression);
+                expression = Expression.Invoke(context.CompilerSettings.EncodingFuction, stringExpression);
             }
 
             if (obj.Indent > 0)

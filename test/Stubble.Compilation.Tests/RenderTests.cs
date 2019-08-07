@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Stubble.Core.Loaders;
 using Xunit;
+using System.Linq.Expressions;
 
 namespace Stubble.Compilation.Tests
 {
@@ -372,6 +373,16 @@ namespace Stubble.Compilation.Tests
             var func = stubble.Compile("{{#Dict}}{{Key}}|{{Value}}.{{/Dict}}", obj);
 
             Assert.Equal("key1|value1.key2|value2.key3|value3.", func(obj));
+        }
+
+        [Fact]
+        public void It_Can_Override_Encoding_Function()
+        {
+            Expression<Func<string, string>> encodingFunc = (str) => str;
+
+            var stubbleBuilder = new StubbleCompilationBuilder()
+                .Configure(settings => settings.SetEncodingFunction(encodingFunc))
+                .Build();
         }
 
         public static IEnumerable<object[]> Data => new List<SpecTest>

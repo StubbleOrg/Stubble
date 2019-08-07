@@ -40,6 +40,7 @@ namespace Stubble.Compilation.Settings
         /// <param name="parserPipeline">The parser pipeline to use during parsing</param>
         /// <param name="compilationSettings">The default compilation settings for each render</param>
         /// <param name="sectionBlacklistTypes">The blacklisted section types</param>
+        /// <param name="encodingFunction">The encoding function for escaping strings</param>
         public CompilerSettings(
             Dictionary<Type, DefaultSettings.ValueGetterDelegate> valueGetters,
             Dictionary<Type, List<LambdaExpression>> truthyChecks,
@@ -53,7 +54,8 @@ namespace Stubble.Compilation.Settings
             Tags defaultTags,
             ParserPipeline parserPipeline,
             CompilationSettings compilationSettings,
-            HashSet<Type> sectionBlacklistTypes)
+            HashSet<Type> sectionBlacklistTypes,
+            Expression<Func<string, string>> encodingFunction)
             : base(templateLoader, partialLoader, maxRecursionDepth, ignoreCaseOnLookup, parser, defaultTags, parserPipeline, sectionBlacklistTypes)
         {
             ValueGetters = valueGetters.ToImmutableDictionary();
@@ -61,6 +63,7 @@ namespace Stubble.Compilation.Settings
             EnumerationConverters = enumerationConverters.ToImmutableDictionary();
             RendererPipeline = rendererPipeline;
             CompilationSettings = compilationSettings;
+            EncodingFuction = encodingFunction;
         }
 
         /// <summary>
@@ -87,5 +90,10 @@ namespace Stubble.Compilation.Settings
         /// Gets the compilation settings for use when compiling
         /// </summary>
         public CompilationSettings CompilationSettings { get; }
+
+        /// <summary>
+        /// Gets the encoding fucntion for escaping strings
+        /// </summary>
+        public Expression<Func<string, string>> EncodingFuction { get; }
     }
 }
