@@ -194,6 +194,18 @@ namespace Stubble.Core.Settings
             return (TBuilder)this;
         }
 
+        /// <summary>
+        /// Adds the specified type to the section blacklist
+        /// </summary>
+        /// <param name="type">The type to blacklist for section iteration</param>
+        /// <returns>The builder instance for chaining</returns>
+        public TBuilder AddSectionBlacklistType(Type type)
+        {
+            SectionBlacklistTypes = SectionBlacklistTypes ?? RendererSettingsDefaults.DefaultSectionBlacklistTypes();
+            SectionBlacklistTypes.Add(type);
+            return (TBuilder)this;
+        }
+
         private TBuilder CombineLoaders(ref IStubbleLoader currentLoader, IStubbleLoader loader)
         {
             if (currentLoader is CompositeLoader compositeLoader)
