@@ -7,6 +7,7 @@ using Stubble.Core.Settings;
 using Stubble.Core.Loaders;
 using Stubble.Core.Parser;
 using Stubble.Core.Parser.TokenParsers;
+using System.Collections;
 
 namespace Stubble.Core.Tests
 {
@@ -83,6 +84,19 @@ namespace Stubble.Core.Tests
 
             Assert.NotEmpty(settings.SectionBlacklistTypes);
             Assert.Equal(typeof(FactAttribute), settings.SectionBlacklistTypes.First());
+        }
+
+        [Fact]
+        public void It_Can_Add_To_Section_Blacklist()
+        {
+            var settings = new RendererSettingsBuilder()
+                .AddSectionBlacklistType(typeof(FactAttribute))
+                .BuildSettings();
+
+            Assert.NotEmpty(settings.SectionBlacklistTypes);
+            Assert.Contains(typeof(FactAttribute), settings.SectionBlacklistTypes);
+            Assert.Contains(typeof(string), settings.SectionBlacklistTypes);
+            Assert.Contains(typeof(IDictionary), settings.SectionBlacklistTypes);
         }
     }
 }
