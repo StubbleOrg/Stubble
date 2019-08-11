@@ -6,6 +6,7 @@ trigger:
     exclude:
     - "*.md"
     - "docs/*"
+    - "version.json"
 
 jobs:
 - job: Windows
