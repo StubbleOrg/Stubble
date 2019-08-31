@@ -50,7 +50,7 @@ The user can then use your builder in place of the standard builder without havi
 ```c#
 var stubble = new StubbleBuilder()
     .UseCompilationRenderer()
-    .Configure(builder => builder.IgnoreCaseOnKeyLookup(true))
+    .Configure(builder => builder.SetIgnoreCaseOnKeyLookup(true))
     .Build();
 ```
 

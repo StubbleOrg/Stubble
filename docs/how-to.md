@@ -62,8 +62,8 @@ An example of this is below:
 ```csharp
 var stubble = new StubbleBuilder()
   .Configure(settings => {
-    settings.IgnoreCaseOnKeyLookup = true;
-    settings.MaxRecursionDepth = 512;
+    settings.SetIgnoreCaseOnKeyLookup(true);
+    settings.SetMaxRecursionDepth(512);
     settings.AddJsonNet(); // Extension method from extension library
   })
   .Build();
