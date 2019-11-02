@@ -27,7 +27,7 @@ public void SyncRender() {
 }
 
 // Async
-public async Task SyncRender() {
+public async Task RenderAsync() {
   var stubble = new StubbleBuilder().Build();
   var myObj = new MyObj();
   using (StreamReader streamReader = new StreamReader(@".\Path\To\My\File.Mustache", Encoding.UTF8))
@@ -83,7 +83,7 @@ If the dynamic argument is defined, it is the context of the function much like 
 
 #### Interpolation: or how I learnt to return tags and love them
 
-If you return tags from your lambda they will be expanded before being rendered. This way you you can build new templates to return from your templates. _My head hurts..._
+If you return tags from your lambda they will be expanded before being rendered. This way you can build new templates to return from your templates. _My head hurts..._
 
 #### Tag Lambdas
 
