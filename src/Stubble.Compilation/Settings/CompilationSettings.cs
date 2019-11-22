@@ -3,6 +3,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Globalization;
+
 namespace Stubble.Compilation.Settings
 {
     /// <summary>
@@ -28,6 +30,11 @@ namespace Stubble.Compilation.Settings
         public bool SkipHtmlEncoding { get; set; }
 
         /// <summary>
+        /// Gets or sets the CultureInfo to use for rendering format-dependent values (doubles, etc.).
+        /// </summary>
+        public CultureInfo CultureInfo { get; set; } = CultureInfo.InvariantCulture;
+
+        /// <summary>
         /// Gets the default render settings
         /// </summary>
         /// <returns>the default <see cref="CompilationSettings"/></returns>
@@ -37,7 +44,8 @@ namespace Stubble.Compilation.Settings
             {
                 SkipRecursiveLookup = false,
                 ThrowOnDataMiss = false,
-                SkipHtmlEncoding = false
+                SkipHtmlEncoding = false,
+                CultureInfo = CultureInfo.InvariantCulture
             };
         }
     }
