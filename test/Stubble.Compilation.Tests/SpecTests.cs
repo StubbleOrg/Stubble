@@ -9,12 +9,10 @@ namespace Stubble.Compilation.Tests
     public class SpecTests
     {
         internal readonly ITestOutputHelper OutputStream;
-        internal readonly CompilerSettings Settings;
 
         public SpecTests(ITestOutputHelper output)
         {
             OutputStream = output;
-            Settings = new CompilerSettingsBuilder().BuildSettings();
         }
 
         [Theory]
@@ -22,9 +20,11 @@ namespace Stubble.Compilation.Tests
         public void CompilationRendererSpecTest(SpecTest data)
         {
             OutputStream.WriteLine(data.Name);
+            var settings = CompilationSettings.GetDefaultRenderSettings();
+            settings.CultureInfo = data.CultureInfo ?? settings.CultureInfo;
 
-            var stubble = new StubbleCompilationRenderer(Settings);
-            var output = data.Partials != null ? stubble.Compile(data.Template, data.Data, data.Partials) : stubble.Compile(data.Template, data.Data);
+            var stubble = new StubbleCompilationRenderer();
+            var output = data.Partials != null ? stubble.Compile(data.Template, data.Data, data.Partials, settings) : stubble.Compile(data.Template, data.Data, settings);
 
             var outputResult = output(data.Data);
 
@@ -37,9 +37,11 @@ namespace Stubble.Compilation.Tests
         public async Task CompilationRendererSpecTest_Async(SpecTest data)
         {
             OutputStream.WriteLine(data.Name);
+            var settings = CompilationSettings.GetDefaultRenderSettings();
+            settings.CultureInfo = data.CultureInfo ?? settings.CultureInfo;
 
-            var stubble = new StubbleCompilationRenderer(Settings);
-            var output = await (data.Partials != null ? stubble.CompileAsync(data.Template, data.Data, data.Partials) : stubble.CompileAsync(data.Template, data.Data));
+            var stubble = new StubbleCompilationRenderer();
+            var output = await (data.Partials != null ? stubble.CompileAsync(data.Template, data.Data, data.Partials, settings) : stubble.CompileAsync(data.Template, data.Data, settings));
 
             var outputResult = output(data.Data);
 

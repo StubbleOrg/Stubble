@@ -5,7 +5,6 @@
 
 using System;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Stubble.Compilation.Contexts;
@@ -20,6 +19,8 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
     /// </summary>
     public class InterpolationTokenRenderer : ExpressionObjectRenderer<InterpolationToken>
     {
+        private static Type[] formatProviderTypeArgs = new[] { typeof(IFormatProvider) };
+
         /// <inheritdoc/>
         protected override void Write(CompilationRenderer renderer, InterpolationToken obj, CompilerContext context)
         {
@@ -29,13 +30,24 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
 
             if (!context.CompilationSettings.SkipHtmlEncoding && obj.EscapeResult && expression != null)
             {
-                var isValueType = expression.Type.GetIsValueType();
+                Expression stringExpression;
+                if (expression.Type == typeof(string))
+                {
+                    stringExpression = expression;
+                }
+                else
+                {
+                    var formattedToString = expression.Type
+                        .GetMethod(nameof(object.ToString), formatProviderTypeArgs);
 
-                var stringExpression = expression.Type == typeof(string)
-                    ? expression
-                    : Expression.Call(
-                        isValueType ? expression : Expression.Coalesce(expression, Expression.Constant(string.Empty)),
-                        expression.Type.GetMethod("ToString", Type.EmptyTypes));
+                    var item = expression.Type.GetIsValueType()
+                        ? expression
+                        : Expression.Coalesce(expression, Expression.Constant(string.Empty));
+
+                    stringExpression = formattedToString is object
+                        ? Expression.Call(item, formattedToString, Expression.Constant(context.CompilationSettings.CultureInfo))
+                        : Expression.Call(item, expression.Type.GetMethod(nameof(object.ToString), Type.EmptyTypes));
+                }
 
                 expression = Expression.Invoke(context.CompilerSettings.EncodingFuction, stringExpression);
             }

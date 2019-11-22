@@ -4,7 +4,7 @@
 // </copyright>
 
 using System;
-using System.Net;
+using System.Globalization;
 using System.Threading.Tasks;
 using Stubble.Core.Contexts;
 using Stubble.Core.Tokens;
@@ -16,6 +16,22 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
     /// </summary>
     public class InterpolationTokenRenderer : StringObjectRenderer<InterpolationToken>
     {
+        /// <summary>
+        /// Renders the value to string using a locale.
+        /// </summary>
+        /// <param name="obj">The object to convert</param>
+        /// <param name="culture">The culture to use</param>
+        /// <returns>The object stringified into the locale</returns>
+        protected static string ConvertToStringInCulture(object obj, CultureInfo culture)
+        {
+            if (obj is null || obj is string)
+            {
+                return obj as string;
+            }
+
+            return Convert.ToString(obj, culture);
+        }
+
         /// <inheritdoc/>
         protected override void Write(StringRender renderer, InterpolationToken obj, Context context)
         {
@@ -27,7 +43,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
             if (functionValueDynamic != null || functionValue != null)
             {
                 object functionResult = functionValueDynamic != null ? functionValueDynamic.Invoke(context.View) : functionValue.Invoke();
-                var resultString = functionResult.ToString();
+                var resultString = ConvertToStringInCulture(functionResult, context.RenderSettings.CultureInfo);
                 if (resultString.Contains("{{"))
                 {
                     renderer.Render(context.RendererSettings.Parser.Parse(resultString), context);
@@ -39,7 +55,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
 
             if (!context.RenderSettings.SkipHtmlEncoding && obj.EscapeResult && value != null)
             {
-                value = context.RendererSettings.EncodingFuction(value.ToString());
+                value = context.RendererSettings.EncodingFuction(ConvertToStringInCulture(value, context.RenderSettings.CultureInfo));
             }
 
             if (obj.Indent > 0)
@@ -47,7 +63,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                 renderer.Write(' ', obj.Indent);
             }
 
-            renderer.Write(value?.ToString());
+            renderer.Write(ConvertToStringInCulture(value, context.RenderSettings.CultureInfo));
         }
 
         /// <inheritdoc/>
@@ -61,7 +77,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
             if (functionValueDynamic != null || functionValue != null)
             {
                 object functionResult = functionValueDynamic != null ? functionValueDynamic.Invoke(context.View) : functionValue.Invoke();
-                var resultString = functionResult.ToString();
+                var resultString = ConvertToStringInCulture(functionResult, context.RenderSettings.CultureInfo);
                 if (resultString.Contains("{{"))
                 {
                     await renderer.RenderAsync(context.RendererSettings.Parser.Parse(resultString), context);
@@ -73,7 +89,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
 
             if (!context.RenderSettings.SkipHtmlEncoding && obj.EscapeResult && value != null)
             {
-                value = context.RendererSettings.EncodingFuction(value.ToString());
+                value = context.RendererSettings.EncodingFuction(ConvertToStringInCulture(value, context.RenderSettings.CultureInfo));
             }
 
             if (obj.Indent > 0)
@@ -81,7 +97,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                 renderer.Write(' ', obj.Indent);
             }
 
-            renderer.Write(value?.ToString());
+            renderer.Write(ConvertToStringInCulture(value, context.RenderSettings.CultureInfo));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Stubble.Test.Shared.Spec
@@ -93,6 +94,14 @@ namespace Stubble.Test.Shared.Spec
                 Data = new { power = 1.21, },
                 Template = @"""{{&power}} jiggawatts!""",
                 Expected = @"""1.21 jiggawatts!"""
+            },
+            new SpecTest {
+                Name = @"Culture-specific Decimal Interpolation",
+                Desc = @"Decimals should interpolate seamlessly with proper significance.",
+                Data = new { power = 1.21, },
+                CultureInfo = CultureInfo.GetCultureInfo("ru-RU"),
+                Template = @"""{{power}} jiggawatts!""",
+                Expected = @"""1,21 jiggawatts!"""
             },
             new SpecTest {
                 Name = @"Basic Context Miss Interpolation",

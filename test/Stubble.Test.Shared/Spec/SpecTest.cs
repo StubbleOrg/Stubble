@@ -6,6 +6,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Xunit.Abstractions;
 
 namespace Stubble.Test.Shared.Spec
@@ -27,5 +28,7 @@ namespace Stubble.Test.Shared.Spec
         public IDictionary<string, string> Partials { get; set; }
 
         public Exception ExpectedException { get; set; }
+
+        public CultureInfo CultureInfo { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Stubble.Test.Shared.Spec;
 using System.Threading.Tasks;
+using Stubble.Core.Settings;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -18,9 +19,12 @@ namespace Stubble.Core.Tests
         [MemberData(nameof(Specs.SpecTestsWithLambda), MemberType = typeof(Specs))]
         public void StringRendererSpecTest(SpecTest data)
         {
+            var settings = RenderSettings.GetDefaultRenderSettings();
+            settings.CultureInfo = data.CultureInfo ?? settings.CultureInfo;
+
             OutputStream.WriteLine(data.Name);
             var stubble = new StubbleVisitorRenderer();
-            var output = data.Partials != null ? stubble.Render(data.Template, data.Data, data.Partials) : stubble.Render(data.Template, data.Data);
+            var output = data.Partials != null ? stubble.Render(data.Template, data.Data, data.Partials, settings) : stubble.Render(data.Template, data.Data, settings);
 
             OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.Expected, output);
             Assert.Equal(data.Expected, output);
@@ -30,9 +34,12 @@ namespace Stubble.Core.Tests
         [MemberData(nameof(Specs.SpecTestsWithLambda), MemberType = typeof(Specs))]
         public async Task StringRendererSpecTest_Async(SpecTest data)
         {
+            var settings = RenderSettings.GetDefaultRenderSettings();
+            settings.CultureInfo = data.CultureInfo ?? settings.CultureInfo;
+
             OutputStream.WriteLine(data.Name);
             var stubble = new StubbleVisitorRenderer();
-            var output = await (data.Partials != null ? stubble.RenderAsync(data.Template, data.Data, data.Partials) : stubble.RenderAsync(data.Template, data.Data));
+            var output = await (data.Partials != null ? stubble.RenderAsync(data.Template, data.Data, data.Partials, settings) : stubble.RenderAsync(data.Template, data.Data, settings));
 
             OutputStream.WriteLine("Expected \"{0}\", Actual \"{1}\"", data.Expected, output);
             Assert.Equal(data.Expected, output);
