@@ -30,9 +30,9 @@ namespace Stubble.Core.Settings
         public bool SkipHtmlEncoding { get; set; }
 
         /// <summary>
-        /// CultureInfo to use for rendering format-dependent values (doubles, etc.).
+        /// Gets or sets the CultureInfo to use for rendering format-dependent values (doubles, etc.).
         /// </summary>
-        public CultureInfo CultureInfo { get; set; }
+        public CultureInfo CultureInfo { get; set; } = CultureInfo.InvariantCulture;
 
         /// <summary>
         /// Gets the default render settings
