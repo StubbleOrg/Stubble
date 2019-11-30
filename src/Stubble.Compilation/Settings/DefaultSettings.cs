@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Stubble.Compilation.Contexts;
 using Stubble.Compilation.Renderers.TokenRenderers;
+using Stubble.Core.Exceptions;
 using Stubble.Core.Helpers;
 using Stubble.Core.Renderers.Interfaces;
 
@@ -127,14 +128,17 @@ namespace Stubble.Compilation.Settings
 
                         if (member.Length > 0)
                         {
-                            var info = member[0];
-                            if (!ignoreCase && !info.Name.Equals(key, StringComparison.Ordinal))
+                            if (member.Length > 1)
                             {
-                                return null;
+                                throw new StubbleAmbigousMatchException($"Ambiguous match found when looking up key: '{key}'");
                             }
 
-                            var expression = ReflectionHelper.GetExpressionFromMemberInfo(info, instance);
-                            return expression;
+                            var info = member[0];
+                            if (ignoreCase || info.Name == key)
+                            {
+                                var expression = ReflectionHelper.GetExpressionFromMemberInfo(info, instance);
+                                return expression;
+                            }
                         }
 
                         return null;
