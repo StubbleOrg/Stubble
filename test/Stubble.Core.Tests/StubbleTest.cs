@@ -483,5 +483,20 @@ namespace Stubble.Core.Tests
             var result = stubble.Render("{{#ValueRender}}{{/ValueRender}}", obj);
             Assert.Equal("A is Cool", result);
         }
+
+        [Fact]
+        public void It_Should_Throw_When_Ambiguous_Match()
+        {
+            var stubble = new StubbleBuilder()
+                .Configure(settings =>
+                {
+                    settings.SetIgnoreCaseOnKeyLookup(true);
+                })
+                .Build();
+
+            var ex = Assert.Throws<StubbleAmbigousMatchException>(() => stubble.Render("{{name}}", new { Name = "foo", name = "bar" }));
+
+            Assert.Equal("Ambiguous match found when looking up key: 'name'", ex.Message);
+        }
     }
 }
