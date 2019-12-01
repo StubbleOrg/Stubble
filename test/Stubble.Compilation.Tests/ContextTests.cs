@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Linq.Expressions;
 using Stubble.Compilation.Settings;
 using Xunit;
-using System.Linq;
 
 namespace Stubble.Compilation.Tests
 {
     public class ContextTests
     {
-        [Fact]
-        public void It_Can_Use_Truthy_Checks()
+        [Theory]
+        [InlineData(10u, "Bar")]
+        [InlineData(0u, "")]
+        public void It_Can_Use_Truthy_Checks(uint fooValue, string expectedResult)
         {
             var builder = new CompilerSettingsBuilder();
 
@@ -20,18 +22,13 @@ namespace Stubble.Compilation.Tests
 
             var obj = new
             {
-                Foo = (uint)10,
+                Foo = fooValue,
                 Bar = "Bar"
             };
 
             var func = stubble.Compile("{{#Foo}}{{Bar}}{{/Foo}}", obj);
 
-            Assert.Equal("Bar", func(obj));
-            Assert.Equal("", func(new
-            {
-                Foo = (uint)0,
-                Bar = "Boo"
-            }));
+            Assert.Equal(expectedResult, func(obj));
         }
 
         [Fact]
@@ -52,8 +49,15 @@ namespace Stubble.Compilation.Tests
             Assert.Equal("", func2(input));
         }
 
-        [Fact]
-        public void CompilationRenderer_ItShouldAllowMultipleTruthyChecks()
+        [Theory]
+        [InlineData("Bar", "")]
+        [InlineData("Boo", "")]
+        [InlineData("false", "")]
+        [InlineData("0", "")]
+        [InlineData(null, "")]
+        [InlineData("true", "Hello World")]
+        [InlineData("1", "Hello World")]
+        public void CompilationRenderer_ItShouldAllowMultipleTruthyChecks(string fooValue, string result)
         {
             var builder = new CompilerSettingsBuilder();
 
@@ -70,24 +74,13 @@ namespace Stubble.Compilation.Tests
 
             var func = stubble.Compile("{{#Foo}}{{Bar}}{{/Foo}}", obj);
 
-            Assert.Equal("", func(obj));
-            Assert.Equal("", func(new
+            var renderResult = func(new
             {
-                Foo = "Boo",
-                Bar = "Display Me"
-            }));
+                Foo = fooValue,
+                Bar = "Hello World"
+            });
 
-            Assert.Equal("", func(new
-            {
-                Foo = "false",
-                Bar = "Display Me"
-            }));
-
-            Assert.Equal("", func(new
-            {
-                Foo = (string)null,
-                Bar = "Display Me"
-            }));
+            Assert.Equal(result, renderResult);
         }
 
         [Fact]
@@ -150,6 +143,37 @@ namespace Stubble.Compilation.Tests
 2 foo.
 3 foo.
 ", func(new { dt = obj }));
+        }
+
+        [Fact]
+        public void It_Should_Not_Render_Falsey_Int() => CheckNoResultForFalseyValue(0);
+
+        [Fact]
+        public void It_Should_Not_Render_Falsey_Long() => CheckNoResultForFalseyValue(0L);
+
+        [Fact]
+        public void It_Should_Not_Render_Falsey_Decimal() => CheckNoResultForFalseyValue(0m);
+
+        [Fact]
+        public void It_Should_Not_Render_Falsey_Float() => CheckNoResultForFalseyValue(0f);
+
+        [Fact]
+        public void It_Should_Not_Render_Falsey_Double() => CheckNoResultForFalseyValue(0d);
+
+        private void CheckNoResultForFalseyValue<T>(T value)
+        {
+            var builder = new CompilerSettingsBuilder();
+            var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
+
+            var obj = new
+            {
+                Val = value
+            };
+
+            var func = stubble.Compile("{{#Val}}Oh Hi{{/Val}}", obj);
+            var result = func(obj);
+
+            Assert.Equal("", result);
         }
 
         private class DifficultClass

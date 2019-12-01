@@ -17,6 +17,18 @@ namespace Stubble.Compilation.Helpers
     public static class TypeHelper
     {
         /// <summary>
+        /// A hashset containing all the numeric types
+        /// </summary>
+        public static readonly HashSet<Type> NumericTypes = new HashSet<Type>
+        {
+            typeof(int),
+            typeof(long),
+            typeof(decimal),
+            typeof(float),
+            typeof(double)
+        };
+
+        /// <summary>
         /// Returns the T of an <see cref="IEnumerable{T}"/> type
         /// </summary>
         /// <param name="type">The generic type to get the value from</param>
