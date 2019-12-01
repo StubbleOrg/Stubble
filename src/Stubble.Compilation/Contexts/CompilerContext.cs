@@ -14,6 +14,7 @@ using Stubble.Compilation.Settings;
 using Stubble.Core.Contexts;
 using Stubble.Core.Exceptions;
 using Stubble.Core.Interfaces;
+using static Stubble.Compilation.Helpers.ExpressionConstants;
 
 namespace Stubble.Compilation.Contexts
 {
@@ -196,48 +197,57 @@ namespace Stubble.Compilation.Contexts
         /// <returns>An expression checking for truthyness</returns>
         public Expression GetTruthyExpression(Expression value)
         {
-            var checks = new List<Expression>();
+            var parameter = Expression.Parameter(value.Type, "checkThis");
+            var checks = new List<Tuple<Expression, ConstantExpression>>();
 
-            if (!value.Type.GetIsValueType())
+            if (!parameter.Type.GetIsValueType())
             {
-                checks.Add(Expression.NotEqual(value, Expression.Constant(null)));
+                checks.Add(Tuple.Create<Expression, ConstantExpression>(Expression.Equal(parameter, Expression.Constant(null)), FalseConstant));
             }
 
-            if (CompilerSettings.TruthyChecks.TryGetValue(value.Type, out var typeTruthyChecks))
+            if (CompilerSettings.TruthyChecks.TryGetValue(parameter.Type, out var typeTruthyChecks))
             {
-                checks.AddRange(typeTruthyChecks.Select(c => Expression.Invoke(c, value)));
+                checks.AddRange(typeTruthyChecks.Select(c => Tuple.Create<Expression, ConstantExpression>(Expression.Equal(Expression.Invoke(c, parameter), FalseConstant), FalseConstant)));
             }
 
-            if (value.Type == typeof(bool))
+            if (parameter.Type == typeof(bool))
             {
-                checks.Add(value);
+                checks.Add(Tuple.Create<Expression, ConstantExpression>(Expression.Equal(parameter, FalseConstant), FalseConstant));
             }
-            else if (value.Type == typeof(string))
+            else if (TypeHelper.NumericTypes.Contains(parameter.Type))
             {
-                checks.AddRange(new Expression[]
+                var zeroInType = Convert.ChangeType(0, parameter.Type);
+
+                checks.Add(Tuple.Create<Expression, ConstantExpression>(Expression.Equal(parameter, Expression.Constant(zeroInType)), FalseConstant));
+            }
+            else if (parameter.Type == typeof(string))
+            {
+                checks.AddRange(new[]
                 {
-                    Expression.Equal(value, Expression.Constant("1")),
-                    Expression.Call(value, MethodInfos.Instance.StringEqualWithComparison, Expression.Constant("true"), Expression.Constant(StringComparison.OrdinalIgnoreCase)),
-                    Expression.Not(Expression.Equal(value, Expression.Constant("0"))),
-                    Expression.Not(Expression.Call(value, MethodInfos.Instance.StringEqualWithComparison, Expression.Constant("false"), Expression.Constant(StringComparison.OrdinalIgnoreCase))),
-                    Expression.Not(Expression.Call(null, MethodInfos.Instance.StringIsNullOrWhitespace, value))
+                    Tuple.Create<Expression, ConstantExpression>(Expression.Equal(parameter, Expression.Constant("1")), TrueConstant),
+                    Tuple.Create<Expression, ConstantExpression>(Expression.Call(parameter, MethodInfos.Instance.StringEqualWithComparison, Expression.Constant("true"), Expression.Constant(StringComparison.OrdinalIgnoreCase)), TrueConstant),
+                    Tuple.Create<Expression, ConstantExpression>(Expression.Equal(parameter, Expression.Constant("0")), FalseConstant),
+                    Tuple.Create<Expression, ConstantExpression>(Expression.Call(parameter, MethodInfos.Instance.StringEqualWithComparison, Expression.Constant("false"), Expression.Constant(StringComparison.OrdinalIgnoreCase)), FalseConstant),
+                    Tuple.Create<Expression, ConstantExpression>(Expression.Call(null, MethodInfos.Instance.StringIsNullOrWhitespace, parameter), FalseConstant)
                 });
             }
-            else if (typeof(IEnumerable).IsAssignableFrom(value.Type))
+            else if (typeof(IEnumerable).IsAssignableFrom(parameter.Type))
             {
-                checks.Add(Expression.Call(Expression.Call(value, MethodInfos.Instance.GetEnumerator), MethodInfos.Instance.MoveNext));
+                checks.Add(Tuple.Create<Expression, ConstantExpression>(Expression.Equal(Expression.Call(Expression.Call(parameter, MethodInfos.Instance.GetEnumerator), MethodInfos.Instance.MoveNext), FalseConstant), FalseConstant));
             }
 
             if (checks.Count == 0)
             {
                 return null;
             }
-            else if (checks.Count == 1)
-            {
-                return checks[0];
-            }
 
-            return checks.Skip(1).Aggregate(checks[0], (Expression agg, Expression ex) => Expression.AndAlso(agg, ex));
+            var returnTarget = Expression.Label(typeof(bool));
+            var allChecks = checks.Select(check => (Expression)Expression.IfThen(check.Item1, Expression.Return(returnTarget, check.Item2)))
+                .Concat(new[] { Expression.Label(returnTarget, Expression.Constant(true)) });
+
+            var lambda = Expression.Lambda(Expression.Block(allChecks), parameter);
+
+            return Expression.Invoke(lambda, value);
         }
 
         /// <summary>
