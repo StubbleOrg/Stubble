@@ -385,6 +385,21 @@ namespace Stubble.Compilation.Tests
                 .Build();
         }
 
+        [Fact]
+        public void It_Should_Throw_When_Ambiguous_Match()
+        {
+            var stubble = new StubbleCompilationBuilder()
+                .Configure(settings =>
+                {
+                    settings.SetIgnoreCaseOnKeyLookup(true);
+                })
+                .Build();
+
+            var ex = Assert.Throws<StubbleAmbigousMatchException>(() => stubble.Compile("{{name}}", new { Name = "foo", name = "bar" }));
+
+            Assert.Equal("Ambiguous match found when looking up key: 'name'", ex.Message);
+        }
+
         public static IEnumerable<object[]> Data => new List<SpecTest>
         {
             new SpecTest

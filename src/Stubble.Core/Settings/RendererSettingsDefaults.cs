@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using Stubble.Core.Contexts;
+using Stubble.Core.Exceptions;
 using Stubble.Core.Helpers;
 using Stubble.Core.Renderers.Interfaces;
 using Stubble.Core.Renderers.StringRenderer.TokenRenderers;
@@ -137,6 +138,8 @@ namespace Stubble.Core.Settings
             if (!GettersCache.TryGetValue(objectType, out var typeLookup))
             {
                 var memberLookup = ReflectionHelper.GetMemberFunctionLookup(objectType);
+                CheckKeyDistinct(memberLookup.Keys, key);
+
                 var noCase =
                     new Dictionary<string, Lazy<Func<object, object>>>(memberLookup, StringComparer.OrdinalIgnoreCase);
                 typeLookup = Tuple.Create(memberLookup, noCase);
@@ -147,6 +150,24 @@ namespace Stubble.Core.Settings
             var lookup = ignoreCase ? typeLookup.Item2 : typeLookup.Item1;
 
             return lookup.TryGetValue(key, out var outValue) ? outValue.Value(value) : null;
+        }
+
+        private static void CheckKeyDistinct(Dictionary<string, Lazy<Func<object, object>>>.KeyCollection keys, string key)
+        {
+            var count = 0;
+
+            foreach (var item in keys)
+            {
+                if (item.Equals(key, StringComparison.OrdinalIgnoreCase))
+                {
+                    count++;
+                }
+
+                if (count > 1)
+                {
+                    throw new StubbleAmbigousMatchException($"Ambiguous match found when looking up key: '{key}'");
+                }
+            }
         }
     }
 }
