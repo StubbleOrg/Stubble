@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Stubble.Core.Contexts;
+using Stubble.Core.Exceptions;
 using Stubble.Core.Tokens;
 
 namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
@@ -21,10 +22,14 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
     {
         private static readonly HashSet<Type> LambdaTypes = new HashSet<Type>
         {
+            typeof(Func<dynamic, string, Task<object>>),
             typeof(Func<dynamic, string, object>),
+            typeof(Func<string, Task<object>>),
             typeof(Func<string, object>),
             typeof(Func<dynamic, string, Func<string, string>, object>),
-            typeof(Func<string, Func<string, string>, object>)
+            typeof(Func<dynamic, string, Func<string, Task<string>>, Task<object>>),
+            typeof(Func<string, Func<string, string>, object>),
+            typeof(Func<string, Func<string, Task<string>>, Task<object>>),
         };
 
         /// <inheritdoc/>
@@ -62,6 +67,11 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
 
                 switch (value)
                 {
+                    case Func<string, Task<object>> _:
+                    case Func<dynamic, string, Task<object>> _:
+                    case Func<dynamic, string, Func<string, Task<string>>, Task<object>> _:
+                    case Func<string, Func<string, Task<string>>, Task<object>> _:
+                        throw new StubbleException("Async lambdas are not allowed in non-async template rendering");
                     case Func<dynamic, string, object> func:
                         value = func(context.View, sectionContent);
                         break;
@@ -120,14 +130,26 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
 
                 switch (value)
                 {
+                    case Func<dynamic, string, Task<object>> func:
+                        value = await func(context.View, sectionContent).ConfigureAwait(false);
+                        break;
                     case Func<dynamic, string, object> func:
                         value = func(context.View, sectionContent);
+                        break;
+                    case Func<string, Task<object>> func:
+                        value = await func(sectionContent).ConfigureAwait(false);
                         break;
                     case Func<string, object> func:
                         value = func(sectionContent);
                         break;
+                    case Func<dynamic, string, Func<string, Task<string>>, Task<object>> func:
+                        value = await func(context.View, sectionContent, RenderInContextAsync(context, obj.Tags)).ConfigureAwait(false);
+                        break;
                     case Func<dynamic, string, Func<string, string>, object> func:
                         value = func(context.View, sectionContent, RenderInContext(context, obj.Tags));
+                        break;
+                    case Func<string, Func<string, Task<string>>, Task<object>> func:
+                        value = await func(sectionContent, RenderInContextAsync(context, obj.Tags)).ConfigureAwait(false);
                         break;
                     case Func<string, Func<string, string>, object> func:
                         value = func(sectionContent, RenderInContext(context, obj.Tags));
@@ -152,15 +174,32 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                     return str;
                 }
 
-                using (var writer = new StringWriter())
+                using var writer = new StringWriter();
+                var blockRenderer = new StringRender(writer, context.RendererSettings.RendererPipeline);
+                var parsed = context.RendererSettings.Parser.Parse(str, tags);
+
+                blockRenderer.Render(parsed, context);
+
+                return writer.ToString();
+            };
+        }
+
+        private Func<string, Task<string>> RenderInContextAsync(Context context, Classes.Tags tags)
+        {
+            return async (str) =>
+            {
+                if (!str.Contains(tags.StartTag))
                 {
-                    var blockRenderer = new StringRender(writer, context.RendererSettings.RendererPipeline);
-                    var parsed = context.RendererSettings.Parser.Parse(str, tags);
-
-                    blockRenderer.Render(parsed, context);
-
-                    return writer.ToString();
+                    return str;
                 }
+
+                using var writer = new StringWriter();
+                var blockRenderer = new StringRender(writer, context.RendererSettings.RendererPipeline);
+                var parsed = context.RendererSettings.Parser.Parse(str, tags);
+
+                await blockRenderer.RenderAsync(parsed, context).ConfigureAwait(false);
+
+                return writer.ToString();
             };
         }
     }

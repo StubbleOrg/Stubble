@@ -498,5 +498,25 @@ namespace Stubble.Core.Tests
 
             Assert.Equal("Ambiguous match found when looking up key: 'name'", ex.Message);
         }
+
+        [Theory]
+        [MemberData(nameof(AsyncLambdaObjects))]
+        public void It_Should_Throw_For_Async_Lambdas_In_Sync_Context(object context)
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var ex = Assert.Throws<StubbleException>(() => stubble.Render("{{#Lambda}}{{/Lambda}}", context));
+
+            Assert.Equal("Async lambdas are not allowed in non-async template rendering", ex.Message);
+        }
+
+        public static IEnumerable<object[]> AsyncLambdaObjects()
+        {
+            yield return new[] { new { Lambda = new Func<string, Task<object>>(async (string str) => str.ToLower()) } };
+            yield return new[] { new { Lambda = new Func<dynamic, string, Task<object>>(async (ctx, str) => str.ToLower()) } };
+            yield return new[] { new { Lambda = new Func<dynamic, string, Func<string, Task<string>>, Task<object>>(async (ctx, str, renderFunc) => str.ToLower()) } };
+            yield return new[] { new { Lambda = new Func<string, Func<string, Task<string>>, Task<object>>(async (str, renderFunc) => str.ToLower()) } };
+        }
     }
 }
