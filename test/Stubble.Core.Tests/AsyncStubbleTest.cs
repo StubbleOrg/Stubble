@@ -206,5 +206,73 @@ namespace Stubble.Core.Tests
             var result = await stubble.RenderAsync("{{#ValueRender}}{{/ValueRender}}", obj);
             Assert.Equal("A is Cool", result);
         }
+
+        [Fact]
+        public async Task It_Should_Allow_Async_Lambda_Method_Without_Context_In_Async_Renderer()
+        {
+            var stubble = new StubbleVisitorRenderer();
+
+            var output = await stubble.RenderAsync("{{#TestMethodAsync}}Hello World!{{/TestMethodAsync}}", new {
+                TestMethodAsync = new Func<string, Task<object>>(async str =>
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(100));
+                    return str.ToLower();
+                }),
+            });
+
+            Assert.Equal("hello world!", output);
+        }
+
+        [Fact]
+        public async Task It_Should_Allow_Async_Lambda_Method_With_Context_In_Async_Renderer()
+        {
+            var stubble = new StubbleVisitorRenderer();
+
+            var output = await stubble.RenderAsync("{{#TestMethodAsync}}Hello World!{{/TestMethodAsync}}", new
+            {
+                TestMethodAsync = new Func<dynamic, string, Task<object>>(async (ctx, str) =>
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(100));
+                    return str.ToLower();
+                }),
+            });
+
+            Assert.Equal("hello world!", output);
+        }
+
+        [Fact]
+        public async Task It_Should_Allow_Async_Lambda_Method_WithRenderFunction_Without_Context_In_Async_Renderer()
+        {
+            var stubble = new StubbleVisitorRenderer();
+
+            var output = await stubble.RenderAsync("{{#TestMethodAsync}}Hello World!{{/TestMethodAsync}}", new
+            {
+                Foo = "Foo",
+                TestMethodAsync = new Func<string, Func<string, Task<string>>, Task<object>>(async (str, renderFunc) =>
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(100));
+                    return (await renderFunc(str)).ToLower();
+                }),
+            });
+
+            Assert.Equal("hello world!", output);
+        }
+
+        [Fact]
+        public async Task It_Should_Allow_Async_Lambda_Method_WithRenderFunction_With_Context_In_Async_Renderer()
+        {
+            var stubble = new StubbleVisitorRenderer();
+
+            var output = await stubble.RenderAsync("{{#TestMethodAsync}}Hello World!{{/TestMethodAsync}}", new
+            {
+                TestMethodAsync = new Func<dynamic, string, Func<string, Task<string>>, Task<object>>(async (ctx, str, renderFunc) =>
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(100));
+                    return (await renderFunc(str)).ToLower();
+                }),
+            });
+
+            Assert.Equal("hello world!", output);
+        }
     }
 }

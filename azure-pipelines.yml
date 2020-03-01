@@ -15,9 +15,15 @@ jobs:
   steps:
     - checkout: self
       submodules: true
-    - task: PowerShell@2
+    - task: DotNetCoreCLI@2
       inputs:
-        filePath: 'build.ps1'
+        command: 'custom'
+        custom: 'tool'
+        arguments: 'restore'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'custom'
+        custom: 'cake'
       env:
         CODECOV_REPO_TOKEN: $(CODECOV_REPO_TOKEN)
     - task: PublishTestResults@2
@@ -40,13 +46,23 @@ jobs:
 
 - job: macOS
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: 'macOS-latest'
   steps:
     - checkout: self
       submodules: true
-    - task: Bash@3
+    - task: UseDotNet@2
       inputs:
-        filePath: 'build.sh'
+        packageType: 'sdk'
+        version: '3.0.102'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'custom'
+        custom: 'tool'
+        arguments: 'restore'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'custom'
+        custom: 'cake'
     - task: PublishTestResults@2
       condition: succeededOrFailed()
       inputs:
@@ -59,16 +75,22 @@ jobs:
       inputs:
         codeCoverageTool: 'Cobertura'
         summaryFileLocation: 'coverage-results/*.cobertura.xml'
-        
+
 - job: Linux
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-18.04'
   steps:
     - checkout: self
       submodules: true
-    - task: Bash@3
+    - task: DotNetCoreCLI@2
       inputs:
-        filePath: 'build.sh'
+        command: 'custom'
+        custom: 'tool'
+        arguments: 'restore'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'custom'
+        custom: 'cake'
     - task: PublishTestResults@2
       condition: succeededOrFailed()
       inputs:
