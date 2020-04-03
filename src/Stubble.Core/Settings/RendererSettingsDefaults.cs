@@ -8,6 +8,13 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+
+using Microsoft.CSharp.RuntimeBinder;
+
+using Stubble.Core.Classes;
 using Stubble.Core.Contexts;
 using Stubble.Core.Exceptions;
 using Stubble.Core.Helpers;
@@ -26,6 +33,15 @@ namespace Stubble.Core.Settings
             =
             new ConcurrentDictionary<Type, Tuple<Dictionary<string, Lazy<Func<object, object>>>,
                 Dictionary<string, Lazy<Func<object, object>>>>>();
+
+        private static readonly LimitedSizeConcurrentDictionary<Tuple<object, string>, CallSite<Func<CallSite, object, object>>>
+            DynamicCallSiteCache
+            = new LimitedSizeConcurrentDictionary<Tuple<object, string>, CallSite<Func<CallSite, object, object>>>(15);
+
+        private static readonly CSharpArgumentInfo[] EmptyCSharpArgumentInfo =
+        {
+            CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null)
+        };
 
         /// <summary>
         /// Delegate type for value getters
@@ -82,22 +98,7 @@ namespace Stubble.Core.Settings
                 },
                 {
                     typeof(IDynamicMetaObjectProvider),
-                    (value, key, ignoreCase) =>
-                    {
-                        if (value is IDictionary<string, object> cast)
-                        {
-                            var caseBound = ignoreCase
-                                ? new Dictionary<string, object>(cast, StringComparer.OrdinalIgnoreCase)
-                                : cast;
-
-                            if (caseBound.TryGetValue(key, out var val))
-                            {
-                                return val;
-                            }
-                        }
-
-                        return null;
-                    }
+                    GetValueFromDynamicByName
                 },
                 {
                     typeof(object),
@@ -131,6 +132,62 @@ namespace Stubble.Core.Settings
             typeof(IDictionary),
             typeof(string)
         };
+
+        private static object GetValueFromDynamicByName(object value, string key, bool ignoreCase)
+        {
+            // First try to access the value through IDictionary. This is fast and will take care of ExpandoObject.
+            if (value is IDictionary<string, object> cast)
+            {
+                var caseBound = ignoreCase
+                    ? new Dictionary<string, object>(cast, StringComparer.OrdinalIgnoreCase)
+                    : cast;
+
+                if (caseBound.TryGetValue(key, out var val))
+                {
+                    return val;
+                }
+            }
+
+            // The value implements IDynamicMetaObjectProvider but isn't an ExpandoObject. Resolve the member using
+            // the CallSite API.
+            if (value is IDynamicMetaObjectProvider dynamicMetaObjectProvider)
+            {
+                // Can't really cache MetaObjects or member names because these objects are dynamic and
+                // those values could theoretically change from call to call.
+                var metaObject = dynamicMetaObjectProvider
+                    .GetMetaObject(Expression.Constant(dynamicMetaObjectProvider));
+
+                var stringComparison = ignoreCase
+                    ? StringComparison.InvariantCultureIgnoreCase
+                    : StringComparison.InvariantCulture;
+
+                var casedKey = metaObject
+                    .GetDynamicMemberNames()
+                    .FirstOrDefault(memberName => key.Equals(memberName, stringComparison));
+
+                if (casedKey == null)
+                {
+                    return null;
+                }
+
+                var callSite = DynamicCallSiteCache.GetOrAdd(
+                    Tuple.Create(value, casedKey),
+                    _ =>
+                    {
+                        var binder = Binder.GetMember(
+                            CSharpBinderFlags.None,
+                            casedKey,
+                            typeof(RendererSettingsDefaults),
+                            EmptyCSharpArgumentInfo);
+
+                        return CallSite<Func<CallSite, object, object>>.Create(binder);
+                    });
+
+                return callSite.Target(callSite, dynamicMetaObjectProvider);
+            }
+
+            return null;
+        }
 
         private static object GetValueFromObjectByName(object value, string key, bool ignoreCase)
         {
