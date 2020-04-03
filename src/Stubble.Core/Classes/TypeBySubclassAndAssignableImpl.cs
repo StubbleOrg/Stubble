@@ -13,6 +13,8 @@ namespace Stubble.Core.Classes
     /// </summary>
     internal class TypeBySubclassAndAssignableImpl : Comparer<Type>
     {
+        private static readonly Type s_objectType = typeof(object);
+
         /// <summary>
         /// Returns an instance of TypeBySubclassAndAssignable Comparer for Type.
         /// </summary>
@@ -50,6 +52,16 @@ namespace Stubble.Core.Classes
             if (x == y)
             {
                 return 0;
+            }
+
+            if (x == s_objectType)
+            {
+                return 1;
+            }
+
+            if (y == s_objectType)
+            {
+                return 1;
             }
 
             var result = 0;

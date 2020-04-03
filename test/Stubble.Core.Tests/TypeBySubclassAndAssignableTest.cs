@@ -124,6 +124,27 @@ namespace Stubble.Core.Tests
             Assert.True(jArrayIndex < iListIndex);
         }
 
+        [Fact]
+        public void Object_Should_Be_Put_At_Last()
+        {
+            var list = new List<Type>
+            {
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+                typeof(JArray),
+                typeof(object),
+            };
+
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
+
+            var jArrayIndex = orderedList.IndexOf(typeof(JArray));
+            var iListIndex = orderedList.IndexOf(typeof(IList));
+            var iDictionaryIndex= orderedList.IndexOf(typeof(IDictionary));
+            var objectIndex = orderedList.IndexOf(typeof(object));
+
+            Assert.Equal((new[] { jArrayIndex, iListIndex, iDictionaryIndex, objectIndex }).Max(), objectIndex);
+        }
+
         private class A
         {
             public string PropertyA { get; set; }
