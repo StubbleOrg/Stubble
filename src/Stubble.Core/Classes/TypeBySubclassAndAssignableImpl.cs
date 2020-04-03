@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Stubble.Core.Classes
 {
@@ -69,6 +68,14 @@ namespace Stubble.Core.Classes
             else if (y.IsAssignableFrom(x))
             {
                 result = -1;
+            }
+            else if (!x.IsInterface && y.IsInterface)
+            {
+                result = -1;
+            }
+            else if (x.IsInterface && !y.IsInterface)
+            {
+                result = 1;
             }
 
             return result;

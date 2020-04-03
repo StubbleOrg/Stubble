@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using Stubble.Core.Classes;
 using Xunit;
 
@@ -87,6 +88,42 @@ namespace Stubble.Core.Tests
             Assert.Equal(-1, comparer.Compare(typeof(string), null));
         }
 
+        [Fact]
+        public void NonInterface_Should_Come_Before_Interface()
+        {
+            var list = new List<Type>
+            {
+                typeof(JArray),
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+            };
+
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
+
+            var jArrayIndex = orderedList.IndexOf(typeof(JArray));
+            var iListIndex = orderedList.IndexOf(typeof(IList));
+
+            Assert.True(jArrayIndex < iListIndex);
+        }
+
+        [Fact]
+        public void NonInterface_Should_Come_Before_Interface_Regardless_Of_Order()
+        {
+            var list = new List<Type>
+            {
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+                typeof(JArray),
+            };
+
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
+
+            var jArrayIndex = orderedList.IndexOf(typeof(JArray));
+            var iListIndex = orderedList.IndexOf(typeof(IList));
+
+            Assert.True(jArrayIndex < iListIndex);
+        }
+
         private class A
         {
             public string PropertyA { get; set; }
@@ -98,3 +135,4 @@ namespace Stubble.Core.Tests
         }
     }
 }
+
