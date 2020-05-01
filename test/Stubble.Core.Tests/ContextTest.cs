@@ -112,7 +112,7 @@ namespace Stubble.Core.Tests
         }
 
         [Fact]
-        public void It_Can_Retrieve_Values_From_Dynamic()
+        public void It_Can_Retrieve_Values_From_Dynamic_As_Dictionary()
         {
             dynamic input = new ExpandoObject();
             input.Foo = "Bar";
@@ -127,6 +127,26 @@ namespace Stubble.Core.Tests
             Assert.Equal("Bar", output);
             Assert.Equal(1, output2);
             Assert.Equal("Test", output3);
+        }
+
+        [Fact]
+        public void It_Can_Retrieve_Values_From_Dynamic_As_Interface()
+        {
+            dynamic input = new InterfaceOnlyDynamicTestFixture();
+            input.Foo = "Bar";
+            input.Number = 1;
+            input.Blah = new { String = "Test" };
+
+            var context = new Context(input, new RendererSettingsBuilder().BuildSettings(), RenderSettings.GetDefaultRenderSettings());
+            var output = context.Lookup("Foo");
+            var output2 = context.Lookup("Number");
+            var output3 = context.Lookup("Blah.String");
+            var output4 = context.Lookup("NonexistantProperty");
+
+            Assert.Equal("Bar", output);
+            Assert.Equal(1, output2);
+            Assert.Equal("Test", output3);
+            Assert.Null(output4);
         }
 
         [Fact]

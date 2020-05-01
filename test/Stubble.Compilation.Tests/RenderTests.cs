@@ -128,23 +128,6 @@ namespace Stubble.Compilation.Tests
         }
 
         [Fact]
-        public void It_Can_Retrieve_Values_From_Dynamic_CaseInsensitively()
-        {
-            dynamic input = new ExpandoObject();
-            input.Foo = "Bar";
-            input.Number = 1;
-            input.Blah = new { String = "Test" };
-
-            var builder = new CompilerSettingsBuilder().SetIgnoreCaseOnKeyLookup(true);
-            var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
-
-            var func = stubble.Compile<ExpandoObject>("{{foo}} {{number}}", input);
-
-            var value = func(input);
-            Assert.Equal("Bar 1", value);
-        }
-
-        [Fact]
         public void It_Should_Throw_On_Data_Miss_Based_On_RenderSettings()
         {
             var input = new
@@ -400,6 +383,45 @@ namespace Stubble.Compilation.Tests
             Assert.Equal("Ambiguous match found when looking up key: 'name'", ex.Message);
         }
 
+        [Theory]
+        [InlineData("{{Foo}}", "Bar")]
+        [InlineData("{{Number}}", "1")]
+        [InlineData("{{Blah.String}}", "")]
+        public void It_Can_Retrieve_Values_From_Dynamic_As_Interface(string template, string result)
+        {
+            dynamic input = new InterfaceOnlyDynamicTestFixture();
+            input.Foo = "Bar";
+            input.Number = 1;
+            input.Blah = new { String = "Test" };
+
+            var stubble = new StubbleCompilationBuilder()
+                .Build();
+
+            Func<InterfaceOnlyDynamicTestFixture, string> func = stubble.Compile(template, input);
+
+            var renderResult = func(input);
+            Assert.Equal(result, renderResult);
+        }
+
+        [Fact]
+        public void It_Should_Throw_Exception_On_Dynamic_IgnoreCase()
+        {
+            dynamic input = new InterfaceOnlyDynamicTestFixture();
+            input.Foo = "Bar";
+            input.Number = 1;
+            input.Blah = new { String = "Test" };
+
+            var stubble = new StubbleCompilationBuilder()
+                .Configure(settings =>
+                {
+                    settings.SetIgnoreCaseOnKeyLookup(true);
+                })
+                .Build();
+
+            var ex = Assert.Throws<StubbleException>(() => stubble.Compile("{{Foo}}", input));
+            Assert.Equal("Dynamic value lookup cannot ignore case", ex.Message);
+        }
+
         public static IEnumerable<object[]> Data => new List<SpecTest>
         {
             new SpecTest
@@ -495,6 +517,27 @@ namespace Stubble.Compilation.Tests
         private class ExampleClass
         {
             public string Foo { get; set; }
+        }
+
+        public class InterfaceOnlyDynamicTestFixture : DynamicObject
+        {
+            private readonly Dictionary<string, object> properties = new Dictionary<string, object>();
+
+            public override bool TrySetMember(SetMemberBinder binder, object value)
+            {
+                properties[binder.Name] = value;
+                return true;
+            }
+
+            public override bool TryGetMember(GetMemberBinder binder, out object result)
+            {
+                return properties.TryGetValue(binder.Name, out result);
+            }
+
+            public override IEnumerable<string> GetDynamicMemberNames()
+            {
+                return properties.Keys;
+            }
         }
     }
 }
