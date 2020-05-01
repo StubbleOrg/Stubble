@@ -7,6 +7,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
+using Newtonsoft.Json.Linq;
 using Stubble.Core.Classes;
 using Xunit;
 
@@ -19,15 +21,17 @@ namespace Stubble.Core.Tests
         {
             var list = new List<Type>
             {
+                typeof(B),
                 typeof(A),
-                typeof(B)
             };
-            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
 
-            var rawTokenIndex = orderedList.IndexOf(typeof(B));
-            var parserOutputIndex = orderedList.IndexOf(typeof(A));
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.Default).ToList();
 
-            Assert.True(rawTokenIndex < parserOutputIndex);
+            orderedList.Should().ContainInOrder(new[]
+            {
+                typeof(B),
+                typeof(A),
+            });
         }
 
         [Fact]
@@ -38,12 +42,14 @@ namespace Stubble.Core.Tests
                 typeof(B),
                 typeof(A)
             };
-            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
 
-            var rawTokenIndex = orderedList.IndexOf(typeof(B));
-            var parserOutputIndex = orderedList.IndexOf(typeof(A));
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.Default).ToList();
 
-            Assert.True(rawTokenIndex < parserOutputIndex);
+            orderedList.Should().ContainInOrder(new[]
+            {
+                typeof(B),
+                typeof(A),
+            });
         }
 
         [Fact]
@@ -54,12 +60,13 @@ namespace Stubble.Core.Tests
                 typeof(IEnumerable),
                 typeof(List<string>)
             };
-            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.Default).ToList();
 
-            var enumerableIndex = orderedList.IndexOf(typeof(IEnumerable));
-            var listIndex = orderedList.IndexOf(typeof(List<string>));
-
-            Assert.True(listIndex < enumerableIndex);
+            orderedList.Should().ContainInOrder(new[]
+            {
+                typeof(List<string>),
+                typeof(IEnumerable),
+            });
         }
 
         [Fact]
@@ -70,21 +77,106 @@ namespace Stubble.Core.Tests
                 typeof(List<string>),
                 typeof(IEnumerable)
             };
-            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable()).ToList();
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.Default).ToList();
 
-            var enumerableIndex = orderedList.IndexOf(typeof(IEnumerable));
-            var listIndex = orderedList.IndexOf(typeof(List<string>));
-
-            Assert.True(listIndex < enumerableIndex);
+            orderedList.Should().ContainInOrder(new[]
+            {
+                typeof(List<string>),
+                typeof(IEnumerable),
+            });
         }
 
         [Fact]
         public void It_Should_Perform_Standard_Equality()
         {
-            var comparer = TypeBySubclassAndAssignableImpl.TypeBySubclassAndAssignable();
+            var comparer = TypeBySubclassAndAssignableImpl.Default;
             Assert.Equal(0, comparer.Compare(null, null));
             Assert.Equal(1, comparer.Compare(null, typeof(string)));
             Assert.Equal(-1, comparer.Compare(typeof(string), null));
+        }
+
+        [Fact]
+        public void NonInterface_Should_Come_Before_Interface()
+        {
+            var list = new List<Type>
+            {
+                typeof(JArray),
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+            };
+
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.Default).ToList();
+
+            orderedList.Should().ContainInOrder(new[]
+            {
+                typeof(JArray),
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+            });
+        }
+
+        [Fact]
+        public void NonInterface_Should_Come_Before_Interface_Regardless_Of_Order()
+        {
+            var list = new List<Type>
+            {
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+                typeof(JArray),
+            };
+
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.Default).ToList();
+
+            orderedList.Should().ContainInOrder(new[]
+            {
+                typeof(JArray),
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+            });
+        }
+
+        [Fact]
+        public void Object_Should_Be_Put_At_Last()
+        {
+            var list = new List<Type>
+            {
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+                typeof(JArray),
+                typeof(object),
+            };
+
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.Default).ToList();
+
+            orderedList.Should().ContainInOrder(new[]
+            {
+                typeof(JArray),
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+                typeof(object),
+            });
+        }
+
+        [Fact]
+        public void Object_Should_Be_Put_At_Last_Regardless_Of_Order()
+        {
+            var list = new List<Type>
+            {
+                typeof(object),
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+                typeof(JArray),
+            };
+
+            var orderedList = list.OrderBy(x => x, TypeBySubclassAndAssignableImpl.Default).ToList();
+
+            orderedList.Should().ContainInOrder(new[]
+            {
+                typeof(JArray),
+                typeof(IList),
+                typeof(IDictionary<string, object>),
+                typeof(object),
+            });
         }
 
         private class A
