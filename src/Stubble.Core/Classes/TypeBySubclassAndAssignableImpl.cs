@@ -18,10 +18,7 @@ namespace Stubble.Core.Classes
         /// Returns an instance of TypeBySubclassAndAssignable Comparer for Type.
         /// </summary>
         /// <returns>an IComparer</returns>
-        public static IComparer<Type> TypeBySubclassAndAssignable()
-        {
-            return new TypeBySubclassAndAssignableImpl();
-        }
+        public static IComparer<Type> Default { get; } = new TypeBySubclassAndAssignableImpl();
 
         /// <summary>
         /// Compares two types using standard comparisions,
