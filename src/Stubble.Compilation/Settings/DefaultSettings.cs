@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq.Expressions;
 using System.Reflection;
+using Microsoft.CSharp.RuntimeBinder;
 using Stubble.Compilation.Contexts;
 using Stubble.Compilation.Renderers.TokenRenderers;
 using Stubble.Core.Exceptions;
@@ -22,6 +23,11 @@ namespace Stubble.Compilation.Settings
     /// </summary>
     public static class DefaultSettings
     {
+        private static readonly CSharpArgumentInfo[] EmptyCSharpArgumentInfo =
+        {
+            CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null)
+        };
+
         /// <summary>
         /// Delegate type for value getters
         /// </summary>
@@ -91,32 +97,34 @@ namespace Stubble.Compilation.Settings
                     typeof(IDynamicMetaObjectProvider),
                     (type, instance, key, ignoreCase) =>
                     {
-                        // Skip dynamic objects since they also implement IDictionary<string, object>
-                        if (!typeof(IDictionary<string, object>).IsAssignableFrom(type))
+                        if (ignoreCase)
                         {
-                            return null;
+                            throw new StubbleException("Dynamic value lookup cannot ignore case");
                         }
 
-                        var outVar = Expression.Variable(typeof(object));
-
-                        var dynamic = ignoreCase
-                            ? Expression.New(
-                                typeof(Dictionary<string, object>).GetConstructor(
-                                    new[] { typeof(IDictionary<string, object>), typeof(IEqualityComparer<string>) }),
-                                instance,
-                                Expression.Property(null, typeof(StringComparer).GetProperty(nameof(StringComparer.OrdinalIgnoreCase))))
-                            : instance;
-
-                        var block = new Expression[]
+                        // First try to access the value through IDictionary. This is fast and will take care of ExpandoObject.
+                        if (typeof(IDictionary<string, object>).IsAssignableFrom(type))
                         {
-                            outVar,
-                            Expression.Condition(
-                                Expression.Call(dynamic, typeof(IDictionary<string, object>).GetMethod("TryGetValue"), new Expression[] { Expression.Constant(key), outVar }),
+                            var outVar = Expression.Variable(typeof(object));
+                            var block = new Expression[]
+                            {
                                 outVar,
-                                Expression.Constant(null))
-                        };
+                                Expression.Condition(
+                                    Expression.Call(instance, typeof(IDictionary<string, object>).GetMethod("TryGetValue"), new Expression[] { Expression.Constant(key), outVar }),
+                                    outVar,
+                                    Expression.Constant(null))
+                            };
 
-                        return Expression.Block(new[] { outVar }, block);
+                            return Expression.Block(new[] { outVar }, block);
+                        }
+
+                        var binder = Microsoft.CSharp.RuntimeBinder.Binder.GetMember(
+                            CSharpBinderFlags.None,
+                            key,
+                            typeof(DefaultSettings),
+                            EmptyCSharpArgumentInfo);
+
+                        return Expression.Dynamic(binder, typeof(object), instance);
                     }
                 },
                 {
