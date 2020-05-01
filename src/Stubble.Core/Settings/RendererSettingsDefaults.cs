@@ -66,7 +66,7 @@ namespace Stubble.Core.Settings
 
                         if (int.TryParse(key, out var intVal))
                         {
-                            return castValue != null && intVal < castValue.Count ? castValue[intVal] : null;
+                            return castValue != null && intVal > -1 && intVal < castValue.Count ? castValue[intVal] : null;
                         }
 
                         return null;

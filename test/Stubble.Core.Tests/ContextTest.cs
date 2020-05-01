@@ -292,10 +292,12 @@ namespace Stubble.Core.Tests
             };
 
             var context = new Context(input, new RendererSettingsBuilder().BuildSettings(), RenderSettings.GetDefaultRenderSettings());
-            var output = context.Lookup("Array.2");
-            var output2 = context.Lookup("Array.10");
+            var output = context.Lookup("Array.-1");
+            var output2 = context.Lookup("Array.2");
+            var output3 = context.Lookup("Array.10");
             Assert.Null(output);
             Assert.Null(output2);
+            Assert.Null(output3);
         }
 
         [Fact]
