@@ -36,9 +36,11 @@ Stubble has neither of these limitations so feel free to use them.
 
 There are two caveats to the compilation renderer.
 
-The first is that it does not support lambda functions since we're not entirely sure of how we should handle rendering the returned tags.
-This will be decided at a later date if we decide to support it.
+1. The first is that it does not support lambda functions since we're not entirely sure of how we should handle rendering the returned tags.
+   This will be decided at a later date if we decide to support it.
 
-The second is a limitation around `section` and `inverted section` blocks.
-Due to the way compilation is done if a partial tag is called inside more than 16 block scopes then an exception will be thrown.
-This is due to the way the values of propagated down through the scopes and into the partial call.
+2. The second is a limitation around `section` and `inverted section` blocks.
+   Due to the way compilation is done if a partial tag is called inside more than 16 block scopes then an exception will be thrown.
+   This is due to the way the values of propagated down through the scopes and into the partial call.
+
+3. Dynamic properies have limitations including that you can't use ignore case when looking up properties and it will throw at runtime if a missing property is found.

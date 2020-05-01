@@ -37,7 +37,9 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Stubble.Test.Shared", "test
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		test\Stubble.Test.Shared\Stubble.Test.Shared.projitems*{032fdc3c-a86b-4f55-b4ad-24e4e9e05b40}*SharedItemsImports = 5
 		test\Stubble.Test.Shared\Stubble.Test.Shared.projitems*{9cf6fb53-3aff-4547-9925-6141ec057ecb}*SharedItemsImports = 13
+		test\Stubble.Test.Shared\Stubble.Test.Shared.projitems*{dfda975c-0fb9-410d-b26b-34384ba49ba3}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
