@@ -266,14 +266,14 @@ namespace Stubble.Core.Contexts
         /// <returns>The value if found or null if not</returns>
         private object GetValueFromRegistry(object value, string key)
         {
-            foreach (var entry in RendererSettings.ValueGetters)
+            foreach (var type in RendererSettings.OrderedValueGetters)
             {
-                if (!entry.Key.IsInstanceOfType(value))
+                if (!type.IsInstanceOfType(value))
                 {
                     continue;
                 }
 
-                var outputVal = entry.Value(value, key, RendererSettings.IgnoreCaseOnKeyLookup);
+                var outputVal = RendererSettings.ValueGetters[type](value, key, RendererSettings.IgnoreCaseOnKeyLookup);
                 if (outputVal != null)
                 {
                     return outputVal;

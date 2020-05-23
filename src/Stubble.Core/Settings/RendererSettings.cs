@@ -7,6 +7,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
+using Stubble.Core.Classes;
 using Stubble.Core.Contexts;
 using Stubble.Core.Interfaces;
 using Stubble.Core.Parser;
@@ -49,7 +51,7 @@ namespace Stubble.Core.Settings
             bool ignoreCaseOnLookup,
             IMustacheParser parser,
             TokenRendererPipeline<Context> rendererPipeline,
-            Classes.Tags defaultTags,
+            Tags defaultTags,
             ParserPipeline parserPipeline,
             HashSet<Type> sectionBlacklistTypes,
             Func<string, string> encodingFunction)
@@ -63,6 +65,7 @@ namespace Stubble.Core.Settings
                   parserPipeline,
                   sectionBlacklistTypes)
         {
+            OrderedValueGetters = valueGetters.Keys.OrderBy(t => t, TypeBySubclassAndAssignableImpl.Default).ToImmutableArray();
             ValueGetters = valueGetters.ToImmutableDictionary();
             TruthyChecks = truthyChecks.ToImmutableDictionary(k => k.Key, v => v.Value.ToImmutableArray());
             RenderSettings = renderSettings;
@@ -72,12 +75,17 @@ namespace Stubble.Core.Settings
         }
 
         /// <summary>
+        /// Gets an array of value getters ordered by lookup order
+        /// </summary>
+        public ImmutableArray<Type> OrderedValueGetters { get; }
+
+        /// <summary>
         /// Gets a map of Types to Value getter functions
         /// </summary>
         public ImmutableDictionary<Type, ValueGetterDelegate> ValueGetters { get; }
 
         /// <summary>
-        /// Gets a readonly list of TruthyChecks
+        /// Gets a map of types to truthy checks
         /// </summary>
         public ImmutableDictionary<Type, ImmutableArray<Func<object, bool>>> TruthyChecks { get; }
 

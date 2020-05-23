@@ -17,7 +17,7 @@ namespace Stubble.Core.Classes
         private static readonly Type ObjectType = typeof(object);
 
         /// <summary>
-        /// Returns an instance of TypeBySubclassAndAssignable Comparer for Type.
+        /// Gets an instance of TypeBySubclassAndAssignable Comparer for Type.
         /// </summary>
         /// <returns>an IComparer</returns>
         public static IComparer<Type> Default { get; } = new TypeBySubclassAndAssignableImpl();
