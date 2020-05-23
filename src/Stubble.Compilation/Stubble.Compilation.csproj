@@ -13,12 +13,13 @@
     <Copyright>Copyright © 2017</Copyright>
     <Version>1.0.0</Version>
     <RepositoryUrl>https://github.com/stubbleorg/stubble</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/StubbleOrg/Stubble/master/assets/logo-64.png</PackageIconUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/StubbleOrg/Stubble/master/assets/logo-128.png</PackageIconUrl>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <PackageProjectUrl>https://github.com/stubbleorg/stubble</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/StubbleOrg/Stubble/blob/master/licence.md</PackageLicenseUrl>
+    <PackageLicenseFile>licence.md</PackageLicenseFile>
+    <PackageIcon>logo-128.png</PackageIcon>
     <Platform>Any CPU</Platform>
     <RootNamespace>Stubble.Compilation</RootNamespace>
     <DebugType>portable</DebugType>
@@ -33,11 +34,6 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json" />
-    <AdditionalFiles Include="..\..\version.json" Link="version.json" />
-  </ItemGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,8 +53,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="2.3.183" PrivateAssets="All" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" PrivateAssets="All" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.1.91" PrivateAssets="All" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
