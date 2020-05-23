@@ -66,10 +66,6 @@ namespace Stubble.Core.Settings
         {
             var mergedGetters = DefaultValueGetters().MergeLeft(ValueGetters);
 
-            mergedGetters = mergedGetters
-                .OrderBy(x => x.Key, TypeBySubclassAndAssignableImpl.Default)
-                .ToDictionary(item => item.Key, item => item.Value);
-
             return new RendererSettings(
                 mergedGetters,
                 TruthyChecks,

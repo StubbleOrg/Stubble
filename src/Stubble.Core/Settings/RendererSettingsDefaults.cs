@@ -62,11 +62,9 @@ namespace Stubble.Core.Settings
                     typeof(IList),
                     (value, key, ignoreCase) =>
                     {
-                        var castValue = value as IList;
-
                         if (int.TryParse(key, out var intVal))
                         {
-                            return castValue != null && intVal > -1 && intVal < castValue.Count ? castValue[intVal] : null;
+                            return value is IList castValue && intVal > -1 && intVal < castValue.Count ? castValue[intVal] : null;
                         }
 
                         return null;

@@ -8,6 +8,7 @@ using Stubble.Core.Loaders;
 using Stubble.Core.Parser;
 using Stubble.Core.Parser.TokenParsers;
 using System.Collections;
+using FluentAssertions;
 
 namespace Stubble.Core.Tests
 {
@@ -97,6 +98,15 @@ namespace Stubble.Core.Tests
             Assert.Contains(typeof(FactAttribute), settings.SectionBlacklistTypes);
             Assert.Contains(typeof(string), settings.SectionBlacklistTypes);
             Assert.Contains(typeof(IDictionary), settings.SectionBlacklistTypes);
+        }
+
+        [Fact]
+        public void Value_Getters_Should_Be_Ordered_Correctly()
+        {
+            var settings = new RendererSettingsBuilder()
+                .BuildSettings();
+
+            settings.OrderedValueGetters.Should().BeInAscendingOrder(TypeBySubclassAndAssignableImpl.Default);
         }
     }
 }
