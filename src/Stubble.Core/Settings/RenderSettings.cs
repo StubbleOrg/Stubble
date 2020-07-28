@@ -30,6 +30,12 @@ namespace Stubble.Core.Settings
         public bool SkipHtmlEncoding { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether values should be escaping
+        /// looked up in the render context.
+        /// </summary>
+        public bool AddEscapeCharacter { get; set; }
+
+        /// <summary>
         /// Gets or sets the CultureInfo to use for rendering format-dependent values (doubles, etc.).
         /// </summary>
         public CultureInfo CultureInfo { get; set; } = CultureInfo.InvariantCulture;
@@ -45,6 +51,7 @@ namespace Stubble.Core.Settings
                 SkipRecursiveLookup = false,
                 ThrowOnDataMiss = false,
                 SkipHtmlEncoding = false,
+                AddEscapeCharacter = false,
                 CultureInfo = CultureInfo.InvariantCulture
             };
         }

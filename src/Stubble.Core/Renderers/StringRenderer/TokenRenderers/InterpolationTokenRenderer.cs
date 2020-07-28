@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Stubble.Core.Contexts;
 using Stubble.Core.Tokens;
+using Newtonsoft.Json;
 
 namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
 {
@@ -56,6 +57,12 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
             if (!context.RenderSettings.SkipHtmlEncoding && obj.EscapeResult && value != null)
             {
                 value = context.RendererSettings.EncodingFuction(ConvertToStringInCulture(value, context.RenderSettings.CultureInfo));
+            }
+
+            if (context.RenderSettings.AddEscapeCharacter && value != null)
+            {
+                string result = JsonConvert.ToString(ConvertToStringInCulture(value, context.RenderSettings.CultureInfo));
+                value =  result.Substring(1, result.Length - 2);
             }
 
             if (obj.Indent > 0)

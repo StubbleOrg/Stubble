@@ -6,6 +6,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Stubble.Core.Builders;
 using Stubble.Core.Classes;
 using Stubble.Core.Exceptions;
@@ -497,6 +499,105 @@ namespace Stubble.Core.Tests
             var ex = Assert.Throws<StubbleAmbigousMatchException>(() => stubble.Render("{{name}}", new { Name = "foo", name = "bar" }));
 
             Assert.Equal("Ambiguous match found when looking up key: 'name'", ex.Message);
+        }
+
+         [Fact]
+        public void Throw_Exception_If_Json_StringIsInvalid_Dictionary()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var dictionary = new Dictionary<string, string>
+            {
+                {"a", "value1"}, {"b", "value2 \"invalidJsonString\""}, {"c", "value3"},
+            };
+
+            string jsonStringTemplate = "{\"value1\": \"{{a}}\",\"value2\": \"{{{b}}}\",\"value3\": \"{{c}}\"}";
+
+            var output = stubble.Render(jsonStringTemplate, dictionary);
+
+            Assert.Throws<JsonReaderException>(() =>
+                JObject.Parse(output));
+        }
+
+        [Fact]
+        public void Throw_Exception_If_Json_StringIsInvalid_Object()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var obj = new
+            {
+                a = "value1",
+                b = "value2 \"invalidJsonString\"",
+                c = "value3"
+            };
+
+            string jsonStringTemplate = "{\"value1\": \"{{a}}\",\"value2\": \"{{{b}}}\",\"value3\": \"{{c}}\"}";
+
+            var output = stubble.Render(jsonStringTemplate, obj);
+
+            Assert.Throws<JsonReaderException>(() =>
+                JObject.Parse(output));
+        }
+
+        [Fact]
+        public void Render_Json_With_Unexpected_Html_Characters()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var obj = new
+            {
+                a = "value1",
+                b = "value2 \"invalidJsonString\"",
+                c = "value3"
+            };
+
+            string jsonStringTemplate = "{\"value1\": \"{{a}}\",\"value2\": \"{{b}}\",\"value3\": \"{{c}}\"}";
+
+            var output = stubble.Render(jsonStringTemplate, obj);
+
+            Assert.Equal("{\"value1\": \"value1\",\"value2\": \"value2 &quot;invalidJsonString&quot;\",\"value3\": \"value3\"}", output);
+        }
+
+        [Fact]
+        public void Json_Is_Invalid_Using_Escaping_RenderSettings_On_Dictionary()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var dictionary = new Dictionary<string, string>
+            {
+                {"a", "value1"}, {"b", "value2 \"invalidJsonString\""}, {"c", "value3"},
+            };
+
+            string jsonStringTemplate = "{\"value1\": \"{{a}}\",\"value2\": \"{{{b}}}\",\"value3\": \"{{c}}\"}";
+
+            var output = stubble.Render(jsonStringTemplate, dictionary, new RenderSettings { AddEscapeCharacter = true });
+
+            //Unexpected result
+            Assert.Equal("{\"value1\": \"value1\",\"value2\": \"value2 \\\"invalidJsonString\\\"\",\"value3\": \"value3\"}", output);
+        }
+
+        [Fact]
+        public void Json_Is_Invalid_Using_Escaping_RenderSettings_On_Object()
+        {
+            var stubble = new StubbleBuilder()
+                .Build();
+
+            var obj = new
+            {
+                a = "value1",
+                b = "value2 \"invalidJsonString\"",
+                c = "value3"
+            };
+
+            string jsonStringTemplate = "{\"value1\": \"{{a}}\",\"value2\": \"{{{b}}}\",\"value3\": \"{{c}}\"}";
+
+            var output = stubble.Render(jsonStringTemplate, obj, new RenderSettings { AddEscapeCharacter = true });
+
+            Assert.Equal("{\"value1\": \"value1\",\"value2\": \"value2 \\\"invalidJsonString\\\"\",\"value3\": \"value3\"}", output);
         }
 
         [Theory]
