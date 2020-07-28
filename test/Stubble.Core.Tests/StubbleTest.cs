@@ -574,7 +574,7 @@ namespace Stubble.Core.Tests
 
             string jsonStringTemplate = "{\"value1\": \"{{a}}\",\"value2\": \"{{{b}}}\",\"value3\": \"{{c}}\"}";
 
-            var output = stubble.Render(jsonStringTemplate, dictionary, new RenderSettings { AddEscapeCharacter = true });
+            var output = stubble.Render(jsonStringTemplate, dictionary, new RenderSettings { EscapeForJson = true });
 
             //Unexpected result
             Assert.Equal("{\"value1\": \"value1\",\"value2\": \"value2 \\\"invalidJsonString\\\"\",\"value3\": \"value3\"}", output);
@@ -595,7 +595,7 @@ namespace Stubble.Core.Tests
 
             string jsonStringTemplate = "{\"value1\": \"{{a}}\",\"value2\": \"{{{b}}}\",\"value3\": \"{{c}}\"}";
 
-            var output = stubble.Render(jsonStringTemplate, obj, new RenderSettings { AddEscapeCharacter = true });
+            var output = stubble.Render(jsonStringTemplate, obj, new RenderSettings { EscapeForJson = true });
 
             Assert.Equal("{\"value1\": \"value1\",\"value2\": \"value2 \\\"invalidJsonString\\\"\",\"value3\": \"value3\"}", output);
         }

@@ -59,7 +59,7 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
                 value = context.RendererSettings.EncodingFuction(ConvertToStringInCulture(value, context.RenderSettings.CultureInfo));
             }
 
-            if (context.RenderSettings.AddEscapeCharacter && value != null)
+            if (context.RenderSettings.EscapeForJson && value != null)
             {
                 string result = JsonConvert.ToString(ConvertToStringInCulture(value, context.RenderSettings.CultureInfo));
                 value =  result.Substring(1, result.Length - 2);

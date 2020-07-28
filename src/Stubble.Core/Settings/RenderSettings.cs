@@ -33,7 +33,7 @@ namespace Stubble.Core.Settings
         /// Gets or sets a value indicating whether values should be escaping
         /// looked up in the render context.
         /// </summary>
-        public bool AddEscapeCharacter { get; set; }
+        public bool EscapeForJson { get; set; }
 
         /// <summary>
         /// Gets or sets the CultureInfo to use for rendering format-dependent values (doubles, etc.).
@@ -51,7 +51,7 @@ namespace Stubble.Core.Settings
                 SkipRecursiveLookup = false,
                 ThrowOnDataMiss = false,
                 SkipHtmlEncoding = false,
-                AddEscapeCharacter = false,
+                EscapeForJson = false,
                 CultureInfo = CultureInfo.InvariantCulture
             };
         }
