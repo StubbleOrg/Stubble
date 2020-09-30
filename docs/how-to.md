@@ -54,6 +54,32 @@ var output  = await stubble.RenderAsync("{{Foo}}", dataHash);
 
 It's as simple as that.
 
+### Layout and View Example
+
+To include a string of HTML unescaped you need to work with partials.
+
+```csharp
+// hash and a pre-rendered view
+var hash = new
+{
+  CompanyName = "StubbleOrg"
+};
+var renderedBodyView = "<h1>Page headline</h1><p>Paragraphs and such...</p>";
+
+// layout/template
+var layout = "<html><body><header>{{CompanyName}}</header>{{> BodyContent}}</body></html>";
+
+// partials
+var partials = new Dictionary<string, string>()
+{
+  { "BodyContent", renderedBodyView }
+};
+
+// render
+var stubble = new StubbleBuilder().Build();
+var output = stubble.Render(layout, hash, partials);
+```
+
 ### Configuration
 
 To configure your stubble instance you can provide a configuration function in which you set any specifics you like.
