@@ -422,6 +422,22 @@ namespace Stubble.Compilation.Tests
             Assert.Equal("Dynamic value lookup cannot ignore case", ex.Message);
         }
 
+        [Fact]
+        public void It_Can_Skip_Null_In_Enumerable()
+        {
+            var builder = new CompilerSettingsBuilder();
+            var stubble = new StubbleCompilationRenderer(builder.BuildSettings());
+
+            var obj = new
+            {
+                Foo = new [] { new { Bar = "123" }, null },
+            };
+
+            var func = stubble.Compile("{{#Foo}}{{Bar}}{{/Foo}}", obj);
+
+            Assert.Equal("123", func(obj));
+        }
+
         public static IEnumerable<object[]> Data => new List<SpecTest>
         {
             new SpecTest

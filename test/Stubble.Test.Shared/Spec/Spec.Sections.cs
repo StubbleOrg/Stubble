@@ -77,6 +77,14 @@ namespace Stubble.Test.Shared.Spec
                 Partials = null
             },
             new SpecTest {
+                Name = @"List With Null Item",
+                Desc = @"Lists should be iterated; list items should visit the context stack. Null items should be skipped",
+                Data = new { list = new [] { new { item = "123" }, null }, },
+                Template = @"""{{#list}}{{item}}{{/list}}""",
+                Expected = @"""123""",
+                Partials = null
+            },
+            new SpecTest {
                 Name = @"Empty List",
                 Desc = @"Empty lists should behave like falsey values.",
                 Data = new { list = Array.Empty<object>(), },
