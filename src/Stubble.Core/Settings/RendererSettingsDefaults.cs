@@ -80,7 +80,16 @@ namespace Stubble.Core.Settings
                             return null;
                         }
 
-                        return value is IDictionary<string, object> castValue && castValue.TryGetValue(key, out var outValue) ? outValue : null;
+                        if (value is not IDictionary<string, object> cast)
+                        {
+                            return null;
+                        }
+
+                        var caseBound = ignoreCase
+                            ? new Dictionary<string, object>(cast, StringComparer.OrdinalIgnoreCase)
+                            : cast;
+
+                        return caseBound.TryGetValue(key, out var val) ? val : null;
                     }
                 },
                 {

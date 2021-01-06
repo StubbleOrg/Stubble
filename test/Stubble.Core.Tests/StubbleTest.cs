@@ -111,6 +111,20 @@ namespace Stubble.Core.Tests
             var output = stubble.Render("{{> inner}}", new { Foo = "Bar" });
             Assert.Equal("", output);
         }
+        
+        [Fact]
+        public void It_Can_Render_Dictionary_WithIgnoreCaseTrue()
+        {
+            var stubble = new StubbleBuilder()
+                .Configure(b =>
+                {
+                    b.SetIgnoreCaseOnKeyLookup(true);
+                })
+                .Build();
+
+            var output = stubble.Render("{{foo}}", new Dictionary<string, object>() { {"Foo", "Bar" }});
+            Assert.Equal("Bar", output);
+        }
 
         [Fact]
         public void It_Can_Render_WithoutData()
