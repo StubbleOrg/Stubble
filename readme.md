@@ -4,9 +4,9 @@
 
 ### Trimmed down {{mustache}} templates in .NET
 
-Stubble is an implementation of the [Mustache](http://mustache.github.com/) template system in C# (but is usable from any .NET language).
+Stubble is an implementation of the [Mustache](https://mustache.github.io/) template system in C# (but is usable from any .NET language).
 
-For a language-agnostic overview of mustache's template syntax, see the `mustache(5)` [manpage](http://mustache.github.com/mustache.5.html).
+For a language-agnostic overview of mustache's template syntax, see the `mustache(5)` [manpage](https://mustache.github.io/mustache.5.html).
 
 Stubble is tested against the mustache specification and is `v.1.1.2, including lambdas` compliant, this means that your templates in other languages will work with Stubble provided they match the spec!
 
