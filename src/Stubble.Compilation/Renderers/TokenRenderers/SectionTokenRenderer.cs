@@ -132,8 +132,18 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
         {
             if (blockContent.Count > 0)
             {
-                var block = Expression.Block(blockContent);
-                return CustomExpression.ForEach(param, value, block);
+                var blockExpressions = new List<Expression>();
+                var continueLabelTarget = Expression.Label("continue");
+                var breakLabelTarget = Expression.Label("break");
+                if (!param.Type.GetIsValueType())
+                {
+                    blockExpressions.Add(Expression.IfThen(Expression.Equal(param, Expression.Constant(null)), Expression.Goto(continueLabelTarget)));
+                }
+
+                blockExpressions.AddRange(blockContent);
+
+                var block = Expression.Block(blockExpressions);
+                return CustomExpression.ForEach(param, value, block, breakLabelTarget, continueLabelTarget);
             }
 
             return null;
