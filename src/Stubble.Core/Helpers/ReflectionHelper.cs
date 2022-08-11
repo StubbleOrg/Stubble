@@ -70,7 +70,7 @@ namespace Stubble.Core.Helpers
                     break;
                 case PropertyInfo pi:
                     var getter = pi.GetGetMethod();
-                    if (getter != null && IsZeroArityGetterMethod(getter))
+                    if (getter is not null && IsZeroArityGetterMethod(getter))
                     {
                         ex = getter.IsStatic ? Expression.Call(getter) : Expression.Call(instance, getter);
                     }
@@ -81,21 +81,51 @@ namespace Stubble.Core.Helpers
 
                     break;
                 case MethodInfo mi:
-                    if (IsZeroArityGetterMethod(mi))
+                    var @params = mi.GetParameters();
+
+                    if (mi.IsGenericMethod || mi.ReturnType == typeof(void))
+                    {
+                        break;
+                    }
+
+                    if (@params.Length is 0)
                     {
                         ex = mi.IsStatic ? Expression.Call(mi) : Expression.Call(instance, mi);
                     }
+                    else
+                    {
+                        var arguments = new Expression[@params.Length];
+                        for (var i = 0; i < @params.Length; i++)
+                        {
+                            var param = @params[i];
+
+                            if (param.HasDefaultValue is false)
+                            {
+                                goto end;
+                            }
+
+                            arguments[i] = param.DefaultValue is null
+                                ? Expression.Default(param.ParameterType)
+                                : Expression.Constant(param.DefaultValue);
+                        }
+
+                        ex = mi.IsStatic
+                            ? Expression.Call(mi, arguments)
+                            : Expression.Call(instance, mi, arguments);
+                    }
+
+                    end:
 
                     break;
             }
 
             return ex;
-        }
 
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
-        private static bool IsZeroArityGetterMethod(MethodInfo mi)
-        {
-            return mi.GetParameters().Length == 0 && !mi.IsGenericMethod && mi.ReturnType != typeof(void);
+            [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
+            static bool IsZeroArityGetterMethod(MethodInfo mi)
+            {
+                return mi.GetParameters().Length == 0 && !mi.IsGenericMethod && mi.ReturnType != typeof(void);
+            }
         }
     }
 }

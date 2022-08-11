@@ -511,12 +511,36 @@ namespace Stubble.Compilation.Tests
                 {
                     { "EmptyPartial", "" }
                 }
+            },
+            new SpecTest
+            {
+                Name = "A Method with default arguments",
+                Data = new ExampleClass {},
+                Template = "{{MethodWithDefault}}",
+                Expected = "Foobar",
+                Partials = new Dictionary<string, string>
+                {
+                }
+            },
+            new SpecTest
+            {
+                Name = "A static Method with default arguments",
+                Data = new ExampleClass {},
+                Template = "{{StaticMethodWithDefault}}",
+                Expected = "Static-Foobar",
+                Partials = new Dictionary<string, string>
+                {
+                }
             }
         }.Select(s => new[] { s });
 
         private class ExampleClass
         {
             public string Foo { get; set; }
+
+            public string MethodWithDefault(string value = "Foobar") => value;
+
+            public static string StaticMethodWithDefault(string value = "Static-Foobar") => value;
         }
 
         public class InterfaceOnlyDynamicTestFixture : DynamicObject
