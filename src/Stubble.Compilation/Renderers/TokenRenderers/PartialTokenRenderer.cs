@@ -59,7 +59,12 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
 
                 renderer.PartialExpressionCache.Add(key, definition);
 
-                var partialContent = renderer.Render(context.CompilerSettings.Parser.Parse(template, lineIndent: obj.LineIndent), context) as List<Expression>;
+                var partialContent = renderer.Render(
+                    context.CompilerSettings.Parser.Parse(
+                        template,
+                        lineIndent: obj.LineIndent,
+                        pipeline: context.CompilerSettings.ParserPipeline),
+                    context) as List<Expression>;
 
                 renderer.AddExpressionToScope(AddLambdaDefinition(definition, partialContent, actionType, sourceDatas));
             }
@@ -103,7 +108,12 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
 
                 renderer.PartialExpressionCache.Add(key, definition);
 
-                var partialContent = await renderer.RenderAsync(context.CompilerSettings.Parser.Parse(template, lineIndent: obj.LineIndent), context) as List<Expression>;
+                var partialContent = await renderer.RenderAsync(
+                    context.CompilerSettings.Parser.Parse(
+                        template,
+                        lineIndent: obj.LineIndent,
+                        pipeline: context.CompilerSettings.ParserPipeline),
+                    context) as List<Expression>;
 
                 renderer.AddExpressionToScope(AddLambdaDefinition(definition, partialContent, actionType, sourceDatas));
             }

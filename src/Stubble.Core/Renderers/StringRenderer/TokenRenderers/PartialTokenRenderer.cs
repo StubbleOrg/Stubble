@@ -26,7 +26,12 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
 
             if (template != null)
             {
-                renderer.Render(context.RendererSettings.Parser.Parse(template, lineIndent: obj.LineIndent), context);
+                renderer.Render(
+                    context.RendererSettings.Parser.Parse(
+                        template,
+                        lineIndent: obj.LineIndent,
+                        pipeline: context.RendererSettings.ParserPipeline),
+                    context);
             }
         }
 
@@ -42,7 +47,12 @@ namespace Stubble.Core.Renderers.StringRenderer.TokenRenderers
 
             if (template != null)
             {
-                await renderer.RenderAsync(context.RendererSettings.Parser.Parse(template, lineIndent: obj.LineIndent), context);
+                await renderer.RenderAsync(
+                    context.RendererSettings.Parser.Parse(
+                        template,
+                        lineIndent: obj.LineIndent,
+                        pipeline: context.RendererSettings.ParserPipeline),
+                    context);
             }
         }
     }
