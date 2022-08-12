@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Stubble.Core.Builders;
 using Stubble.Core.Classes;
@@ -12,6 +13,7 @@ using Stubble.Core.Exceptions;
 using Stubble.Core.Loaders;
 using Stubble.Core.Parser;
 using Stubble.Core.Settings;
+using Stubble.Helpers;
 using Xunit;
 
 namespace Stubble.Core.Tests
@@ -454,8 +456,8 @@ namespace Stubble.Core.Tests
                     { "a", "A is Cool" },
                     { "b", "B is Cool" },
                 },
-                ValueRender = new Func<string, Func<string, string>, object>((string text, Func<string, string> render) 
-                    => "{{ValueDictionary." + render("{{Value}}") +"}}")
+                ValueRender = new Func<string, Func<string, string>, object>((string text, Func<string, string> render)
+                    => "{{ValueDictionary." + render("{{Value}}") + "}}")
             };
 
             var result = stubble.Render("{{#ValueRender}}{{/ValueRender}}", obj);
@@ -509,6 +511,44 @@ namespace Stubble.Core.Tests
             var ex = Assert.Throws<StubbleException>(() => stubble.Render("{{#Lambda}}{{/Lambda}}", context));
 
             Assert.Equal("Async lambdas are not allowed in non-async template rendering", ex.Message);
+        }
+
+        [Fact]
+        public void It_Should_Pass_Extensions_Down_To_Partial_Renderer()
+        {
+            var culture = new CultureInfo("en-GB");
+            var helpers = new Stubble.Helpers.Helpers()
+                .Register("FormatCurrency", (HelperContext context, decimal count) => count.ToString("C", culture));
+
+            var stubble = new StubbleBuilder()
+                .Configure(conf => conf.AddHelpers(helpers))
+                .Build();
+
+            var result = stubble.Render("{{> Partial}}", new { Count = 100.26m }, new Dictionary<string, string>
+            {
+                ["Partial"] = "{{FormatCurrency Count}}"
+            });
+
+            Assert.Equal("£100.26", result);
+        }
+
+        [Fact]
+        public async Task It_Should_Pass_Extensions_Down_To_Partial_Renderer_Async()
+        {
+            var culture = new CultureInfo("en-GB");
+            var helpers = new Stubble.Helpers.Helpers()
+                .Register("FormatCurrency", (HelperContext context, decimal count) => count.ToString("C", culture));
+
+            var stubble = new StubbleBuilder()
+                .Configure(conf => conf.AddHelpers(helpers))
+                .Build();
+
+            var result = await stubble.RenderAsync("{{> Partial}}", new { Count = 100.26m }, new Dictionary<string, string>
+            {
+                ["Partial"] = "{{FormatCurrency Count}}"
+            });
+
+            Assert.Equal("£100.26", result);
         }
 
         public static IEnumerable<object[]> AsyncLambdaObjects()
