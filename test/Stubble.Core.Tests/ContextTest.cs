@@ -169,15 +169,19 @@ namespace Stubble.Core.Tests
             var staticField = context.Lookup("StaticField");
             var instanceMethodWithoutArgs = context.Lookup("MethodWithoutArgs");
             var instanceMethodWithArgs = context.Lookup("MethodWithArgs");
+            var instanceMethodWithDefaultArgs = context.Lookup(nameof(StronglyTypedTestClass.MethodWithDefaultArgs));
             var staticMethodWithoutArgs = context.Lookup("StaticMethodWithNoArgs");
             var staticMethodWithArgs = context.Lookup("StaticMethodWithArgs");
+            var staticMethodWithDefaultArgs = context.Lookup(nameof(StronglyTypedTestClass.StaticMethodWithDefaultArgs));
 
             Assert.Equal(1, staticProperty);
             Assert.Equal(1, instanceProperty);
             Assert.Equal(1, instanceField);
             Assert.Equal(1, staticField);
             Assert.Equal(1, instanceMethodWithoutArgs);
+            Assert.Equal(1, instanceMethodWithDefaultArgs);
             Assert.Equal(1, staticMethodWithoutArgs);
+            Assert.Equal(1, staticMethodWithDefaultArgs);
             Assert.Null(instanceMethodWithArgs);
             Assert.Null(staticMethodWithArgs);
         }
@@ -207,14 +211,20 @@ namespace Stubble.Core.Tests
             var instanceField = context.Lookup("ChildField");
             var parentInstanceMethodWithoutArgs = context.Lookup("MethodWithoutArgs");
             var parentInstanceMethodWithArgs = context.Lookup("MethodWithArgs");
+            var parentInstanceMethodWithDefaultArgs = context.Lookup(nameof(StronglyTypedChildTestClass.MethodWithDefaultArgs));
             var instanceMethodWithoutArgs = context.Lookup("ChildMethodWithoutArgs");
+            var instanceMethodWithDefaultArgs = context.Lookup(nameof(StronglyTypedChildTestClass.ChildMethodWithDefaultArgs));
+            var staticMethodWithDefaultArgs = context.Lookup(nameof(StronglyTypedChildTestClass.ChildStaticMethodWithDefaultArgs));
 
             Assert.Equal(1, parentInstanceProperty);
             Assert.Equal(1, parentInstanceField);
             Assert.Equal(1, parentInstanceMethodWithoutArgs);
+            Assert.Equal(1, parentInstanceMethodWithDefaultArgs);
             Assert.Equal(2, instanceProperty);
             Assert.Equal(2, instanceField);
             Assert.Equal(2, instanceMethodWithoutArgs);
+            Assert.Equal(2, instanceMethodWithDefaultArgs);
+            Assert.Equal(2, staticMethodWithDefaultArgs);
             Assert.Null(parentInstanceMethodWithArgs);
         }
 
@@ -499,12 +509,22 @@ namespace Stubble.Core.Tests
             return i;
         }
 
+        public static int StaticMethodWithDefaultArgs(int i = 1)
+        {
+            return i;
+        }
+
         public int MethodWithoutArgs()
         {
             return 1;
         }
 
         public int MethodWithArgs(int i)
+        {
+            return i;
+        }
+
+        public int MethodWithDefaultArgs(int i = 1)
         {
             return i;
         }
@@ -530,9 +550,19 @@ namespace Stubble.Core.Tests
             return 2;
         }
 
+        public static int ChildStaticMethodWithDefaultArgs(int i = 2)
+        {
+            return i;
+        }
+
         public int ChildMethodWithoutArgs()
         {
             return 2;
+        }
+
+        public int ChildMethodWithDefaultArgs(int i = 2)
+        {
+            return i;
         }
     }
 }
