@@ -15,6 +15,11 @@ jobs:
   steps:
     - checkout: self
       submodules: true
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
+      inputs:
+        packageType: sdk
+        useGlobalJson: true
     - task: DotNetCoreCLI@2
       inputs:
         command: 'custom'
