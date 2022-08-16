@@ -200,9 +200,9 @@ namespace Stubble.Compilation.Contexts
             var parameter = Expression.Parameter(value.Type, "checkThis");
             var checks = new List<Tuple<Expression, ConstantExpression>>();
 
-            if (!parameter.Type.GetIsValueType())
+            if (parameter.Type.IsNullable())
             {
-                checks.Add(Tuple.Create<Expression, ConstantExpression>(Expression.Equal(parameter, Expression.Constant(null)), FalseConstant));
+                checks.Add(Tuple.Create<Expression, ConstantExpression>(Expression.Equal(parameter, Expression.Default(parameter.Type)), FalseConstant));
             }
 
             if (CompilerSettings.TruthyChecks.TryGetValue(parameter.Type, out var typeTruthyChecks))

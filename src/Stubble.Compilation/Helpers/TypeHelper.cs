@@ -54,18 +54,22 @@ namespace Stubble.Compilation.Helpers
         }
 
         /// <summary>
-        /// Returns if the type is a value type or not
+        /// Returns if the provided type is nullable or not.
         /// </summary>
-        /// <param name="type">The type to evaluate</param>
-        /// <returns>If the type is a value type or not</returns>
-        [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
-        public static bool GetIsValueType(this Type type)
+        /// <param name="type">The type to evaluate.</param>
+        /// <returns>If the type is nullable or not.</returns>
+        public static bool IsNullable(this Type type)
         {
-#if NETSTANDARD1_3
-            return type.GetTypeInfo().IsValueType;
-#else
-            return type.IsValueType;
-#endif
+            if (type.IsValueType is false)
+            {
+                return true;
+            }
+            else if (Nullable.GetUnderlyingType(type) is not null)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
