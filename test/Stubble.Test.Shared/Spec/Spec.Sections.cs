@@ -291,6 +291,14 @@ namespace Stubble.Test.Shared.Spec
                 Expected = @"|=|",
                 Partials = null
             },
+            new SpecTest {
+                Name = @"Null ints are not truthy",
+                Desc = @"Nullable items should be truthy checked",
+                Data = new { Count = (int?)null },
+                Template = @"""{{#Count}}Should not be visible{{/Count}}""",
+                Expected = @"""""",
+                Partials = null
+            },
         }.Select(s => new object[] { s });
     }
 }

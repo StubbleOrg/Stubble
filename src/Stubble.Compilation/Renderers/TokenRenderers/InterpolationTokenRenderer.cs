@@ -40,9 +40,9 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
                     var formattedToString = expression.Type
                         .GetMethod(nameof(object.ToString), formatProviderTypeArgs);
 
-                    var item = expression.Type.GetIsValueType()
-                        ? expression
-                        : Expression.Coalesce(expression, Expression.Constant(string.Empty));
+                    var item = expression.Type.IsNullable()
+                        ? Expression.Coalesce(expression, Expression.Constant(string.Empty))
+                        : expression;
 
                     stringExpression = formattedToString is object
                         ? Expression.Call(item, formattedToString, Expression.Constant(context.CompilationSettings.CultureInfo))
