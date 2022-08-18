@@ -299,6 +299,31 @@ namespace Stubble.Test.Shared.Spec
                 Expected = @"""""",
                 Partials = null
             },
-        }.Select(s => new object[] { s });
+            new SpecTest {
+                Name = @"List With Null Item",
+                Desc = @"Lists should be iterated; list items should visit the context stack. Null items should be safely checked",
+                Data = new { List = new [] { new { Item = "123" }, null }, },
+                Template = @"""{{#List}}{{Item}}{{/List}}""",
+                Expected = @"""123""",
+                Partials = null
+            },
+            new SpecTest {
+                Name = @"List With Null Items but no access in section",
+                Desc = @"Lists should be iterated; list items should visit the context stack. Null items don't matter",
+                Data = new { List = new object[] { null, null }, },
+                Template = @"""{{#List}}{{List.Length}}{{/List}}""",
+                Expected = @"""22""",
+                Partials = null
+            },
+            new SpecTest {
+                Name = @"List With null item directly accessed by index",
+                Desc = @"Accessing a list item that is in range but null should be safe",
+                Data = new { List = new [] { new { Item = "123" }, null }, },
+                Template = @"""{{List.0.Item}}{{List.1.Item}}""",
+                Expected = @"""123""",
+                Partials = null
+            },
+        }
+        .Select(s => new object[] { s });
     }
 }
