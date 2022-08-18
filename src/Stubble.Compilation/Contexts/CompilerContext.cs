@@ -277,19 +277,19 @@ namespace Stubble.Compilation.Contexts
         {
             foreach (var entry in CompilerSettings.ValueGetters)
             {
-                if (!entry.Key.IsAssignableFrom(value))
+                if (entry.TypeMatchCheck(value) is false)
                 {
                     continue;
                 }
 
-                var outputVal = entry.Value(value, instance, key, CompilerSettings.IgnoreCaseOnKeyLookup);
-                if (outputVal != null)
+                var outputVal = entry.ValueGetterMethod(value, instance, key, CompilerSettings.IgnoreCaseOnKeyLookup);
+                if (outputVal is not null)
                 {
                     return new RegistryResult(outputVal.Type, outputVal);
                 }
             }
 
-            return default(RegistryResult);
+            return default;
         }
 
         /// <summary>
