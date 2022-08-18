@@ -8,13 +8,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using Stubble.Compilation.Helpers;
 using Stubble.Compilation.Settings;
 using Stubble.Core.Contexts;
 using Stubble.Core.Exceptions;
 using Stubble.Core.Interfaces;
 using static Stubble.Compilation.Helpers.ExpressionConstants;
+using static Stubble.Compilation.Helpers.ExpressionHelpers;
 
 namespace Stubble.Compilation.Contexts
 {
@@ -175,6 +175,7 @@ namespace Stubble.Compilation.Contexts
                 }
 
                 value = TryEnumerationConversionIfRequired(value);
+                value = EnsureSafeAccess(value);
 
                 cache[name] = value;
             }
