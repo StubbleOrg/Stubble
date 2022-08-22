@@ -42,7 +42,7 @@ namespace Stubble.Compilation.Settings
         /// <param name="sectionBlacklistTypes">The blacklisted section types</param>
         /// <param name="encodingFunction">The encoding function for escaping strings</param>
         public CompilerSettings(
-            Dictionary<Type, DefaultSettings.ValueGetterDelegate> valueGetters,
+            List<ValueGetter> valueGetters,
             Dictionary<Type, List<LambdaExpression>> truthyChecks,
             Dictionary<Type, EnumerationConverter> enumerationConverters,
             TokenRendererPipeline<CompilerContext> rendererPipeline,
@@ -58,7 +58,7 @@ namespace Stubble.Compilation.Settings
             Expression<Func<string, string>> encodingFunction)
             : base(templateLoader, partialLoader, maxRecursionDepth, ignoreCaseOnLookup, parser, defaultTags, parserPipeline, sectionBlacklistTypes)
         {
-            ValueGetters = valueGetters.ToImmutableDictionary();
+            ValueGetters = valueGetters.ToImmutableArray();
             TruthyChecks = truthyChecks.ToImmutableDictionary(k => k.Key, v => v.Value.ToImmutableList());
             EnumerationConverters = enumerationConverters.ToImmutableDictionary();
             RendererPipeline = rendererPipeline;
@@ -69,7 +69,7 @@ namespace Stubble.Compilation.Settings
         /// <summary>
         /// Gets a map of Types to Value getter functions
         /// </summary>
-        public ImmutableDictionary<Type, DefaultSettings.ValueGetterDelegate> ValueGetters { get; }
+        public ImmutableArray<ValueGetter> ValueGetters { get; }
 
         /// <summary>
         /// Gets a readonly list of TruthyChecks

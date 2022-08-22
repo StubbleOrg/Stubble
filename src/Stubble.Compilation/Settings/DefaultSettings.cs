@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.CSharp.RuntimeBinder;
 using Stubble.Compilation.Contexts;
+using Stubble.Compilation.Helpers;
 using Stubble.Compilation.Renderers.TokenRenderers;
 using Stubble.Core.Exceptions;
 using Stubble.Core.Helpers;
@@ -19,52 +20,59 @@ using Stubble.Core.Renderers.Interfaces;
 namespace Stubble.Compilation.Settings
 {
     /// <summary>
-    /// Contains defaults for the <see cref="CompilerSettings"/>
+    /// Contains defaults for the <see cref="CompilerSettings"/>.
     /// </summary>
     public static class DefaultSettings
     {
         private static readonly CSharpArgumentInfo[] EmptyCSharpArgumentInfo =
         {
-            CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null)
+            CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null),
         };
 
         /// <summary>
-        /// Delegate type for value getters
+        /// Returns the default value getters.
         /// </summary>
-        /// <param name="type">The type of member to lookup the value on</param>
-        /// <param name="instance">An expression tothe member to lookup the value on</param>
-        /// <param name="key">The key to lookup</param>
-        /// <param name="ignoreCase">If case should be ignored when looking up value</param>
-        /// <returns>The expression to find the value or null if not found</returns>
-        public delegate Expression ValueGetterDelegate(Type type, Expression instance, string key, bool ignoreCase);
-
-        /// <summary>
-        /// Returns the default value getters
-        /// </summary>
-        /// <returns>The default value getters</returns>
-        public static Dictionary<Type, ValueGetterDelegate> DefaultValueGetters()
+        /// <returns>The default value getters.</returns>
+        public static List<ValueGetter> DefaultValueGetters()
         {
-            return new Dictionary<Type, ValueGetterDelegate>()
+            return new List<ValueGetter>()
             {
-                {
-                    typeof(IList),
+                new ValueGetter(
+                    typeof(IList<>),
+                    static type =>
+                    {
+                        foreach (var @interface in type.GetInterfaces())
+                        {
+                            if (@interface.IsGenericType)
+                            {
+                                if (@interface.GetGenericTypeDefinition() == typeof(IList<>))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+
+                        return false;
+                    },
                     (type, instance, key, ignoreCase) =>
                     {
                         if (int.TryParse(key, out var intVal))
                         {
                             var index = Expression.Constant(intVal);
 
+                            var inner = type.GetElementTypeOfIEnumerable();
+
                             return Expression.Condition(
                                 Expression.LessThan(index, Expression.Property(instance, typeof(ICollection), "Count")),
-                                Expression.MakeIndex(instance, typeof(IList).GetProperty("Item"), new[] { index }),
-                                Expression.Constant(null));
+                                Expression.Convert(Expression.MakeIndex(instance, typeof(IList).GetProperty("Item"), new[] { index }), inner),
+                                Expression.Default(inner));
                         }
 
                         return null;
-                    }
-                },
-                {
+                    }),
+                new ValueGetter(
                     typeof(IDictionary<string, object>),
+                    static type => typeof(IDictionary<string, object>).IsAssignableFrom(type),
                     (type, instance, key, ignoreCase) =>
                     {
                         // Skip dynamic objects since they also implement IDictionary<string, object>
@@ -80,21 +88,24 @@ namespace Stubble.Compilation.Settings
                             Expression.Condition(
                                 Expression.Call(instance, typeof(IDictionary<string, object>).GetMethod("TryGetValue"), new Expression[] { Expression.Constant(key), outVar }),
                                 outVar,
-                                Expression.Constant(null))
+                                Expression.Constant(null)),
                         };
 
                         return Expression.Block(new[] { outVar }, block);
-                    }
-                },
-                {
+                    }),
+                new ValueGetter(
                     typeof(IDictionary),
+                    static type => typeof(IDictionary).IsAssignableFrom(type),
                     (type, instance, key, ignoreCase) =>
                     {
-                        return Expression.MakeIndex(instance, typeof(IDictionary).GetProperty("Item"), new[] { Expression.Constant(key) });
-                    }
-                },
-                {
+                        return Expression.MakeIndex(
+                            instance,
+                            typeof(IDictionary).GetProperty("Item"),
+                            new[] { Expression.Constant(key) });
+                    }),
+                new ValueGetter(
                     typeof(IDynamicMetaObjectProvider),
+                    static type => typeof(IDynamicMetaObjectProvider).IsAssignableFrom(type),
                     (type, instance, key, ignoreCase) =>
                     {
                         if (ignoreCase)
@@ -112,7 +123,7 @@ namespace Stubble.Compilation.Settings
                                 Expression.Condition(
                                     Expression.Call(instance, typeof(IDictionary<string, object>).GetMethod("TryGetValue"), new Expression[] { Expression.Constant(key), outVar }),
                                     outVar,
-                                    Expression.Constant(null))
+                                    Expression.Constant(null)),
                             };
 
                             return Expression.Block(new[] { outVar }, block);
@@ -125,10 +136,11 @@ namespace Stubble.Compilation.Settings
                             EmptyCSharpArgumentInfo);
 
                         return Expression.Dynamic(binder, typeof(object), instance);
-                    }
-                },
-                {
-                    typeof(object), (type, instance, key, ignoreCase) =>
+                    }),
+                new ValueGetter(
+                    typeof(object),
+                    static type => typeof(object).IsAssignableFrom(type),
+                    (type, instance, key, ignoreCase) =>
                     {
                         var member = type.GetMember(
                             key,
@@ -150,15 +162,14 @@ namespace Stubble.Compilation.Settings
                         }
 
                         return null;
-                    }
-                }
+                    }),
             };
         }
 
         /// <summary>
-        /// Returns the default token renderers
+        /// Returns the default token renderers.
         /// </summary>
-        /// <returns>Default token renderers</returns>
+        /// <returns>Default token renderers.</returns>
         internal static IEnumerable<ITokenRenderer<CompilerContext>> DefaultTokenRenderers()
         {
             return new List<ITokenRenderer<CompilerContext>>
@@ -172,13 +183,13 @@ namespace Stubble.Compilation.Settings
         }
 
         /// <summary>
-        /// Returns the default blacklisted types for sections
+        /// Returns the default blacklisted types for sections.
         /// </summary>
-        /// <returns>A hashset of default blacklisted types for sections</returns>
-        internal static HashSet<Type> DefaultSectionBlacklistTypes() => new HashSet<Type>
+        /// <returns>A hashset of default blacklisted types for sections.</returns>
+        internal static HashSet<Type> DefaultSectionBlacklistTypes() => new ()
         {
             typeof(IDictionary),
-            typeof(string)
+            typeof(string),
         };
     }
 }

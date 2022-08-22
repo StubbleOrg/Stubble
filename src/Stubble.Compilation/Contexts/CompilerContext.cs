@@ -8,13 +8,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using Stubble.Compilation.Helpers;
 using Stubble.Compilation.Settings;
 using Stubble.Core.Contexts;
 using Stubble.Core.Exceptions;
 using Stubble.Core.Interfaces;
 using static Stubble.Compilation.Helpers.ExpressionConstants;
+using static Stubble.Compilation.Helpers.ExpressionHelpers;
 
 namespace Stubble.Compilation.Contexts
 {
@@ -175,6 +175,7 @@ namespace Stubble.Compilation.Contexts
                 }
 
                 value = TryEnumerationConversionIfRequired(value);
+                value = EnsureSafeAccess(value);
 
                 cache[name] = value;
             }
@@ -276,19 +277,19 @@ namespace Stubble.Compilation.Contexts
         {
             foreach (var entry in CompilerSettings.ValueGetters)
             {
-                if (!entry.Key.IsAssignableFrom(value))
+                if (entry.TypeMatchCheck(value) is false)
                 {
                     continue;
                 }
 
-                var outputVal = entry.Value(value, instance, key, CompilerSettings.IgnoreCaseOnKeyLookup);
-                if (outputVal != null)
+                var outputVal = entry.ValueGetterMethod(value, instance, key, CompilerSettings.IgnoreCaseOnKeyLookup);
+                if (outputVal is not null)
                 {
                     return new RegistryResult(outputVal.Type, outputVal);
                 }
             }
 
-            return default(RegistryResult);
+            return default;
         }
 
         /// <summary>

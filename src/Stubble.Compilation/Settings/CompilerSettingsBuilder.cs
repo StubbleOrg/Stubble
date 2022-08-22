@@ -6,6 +6,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Linq.Expressions;
 using Stubble.Compilation.Class;
 using Stubble.Compilation.Contexts;
@@ -33,8 +35,8 @@ namespace Stubble.Compilation.Settings
         /// <summary>
         /// Gets or sets a map of Types to Value getter functions
         /// </summary>
-        protected internal Dictionary<Type, DefaultSettings.ValueGetterDelegate> ValueGetters { get; set; }
-            = new Dictionary<Type, DefaultSettings.ValueGetterDelegate>();
+        protected internal List<ValueGetter> ValueGetters { get; set; }
+            = new List<ValueGetter>();
 
         /// <summary>
         /// Gets or sets a readonly list of TruthyChecks
@@ -75,7 +77,9 @@ namespace Stubble.Compilation.Settings
         /// <returns>The built compilation settings</returns>
         public override CompilerSettings BuildSettings()
         {
-            var mergedGetters = DefaultSettings.DefaultValueGetters().MergeLeft(ValueGetters);
+            var mergedGetters = MergeGetters(
+                DefaultSettings.DefaultValueGetters(),
+                ValueGetters);
 
             return new CompilerSettings(
                 mergedGetters,
@@ -120,9 +124,9 @@ namespace Stubble.Compilation.Settings
         /// <typeparam name="T">The type to get the value from</typeparam>
         /// <param name="func">The getter function for the type</param>
         /// <returns>The builder for chaining calls</returns>
-        public CompilerSettingsBuilder AddValueGetter<T>(DefaultSettings.ValueGetterDelegate func)
+        public CompilerSettingsBuilder AddValueGetter<T>(ValueGetterDelegate func)
         {
-            ValueGetters[typeof(T)] = func;
+            ValueGetters.Add(new ValueGetter(typeof(T), static type => type == typeof(T), func));
             return this;
         }
 
@@ -154,6 +158,16 @@ namespace Stubble.Compilation.Settings
         {
             EncodingFunction = encodingFunction;
             return this;
+        }
+
+        private static List<ValueGetter> MergeGetters(IEnumerable<ValueGetter> baseGetters, params IEnumerable<ValueGetter>[] getters)
+        {
+            var map = baseGetters.ToDictionary(k => k.Key, v => v);
+            var others = getters
+                .Select(getter => getter.ToDictionary(k => k.Key, v => v))
+                .ToArray();
+
+            return map.MergeLeft(others).Values.ToList();
         }
     }
 }
