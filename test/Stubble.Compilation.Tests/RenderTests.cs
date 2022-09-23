@@ -531,12 +531,21 @@ namespace Stubble.Compilation.Tests
                 Partials = new Dictionary<string, string>
                 {
                 }
+            },
+            new SpecTest
+            {
+                Name = "A model with a nullable int",
+                Data = new ExampleClass { Count = 3 },
+                Template = "{{Count}}",
+                Expected = "3"
             }
         }.Select(s => new[] { s });
 
         private class ExampleClass
         {
             public string Foo { get; set; }
+
+            public int? Count { get; set; }
 
             public string MethodWithDefault(string value = "Foobar") => value;
 
