@@ -40,13 +40,22 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
                     var formattedToString = expression.Type
                         .GetMethod(nameof(object.ToString), formatProviderTypeArgs);
 
-                    var item = expression.Type.IsNullable()
-                        ? Expression.Coalesce(expression, Expression.Constant(string.Empty))
-                        : expression;
+                    var toString = formattedToString is not null
+                        ? Expression.Call(expression, formattedToString, Expression.Constant(context.CompilationSettings.CultureInfo))
+                        : Expression.Call(expression, expression.Type.GetMethod(nameof(object.ToString), Type.EmptyTypes));
 
-                    stringExpression = formattedToString is object
-                        ? Expression.Call(item, formattedToString, Expression.Constant(context.CompilationSettings.CultureInfo))
-                        : Expression.Call(item, expression.Type.GetMethod(nameof(object.ToString), Type.EmptyTypes));
+                    var item = expression;
+                    if (expression.Type.IsNullable())
+                    {
+                        stringExpression = Expression.Condition(
+                            Expression.Equal(expression, Expression.Default(expression.Type)),
+                            Expression.Default(typeof(string)),
+                            toString);
+                    }
+                    else
+                    {
+                        stringExpression = toString;
+                    }
                 }
 
                 expression = Expression.Invoke(context.CompilerSettings.EncodingFuction, stringExpression);

@@ -23,7 +23,7 @@ namespace Stubble.Test.Shared.Spec
 
         public bool Skip { get; set; }
 
-        public IDictionary<string, string> Partials { get; set; }
+        public IDictionary<string, string> Partials { get; set; } = new Dictionary<string, string>();
 
         public Exception ExpectedException { get; set; }
 
