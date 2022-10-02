@@ -25,6 +25,7 @@ namespace Stubble.Core.Parser.TokenParsers
         {
             var tagStart = slice.Start - processor.CurrentTags.StartTag.Length;
             var index = slice.Start;
+            var initialIndex = index;
 
             while (slice[index].IsWhitespace())
             {
@@ -58,6 +59,7 @@ namespace Stubble.Core.Parser.TokenParsers
 
                 if (slice.IsEmpty)
                 {
+                    slice.Start = initialIndex;
                     return false;
                 }
 
