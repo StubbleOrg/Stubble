@@ -188,6 +188,7 @@ namespace Stubble.Compilation.Settings
         /// <returns>A hashset of default blacklisted types for sections.</returns>
         internal static HashSet<Type> DefaultSectionBlacklistTypes() => new ()
         {
+            typeof(IDynamicMetaObjectProvider),
             typeof(IDictionary),
             typeof(string),
         };
