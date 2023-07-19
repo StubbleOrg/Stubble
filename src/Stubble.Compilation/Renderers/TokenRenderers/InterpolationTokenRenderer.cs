@@ -28,37 +28,32 @@ namespace Stubble.Compilation.Renderers.TokenRenderers
 
             var expression = context.Lookup(member);
 
-            if (!context.CompilationSettings.SkipHtmlEncoding && obj.EscapeResult && expression != null)
+            if (expression != null && expression.Type != typeof(string))
             {
-                Expression stringExpression;
-                if (expression.Type == typeof(string))
+                var formattedToString = expression.Type
+                    .GetMethod(nameof(object.ToString), formatProviderTypeArgs);
+
+                var toString = formattedToString is not null
+                    ? Expression.Call(expression, formattedToString, Expression.Constant(context.CompilationSettings.CultureInfo))
+                    : Expression.Call(expression, expression.Type.GetMethod(nameof(object.ToString), Type.EmptyTypes));
+
+                var item = expression;
+                if (expression.Type.IsNullable())
                 {
-                    stringExpression = expression;
+                    expression = Expression.Condition(
+                        Expression.Equal(expression, Expression.Default(expression.Type)),
+                        Expression.Default(typeof(string)),
+                        toString);
                 }
                 else
                 {
-                    var formattedToString = expression.Type
-                        .GetMethod(nameof(object.ToString), formatProviderTypeArgs);
-
-                    var toString = formattedToString is not null
-                        ? Expression.Call(expression, formattedToString, Expression.Constant(context.CompilationSettings.CultureInfo))
-                        : Expression.Call(expression, expression.Type.GetMethod(nameof(object.ToString), Type.EmptyTypes));
-
-                    var item = expression;
-                    if (expression.Type.IsNullable())
-                    {
-                        stringExpression = Expression.Condition(
-                            Expression.Equal(expression, Expression.Default(expression.Type)),
-                            Expression.Default(typeof(string)),
-                            toString);
-                    }
-                    else
-                    {
-                        stringExpression = toString;
-                    }
+                    expression = toString;
                 }
+            }
 
-                expression = Expression.Invoke(context.CompilerSettings.EncodingFuction, stringExpression);
+            if (!context.CompilationSettings.SkipHtmlEncoding && obj.EscapeResult && expression != null)
+            {
+                expression = Expression.Invoke(context.CompilerSettings.EncodingFuction, expression);
             }
 
             if (obj.Indent > 0)
